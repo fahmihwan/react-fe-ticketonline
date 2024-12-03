@@ -1,0 +1,21 @@
+{   
+    "data": [
+        {
+            "type": "Bank Transfer",
+            "name": "bank_transfer",
+            "list": [
+                {"id":"bca", "title":"BCA Virtual Account", "img":"bca.png"},
+                {"id":"bni", "title":"BNI Virtual Account", "img":"bni.png"},
+                {"id":"briva", "title":"BRI Virtual Account", "img":"briva.png"},
+                {"id":"mandiri", "title":"MANDIRI Virtual Account", "img":"mandiri.png"}]
+        }
+    ],
+    "data_payment_status":[
+        {"statusName": "all", "title":"All Transaction"},
+        {"statusName": "success", "title":"Payment Success"},
+        {"statusName": "expired", "title":"Payment Expired"},
+        {"statusName": "canceled", "title":"Payment Cancelled"}
+
+    ]
+            
+}
