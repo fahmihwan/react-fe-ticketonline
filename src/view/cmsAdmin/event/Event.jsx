@@ -90,9 +90,6 @@ const Event = () => {
                                 Description
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                List Ticket
-                            </th>
-                            <th scope="col" className="px-6 py-3">
                                 Action
                             </th>
                         </tr>
@@ -111,7 +108,6 @@ const Event = () => {
                                 </th>
                                 <td className="px-6 py-4">Silver</td>
                                 <td className="px-6 py-4">Laptop</td>
-                                <td className="px-6 py-4">$2999</td>
                                 <td className="px-6 py-4">$2999</td>
                                 <td className="px-6 py-4">
                                     <Link

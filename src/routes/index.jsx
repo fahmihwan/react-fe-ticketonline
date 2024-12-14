@@ -10,6 +10,7 @@ import Event from "../view/cmsAdmin/event/Event";
 import CreateEvent from "../view/cmsAdmin/event/CreateEvent";
 import CreateTicket from "../view/cmsAdmin/ticket/CreateTicket";
 import Ticket from "../view/cmsAdmin/ticket/Ticket";
+import Transaction from "../view/cmsAdmin/transaction/Transaction";
 
 
 const routes = createBrowserRouter([
@@ -34,7 +35,10 @@ const routes = createBrowserRouter([
         path: "/admin/ticket/:id/create",
         element: <CreateTicket />
     },
-
+    {
+        path: "/admin/transaction",
+        element: <Transaction />
+    },
     {
         path: "/",
         element: <Home />

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
+
 import { Link } from 'react-router-dom'
 
-const Ticket = () => {
+const Transaction = () => {
     const [data, setData] = useState([])
 
 
@@ -64,7 +65,7 @@ const Ticket = () => {
         <LayoutAdmin>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
-                    <p className='text-3xl font-bold '>Ticket</p>
+                    <p className='text-3xl font-bold '>Transaction</p>
                 </div>
             </div>
 
@@ -196,4 +197,4 @@ const Ticket = () => {
     )
 }
 
-export default Ticket
+export default Transaction
