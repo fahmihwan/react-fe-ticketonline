@@ -9,6 +9,7 @@ import Dashboard from "../view/cmsAdmin/Dashboard";
 import Event from "../view/cmsAdmin/event/Event";
 import CreateEvent from "../view/cmsAdmin/event/CreateEvent";
 import CreateTicket from "../view/cmsAdmin/ticket/CreateTicket";
+import Ticket from "../view/cmsAdmin/ticket/Ticket";
 
 
 const routes = createBrowserRouter([
@@ -22,13 +23,18 @@ const routes = createBrowserRouter([
         element: <Event />
     },
     {
-        path: "/admin/:id/ticket",
-        element: <CreateTicket />
-    },
-    {
         path: "/admin/event/create",
         element: <CreateEvent />
     },
+    {
+        path: "/admin/ticket",
+        element: <Ticket />
+    },
+    {
+        path: "/admin/ticket/:id/create",
+        element: <CreateTicket />
+    },
+
     {
         path: "/",
         element: <Home />

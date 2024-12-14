@@ -3,7 +3,7 @@ import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Button } from 'flowbite-react'
 import { Link } from 'react-router-dom'
 
-const Event = () => {
+const Ticket = () => {
     const [data, setData] = useState([])
 
 
@@ -65,10 +65,7 @@ const Event = () => {
         <LayoutAdmin>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
-                    <p className='text-3xl font-bold '>Event</p>
-                    <Link to="/admin/event/create">
-                        <Button color="blue">Add new event</Button>
-                    </Link>
+                    <p className='text-3xl font-bold '>Ticket</p>
                 </div>
             </div>
 
@@ -86,9 +83,7 @@ const Event = () => {
                             <th scope="col" className="px-6 py-3">
                                 Schedule
                             </th>
-                            <th scope="col" className="px-6 py-3">
-                                Description
-                            </th>
+
                             <th scope="col" className="px-6 py-3">
                                 List Ticket
                             </th>
@@ -111,15 +106,16 @@ const Event = () => {
                                 </th>
                                 <td className="px-6 py-4">Silver</td>
                                 <td className="px-6 py-4">Laptop</td>
-                                <td className="px-6 py-4">$2999</td>
+
                                 <td className="px-6 py-4">$2999</td>
                                 <td className="px-6 py-4">
                                     <Link
-                                        to=""
-                                        className="font-medium mr-5 text-yellow-400  hover:underline"
+                                        to="/admin/ticket/1/create"
+                                        className="mr-5 font-medium text-blue-600  hover:underline"
                                     >
-                                        Edit
+                                        add ticket
                                     </Link>
+
                                 </td>
                             </tr>
                         ))}
@@ -201,4 +197,4 @@ const Event = () => {
     )
 }
 
-export default Event
+export default Ticket

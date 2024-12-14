@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link } from 'react-router-dom'
 import { Button, Datepicker } from 'flowbite-react'
-import { InputCKEditorEl, InputDateEl, InputTimeEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
+import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
 
 
 const CreateEvent = () => {
@@ -20,21 +20,23 @@ const CreateEvent = () => {
             </div>
             <div className='w-full flex'>
                 <div
-                    className="block w-1/2 mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 "
+                    className="block md:w-full lg:w-1/2   mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow  "
                 >
-                    <TextInputEl placeholder="event title" />
-                    <UploadFileEl placeholder="upload image" />
+                    <TextInputEl placeholder="Event title" />
+                    <UploadFileEl placeholder="Upload image" />
+                    <TextareaEl placeholder="Venue" />
+
                     <div className='w-full flex'>
                         <div className='mr-2 w-9/12'>
-                            <InputDateEl placeholder="schedule" />
+                            <InputDateEl placeholder="Schedule" />
                         </div>
                         <div className='w-3/12'>
-                            <InputTimeEl placeholder="&nbsp;" />
+                            <InputTimeEl placeholder="Time" />
                         </div>
                     </div>
                     <div>
-                        {/*  */}
-                        <InputCKEditorEl value={description} handleChange={setDescription} placeholder="description" />
+
+                        <InputCKEditorEl value={description} handleChange={setDescription} placeholder="Description" />
                     </div>
                     <div className='my-5 flex justify-end'>
                         <Link to="/admin/event" className='mr-3'>

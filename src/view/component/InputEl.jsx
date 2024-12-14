@@ -37,6 +37,34 @@ export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange
     )
 }
 
+
+
+export const TextareaEl = ({ type = 'text', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
+    return (
+
+        <div className="mb-5">
+            <label
+                htmlFor="message"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+                {placeholder}
+            </label>
+            <textarea
+                rows={4}
+                id={id}
+                onChange={(e) => handleChange(e)}
+                value={value}
+                name={name}
+                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
+                placeholder="Write your thoughts here..."
+                defaultValue={""}
+            />
+        </div>
+    )
+}
+
+
+
 export const TextInputSearchEl = (type = 'search', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "") => {
     return (
         <div className="relative">
@@ -86,7 +114,7 @@ export const UploadFileEl = ({ type = 'file', name, id, placeholder, handleChang
                 onChange={(e) => handleChange(e)}
                 value={value}
                 name={name}
-                className="block w-full mb-8 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                className="block w-full  mb-8 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none "
             />
         </div>
 
@@ -239,7 +267,7 @@ export const InputTimeEl = ({ placeholder, handleChange, value, className }) => 
                 onChange={(e) => handleChange(e)}
                 value={value}
                 id="time"
-                className="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="bg-gray-50 h-12 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 min="09:00"
                 max="18:00"
                 required=""
@@ -251,14 +279,14 @@ export const InputTimeEl = ({ placeholder, handleChange, value, className }) => 
 
 
 export const InputDateEl = ({ placeholder, handleChange, value, className }) => {
-    return (<div className='mb-5'>
+    return (<div className='mb-5 '>
         <label
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-1  ext-sm font-medium text-gray-900 dark:text-white"
             htmlFor="file_input"
         >
             {placeholder}
         </label>
-        <Datepicker language="pt-BR" labelTodayButton="Hoje" labelClearButton="Limpar" />
+        <Datepicker language="pt-BR" style={{ height: "48px" }} labelTodayButton="Hoje" labelClearButton="Limpar" />
     </div>)
 }
 
@@ -273,6 +301,8 @@ export const InputCKEditorEl = ({ handleChange, value, placeholder }) => {
             </label>
             <CKEditor
                 editor={ClassicEditor}
+                // style={{ height: "400px" }}
+
                 config={{
                     toolbar: {
                         items: ['undo', 'redo', '|', 'bold', 'italic'],
