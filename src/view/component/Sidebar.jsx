@@ -1,6 +1,5 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IconDashboard, IconEvenetEl, IconTicketEl } from "./IconSvg";
-import { useState } from "react";
 
 export default function Sidebar() {
     // Menyimpan item menu yang aktif

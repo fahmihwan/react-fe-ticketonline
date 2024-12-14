@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Button } from 'flowbite-react'
 import { Link } from 'react-router-dom'
