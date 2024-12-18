@@ -1,13 +1,46 @@
 
 import { ToggleSwitch } from "flowbite-react";
 import { IconPrimaryFormEl, IconSecondaryFormEl } from "../component/IconSvg";
-import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
+import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
+import paymentJson from '../../data/paymentType.json'
 
 export default function Checkout() {
     const [formCustomer, setFormCustomer] = useState([]);
     const [detailCartTicket, setDetailCartTicket] = useState([]);
+    const [selectedPayment, setSelectedPayment] = useState('')
+    const [step, setStep] = useState(1);
+    // Set initial time to 10 minutes (600 detik)
+    let sessionTime = ''
+    if (sessionTime) {
+        sessionTime = 8 * 60;
+    } else {
+        sessionTime = 10 * 60;
+    }
+    const [timeLeft, setTimeLeft] = useState(sessionTime);
+
+
+
+    useEffect(() => {
+        if (timeLeft === 0) return; // Jika waktu habis, tidak perlu melakukan setInterval lagi
+
+        const intervalId = setInterval(() => {
+            setTimeLeft((prevTime) => prevTime - 1);
+        }, 1000); // Update setiap detik
+
+        // Bersihkan interval saat komponen unmount atau ketika timer selesai
+        return () => clearInterval(intervalId);
+    }, [timeLeft]);
+
+
+    // Fungsi untuk mengonversi detik ke format MM:SS
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    };
+
 
     useEffect(() => {
         let response = [
@@ -78,7 +111,7 @@ export default function Checkout() {
 
     const handleChange = (e, index) => {
         let { name, value } = e.target
-        console.log(name);
+
         if (name.includes('gender')) {
             name = 'gender'
         }
@@ -91,19 +124,30 @@ export default function Checkout() {
         setFormCustomer(updateForm)
     }
     const handleSubmit = () => {
-        console.log(formCustomer);
+        // console.log(formCustomer);
+        // if (step == 2) {
+
+        // }
+
+        setStep(2)
+        // navigate('/payment');
+
     }
 
     return (
         <LayoutCustomer>
             <div className="w-full bg-gray-100 border">
+                <div className="bg-yellow-300 w-full py-1 text-center">
+                    {/* <b>7:56</b> Waktu pengisian data */}
+                    <b> {formatTime(timeLeft)}</b> Waktu pengisian data
+                </div>
                 <div className="w-full my-5 flex justify-center">
-                    <StepperCompt />
+                    <StepperCompt step={step} />
                 </div>
                 <div className="lg:mx-[300px]">
                     <div className="w-full flex">
                         <div className="w-full md:w-7/12 m-5 md:m-0 md:mr-5">
-                            {formCustomer.map((d, i) => (
+                            {step == 1 ? (formCustomer.map((d, i) => (
                                 <FormCardCompt
                                     key={d.increment_id}
                                     category_name={d.category_name}
@@ -118,12 +162,37 @@ export default function Checkout() {
                                     address={d.address}
                                     handleChange={(e) => handleChange(e, i)}
                                 />
-                            ))}
+                            ))) : (paymentJson.data.map((d, i) => {
+                                return (
+                                    <div key={i} className="bg-white">
+                                        <div className="border-b p-3">
+                                            <b>{d.type}</b>
+                                        </div>
+                                        <div className="p-5">
+                                            {d.list.map((x, index) => (<PaymentRadioBtnEl
+                                                id={x.id}
+                                                placeholder={x.title}
+                                                img={"/assets/logo-payment/" + x.img}
+                                                handleChange={(e) => setSelectedPayment(e.target.value)}
+                                                selectedValue={selectedPayment}
+                                                optionValue={x.id}
+                                                name={d.name}
+                                                key={index} />))}
+                                        </div>
+                                    </div>
+                                )
+                            })
+                            )}
+
 
                         </div>
                         <div className="md:flex hidden w-4/12  flex-col">
-                            <DetailOrderCompt handleSubmit={handleSubmit}
-                                detailCartTicket={detailCartTicket} />
+                            <DetailOrderCompt
+                                step={step}
+                                handleSubmit={handleSubmit}
+                                detailCartTicket={detailCartTicket}
+                                selectedPayment={selectedPayment}
+                            />
                         </div>
                     </div>
                 </div>
@@ -132,7 +201,8 @@ export default function Checkout() {
     )
 }
 
-const StepperCompt = () => {
+const StepperCompt = ({ step }) => {
+
     return (
         <div className="w-full md:w-1/3">
             <ol className="flex items-center w-full text-sm md:text-base justify-center">
@@ -143,10 +213,10 @@ const StepperCompt = () => {
                     <span className="ml-2 w-[300px]">Detail Pembelian</span>
                 </li>
                 <li className="flex items-center ml-2 ">
-                    <span className="flex items-center justify-center w-10 h-10 bg-blue-500 text-white rounded-full lg:h-8 lg:w-8  shrink-0">
+                    <span className={`flex items-center justify-center w-10 h-10 ${step == 1 ? "bg-gray-400" : "bg-blue-500"} text-white rounded-full lg:h-8 lg:w-8  shrink-0`}>
                         2
                     </span>
-                    <span className="ml-2 w-[160px] text-blue-600">Metode Pembayaran</span>
+                    <span className={`ml-2 w-[160px] ${step == 1 ? "text-gray-500" : "text-blue-600"}`}>Metode Pembayaran</span>
                 </li>
             </ol>
         </div>
@@ -249,8 +319,8 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
 }
 
 
-const DetailOrderCompt = ({ detailCartTicket, handleSubmit }) => {
-
+const DetailOrderCompt = ({ step, detailCartTicket, handleSubmit, selectedPayment }) => {
+    // console.log(selectedPayment);
     return (
         <div className="border bg-white p-5 mb-3 ">
             <p className="font-extrabold mb-5">Detail Pesanan</p>
@@ -301,9 +371,13 @@ const DetailOrderCompt = ({ detailCartTicket, handleSubmit }) => {
                 <p>Total</p>
                 <b>Rp 110.000</b>
             </div>
-            <button onClick={(e) => handleSubmit(e)} type="button" className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
-                Checkout
-            </button>
+            {step == 1 ? (<button onClick={(e) => handleSubmit(e)} type="button" className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                Pilih metode pembayaran
+            </button>) : (<button
+                onClick={(e) => handleSubmit(e)} type="button" className={` mt-5 w-full ${selectedPayment ? " bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-p" : "bg-gray-400 cursor-not-allowed"} font-medium rounded-lg text-sm px-5 py-2.5 me-2 text-white`}>
+                Bayar Sekarang
+            </button>)}
+
         </div>
     )
 }

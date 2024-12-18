@@ -8,7 +8,7 @@ export default function LayoutCustomer({ children }) {
         <>
             <Navbar fluid className="shadow-lg flex justify-center ">
                 <div className=" w-full flex items-center">
-                    <Link to={"/home"}>
+                    <Link to={"/"}>
                         <IconLogoBrandEl />
                     </Link>
 
@@ -55,7 +55,7 @@ export default function LayoutCustomer({ children }) {
                         </form>
                     </div>
 
-                    <Link className="mr-5">Transaksi</Link>
+                    <Link to="/transaction-history" className="mr-5">Transaksi</Link>
                     <Link className="mr-5">Ticket</Link>
 
                     <div className="flex md:order-2">

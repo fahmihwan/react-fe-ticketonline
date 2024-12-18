@@ -8,6 +8,23 @@ import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, Upl
 const CreateEvent = () => {
     const [description, setDescription] = useState('')
 
+    const [formData, setFormData] = useState({
+        increment_id: 0,
+        gender: '',
+        full_name: '',
+        email: '',
+        password: "",
+        d_birth_date: '',
+        m_birth_date: '',
+        y_birth_date: '',
+        phone_number: '',
+        address: ''
+    });
+
+
+
+
+
     const handleSubmit = () => {
         console.log(description);
     }

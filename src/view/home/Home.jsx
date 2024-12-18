@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 
 export default function Home() {
@@ -15,9 +16,7 @@ export default function Home() {
 
                 <div>
                     <b className="text-2xl inline-block mb-5">Event</b>
-
                     <section>
-
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <CardEventEL />
                             <CardEventEL />
@@ -51,14 +50,14 @@ export default function Home() {
                     </section>
                 </div>
             </div>
-        </LayoutCustomer>
-
-    )
+        </LayoutCustomer>)
 }
 
 const CardEventEL = () => {
     return (
-        <div className="border rounded-md m-2">
+        <Link
+            to="/event/1"
+            className="border rounded-md m-2 cursor-pointer">
             <img src="/assets/dummy/event-1.png" alt="" />
             <div className="p-2">
                 <b className="">ALPEN ATLANTIC</b>
@@ -69,6 +68,6 @@ const CardEventEL = () => {
                 <p className="text-[13px] text-gray-500">Mulai Dari</p>
                 <b>Rp 15.000</b>
             </div>
-        </div>
+        </Link>
     )
 }

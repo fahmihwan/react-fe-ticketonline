@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconMinusEl, IconPlusEl } from "../component/IconSvg";
+import { Link } from "react-router-dom";
 
 export default function CartTicket() {
     // const [showFullText, setShowFullText] = useState(false);
@@ -156,9 +157,16 @@ export default function CartTicket() {
                                 <p>Total</p>
                                 <b>Rp 110.000</b>
                             </div>
-                            <button type="button" className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                            <Link
+                                to="/event/:id/checkout"
+                                type="button" className="block text-center text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                                 Checkout
-                            </button>
+                            </Link>
+
+                            <div className="text-center py-3 mt-5 border border-blue-200 bg-blue-200">
+                                Kamu Memiliki pesan di keranjnag
+
+                            </div>
                         </div>
 
                     </div>

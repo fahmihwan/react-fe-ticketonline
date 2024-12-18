@@ -32,16 +32,6 @@ export default function Payment() {
         setDetailCartTicket(response)
     }, [])
 
-    // const handleChange = (e, index) => {
-    //     const { name, value } = e.target
-    //     const updateForm = [...formCustomer];
-    //     updateForm[index] = {
-    //         ...updateForm[index], [name]: value
-    //     }
-
-    //     setFormCustomer(updateForm)
-    // }
-    // console.log(paymentJson.data);
     const handleSubmit = () => {
         console.log(formCustomer);
     }

@@ -11,13 +11,35 @@ import CreateEvent from "../view/cmsAdmin/event/CreateEvent";
 import CreateTicket from "../view/cmsAdmin/ticket/CreateTicket";
 import Ticket from "../view/cmsAdmin/ticket/Ticket";
 import Transaction from "../view/cmsAdmin/transaction/Transaction";
+import Profile from "../view/cmsAdmin/profile/Profile";
 
 
 const routes = createBrowserRouter([
     {
+        path: "/",
+        element: <Home />
+    }, {
+        path: "/event/:id",
+        element: <DetailEvent />
+    }, {
+        path: "/event/:id/tickets",
+        element: <CartTicket />
+    },
+    {
+        path: "/event/:id/checkout",
+        element: <Checkout />
+    },
+    {
+        path: "/payment",
+        element: <Payment />
+    },
+    {
+        path: "/transaction-history",
+        element: <TransactionHistory />
+    },
+    {
         path: "/admin/dashboard",
         element: <Dashboard />
-
     },
     {
         path: "/admin/event",
@@ -40,35 +62,9 @@ const routes = createBrowserRouter([
         element: <Transaction />
     },
     {
-        path: "/",
-        element: <Home />
-    }, {
-        path: "/detail-event",
-        element: <DetailEvent />
-    }, {
-        path: "/cart-ticket",
-        element: <CartTicket />
+        path: "/admin/profile",
+        element: <Profile />
     },
-    {
-        path: "/checkout",
-        element: <Checkout />
-    },
-    {
-        path: "/payment",
-        element: <Payment />
-    },
-    {
-        path: "/payment",
-        element: <Payment />
-    },
-    {
-        path: "/transaction-history",
-        element: <TransactionHistory />
-    }
-
-
-    // 
-
 
 ])
 

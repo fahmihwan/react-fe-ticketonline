@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
+import { Link } from "react-router-dom";
 
 export default function DetailEvent() {
     const [showFullText, setShowFullText] = useState(false);
@@ -118,9 +119,9 @@ export default function DetailEvent() {
                                 <p>Mulai Dari : </p>
                                 <b>Rp. 75.000</b>
                             </div>
-                            <button type="button" className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                            <Link to="/event/1/tickets" type="button" className="text-white block text-center mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                                 Beli Sekarang
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

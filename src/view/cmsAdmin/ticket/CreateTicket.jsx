@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link } from 'react-router-dom'
-import { Button, Datepicker } from 'flowbite-react'
-import { InputCKEditorEl, InputDateEl, InputTimeEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
-
-
+import { Button } from 'flowbite-react'
+import { InputCKEditorEl, TextInputEl } from '../../component/InputEl'
 
 
 
@@ -23,7 +21,7 @@ const CreateTicket = () => {
             </div>
             <div className='w-full flex'>
                 <div
-                    className="block w-1/2 mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 "
+                    className="block w-1/2 mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow  "
                 >
                     <TextInputEl placeholder="Category Ticket" />
                     <TextInputEl placeholder="Price" />

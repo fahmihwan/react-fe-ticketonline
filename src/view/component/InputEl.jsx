@@ -196,6 +196,10 @@ export const SelectEl = ({ type = 'text', name, id, placeholder, selectedValue, 
         data = paymentJson.data_payment_status
     }
 
+    if (data[0] != "select") {
+        data.unshift("select")
+    }
+
     return (
         <>
             {
@@ -230,7 +234,6 @@ export const SelectEl = ({ type = 'text', name, id, placeholder, selectedValue, 
                         }
                     })()
                 }
-
             </select>
         </>
     )
@@ -286,7 +289,7 @@ export const InputDateEl = ({ placeholder, handleChange, value, className }) => 
         >
             {placeholder}
         </label>
-        <Datepicker language="pt-BR" style={{ height: "48px" }} labelTodayButton="Hoje" labelClearButton="Limpar" />
+        <Datepicker style={{ height: "48px" }} />
     </div>)
 }
 
