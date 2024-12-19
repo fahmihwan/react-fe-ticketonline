@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SelectEl, TextInputSearchEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
+import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, IconPaymentWaitingEl } from "../component/IconSvg";
 
 
 export default function TransactionHistory() {
@@ -92,7 +93,12 @@ const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transact
                     <div className="w-4/12 flex flex-col justify-between  h-[100%] ">
                         <div>
                             <b>{event}</b>
-                            <p>{transaction_status}</p>
+                            <div className="flex items-center">
+                                {/* <IconPaymentSuccessEl /> */}
+                                {/* <IconPaymentCanceledEl /> */}
+                                {/* <IconPaymentExpiredEl /> */}
+                                {/* <IconPaymentWaitingEl /> */}
+                                <span className="ml-1">{transaction_status}</span></div>
                         </div>
                         <div>
                             <p className="text-gray-500">Tanggal Transaksi</p>

@@ -11,7 +11,7 @@ import 'ckeditor5/ckeditor5.css';
 import 'ckeditor5-premium-features/ckeditor5-premium-features.css';
 
 
-export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
+export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "", messageInfo = "" }) => {
     return (
         <div className="mb-5">
             <label
@@ -25,11 +25,15 @@ export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange
                 id={id}
                 onChange={(e) => handleChange(e)}
                 value={value}
+                readOnly={readOnly}
                 name={name}
                 className={` ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "border-gray-300"}
-               text-sm rounded-lg border h-12 mb-8 block w-full p-2.5 `}
+               text-sm rounded-lg border h-12  block w-full p-2.5  ${readOnly && "bg-gray-200"}`}
                 placeholder={placeholder}
             />
+            {messageInfo && (<p className="text-sm mt-1 ml-1 text-gray-500 ">
+                {messageInfo}
+            </p>)}
             {isError && (<b className="mt-2 text-sm text-red-600 dark:text-red-500">
                 Wajib diisi
             </b>)}
@@ -91,7 +95,7 @@ export const TextInputSearchEl = (type = 'search', name, id, placeholder, handle
                 onChange={(e) => handleChange(e)}
                 value={value}
                 name={name}
-                className="block w-full p-4 h-12 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full p-4 h-12 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Cari nama event"
                 required=""
             />
