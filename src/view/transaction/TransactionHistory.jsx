@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SelectEl, TextInputSearchEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, IconPaymentWaitingEl } from "../component/IconSvg";
+import { Link } from "react-router-dom";
 
 
 export default function TransactionHistory() {
@@ -113,12 +114,12 @@ const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transact
                         </div>
                     </div>
                     <div className="w-4/12 flex justify-end items-end">
-                        <button
+                        <Link to="/transaction-history/1"
                             type="button"
                             className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
                         >
                             Lihat Detail
-                        </button>
+                        </Link>
 
                     </div>
                 </div>

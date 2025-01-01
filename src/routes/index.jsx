@@ -3,7 +3,7 @@ import Home from "../view/home/Home";
 import DetailEvent from "../view/home/DetailEvent";
 import CartTicket from "../view/home/CartTicket";
 import Checkout from "../view/transaction/Checkout";
-import Payment from "../view/transaction/Payment";
+
 import TransactionHistory from "../view/transaction/TransactionHistory";
 import Dashboard from "../view/cmsAdmin/Dashboard";
 import Event from "../view/cmsAdmin/event/Event";
@@ -12,6 +12,7 @@ import CreateTicket from "../view/cmsAdmin/ticket/CreateTicket";
 import Ticket from "../view/cmsAdmin/ticket/Ticket";
 import Transaction from "../view/cmsAdmin/transaction/Transaction";
 import Profile from "../view/cmsAdmin/profile/Profile";
+import DetailTransaction from "../view/transaction/DetailTransaction";
 
 
 const routes = createBrowserRouter([
@@ -30,12 +31,12 @@ const routes = createBrowserRouter([
         element: <Checkout />
     },
     {
-        path: "/payment",
-        element: <Payment />
-    },
-    {
         path: "/transaction-history",
         element: <TransactionHistory />
+    },
+    {
+        path: "/transaction-history/:id",
+        element: <DetailTransaction />
     },
     {
         path: "/admin/dashboard",
