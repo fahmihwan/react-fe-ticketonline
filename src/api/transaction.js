@@ -18,7 +18,7 @@ export const transactionRequestDuitku = async (payload) => {
     }
 }
 
-export const transaction = async (payload) => {
+export const callbackurlDuitku = async (payload) => {
     try {
         const response = await apiClient.post(`/transaction/paymentgateway-callbackurl`, payload)
         return response.data;

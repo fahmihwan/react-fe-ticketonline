@@ -1,19 +1,25 @@
 import { useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useEffectDetailEvent } from "../../hook/useEffectEvents";
+import { formatDateUtil, formatRupiahUtil, formatTimeUtil } from "../../utils/utils";
 
 export default function DetailEvent() {
     const [showFullText, setShowFullText] = useState(false);
 
+    const { data } = useEffectDetailEvent(2); //customeHook
+    const { slug } = useParams();
+
     return (
         <LayoutCustomer>
-            <div className=" mx-[300px] my-5">
-                <div className="w-full flex">
-                    <div className="w-7/12 mr-5">
+            <div className="mx-[20px] xl:mx-[300px]  my-5">
+                <div className="w-full md:flex">
+                    <div className="w-full mb-[30px] md:mb-0 md:w-7/12 mr-5">
                         <img src="/assets/dummy/event-1.png" alt="" />
                         <p className="font-extrabold text-xl py-5">Deskripsi</p>
                         <div className={`${!showFullText && 'h-32'} overflow-hidden`}>
-                            🎵 Alpen Atlantic 🎵
+                            {data?.description}
+                            {/* 🎵 Alpen Atlantic 🎵
                             ALPEN CUP 2024 ATLANTIC merupakan acara kompetisi antar sekolah dan pentas seni yang diselenggarakan oleh SMPI Al Azhar 2 Pejaten.
 
                             Pentas Seni ALPEN CUP 2024 ATLANTIC  ini akan dimeriahkan :
@@ -92,42 +98,41 @@ export default function DetailEvent() {
 
                             14. Penonton diharapkan mematuhi semua aturan yang sudah diterapkan oleh panitia dan apabila penonton membuat kericuhan atau tidak menaati peraturan panitia berhak mengeluarkan penonton tersebut dari venue.
 
-                            Sampai Bertenuuuu di ALPEN ATLANTIC!!
+                            Sampai Bertenuuuu di ALPEN ATLANTIC!! */}
                         </div>
                         <p className="text-blue-700 font-bold cursor-pointer" onClick={() => setShowFullText(!showFullText)}>Tampilkan Lebih Banyak</p>
                     </div>
-                    <div className="w-4/12 flex flex-col">
+                    <div className="w-full md:w-4/12 flex flex-col">
                         <div className="border bg-white p-5 mb-5">
-                            <p className="font-extrabold">ALPEN ATLANTIC</p>
+                            <p className="font-extrabold">{data?.eventTitle}</p>
                             <table>
-                                <tr>
-                                    <td></td>
-                                    <td>30 November 2024</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>09:00 WIB</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>SMPI AL AZHAR 2 PEJATEN | SMP Islam Al Azhar 2 Pejaten, Jalan Siaga Raya, RT.7/RW.5, West Pejaten, South Jakarta City, Jakarta, Indonesia</td>
-                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>{formatDateUtil(data?.schedule)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{formatTimeUtil(data?.schedule)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{data?.venue}</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                         <div className="border bg-white p-5 mb-5">
                             <div className="flex justify-between">
                                 <p>Mulai Dari : </p>
-                                <b>Rp. 75.000</b>
+                                <b>{formatRupiahUtil(data?.startFromPrice)}</b>
                             </div>
-                            <Link to="/event/1/tickets" type="button" className="text-white block text-center mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                            <Link to={`/event/${slug}/tickets`} type="button" className="text-white block text-center mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                                 Beli Sekarang
                             </Link>
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
         </LayoutCustomer>
     )

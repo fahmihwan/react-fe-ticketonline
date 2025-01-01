@@ -5,12 +5,16 @@ import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
 import paymentJson from '../../data/paymentType.json'
+import { getPaymentMethodDuitku } from "../../api/transaction";
 
 export default function Checkout() {
     const [formCustomer, setFormCustomer] = useState([]);
     const [detailCartTicket, setDetailCartTicket] = useState([]);
     const [selectedPayment, setSelectedPayment] = useState('')
     const [step, setStep] = useState(1);
+    const [listPayment, setListPayment] = useState([])
+
+
     // Set initial time to 10 minutes (600 detik)
     let sessionTime = ''
     if (sessionTime) {
@@ -19,7 +23,6 @@ export default function Checkout() {
         sessionTime = 10 * 60;
     }
     const [timeLeft, setTimeLeft] = useState(sessionTime);
-
 
 
     useEffect(() => {
@@ -42,22 +45,47 @@ export default function Checkout() {
     };
 
 
-    useEffect(() => {
-        let response = [
-            {
-                id: 50,
-                category_name: "PRESALE",
-                price: 25000,
-                total: 2,
-            },
-            {
-                id: 51,
-                category_name: "EARLYBIRD",
-                price: 35000,
-                total: 0,
-            }
 
-        ]
+
+
+    const fetchPaymentMethod = async (params) => {
+        try {
+            const response = await getPaymentMethodDuitku(params)
+            return response.data
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+    useEffect(() => {
+
+        let categorizedPayments = {
+            "Virtual Account": [],
+            "E-Wallet & QRIS": [],
+            "Kartu Debit/Kredit": [],
+            "Retail Outlets": [],
+        };
+
+        let response = []
+        fetchPaymentMethod({ amount: 20000 }).then((res) => {
+            console.log(res?.paymentFee?.length);
+            res?.paymentFee.forEach(payment => {
+                if (payment.paymentMethod.startsWith("VA") || payment.paymentMethod === "B1" || payment.paymentMethod === "BT" || payment.paymentMethod === "A1" || payment.paymentMethod === "I1" || payment.paymentMethod === "M2" || payment.paymentMethod === "AG" || payment.paymentMethod === "BC" || payment.paymentMethod === "BR" || payment.paymentMethod === "NC" || payment.paymentMethod === "BV") {
+                    categorizedPayments["Virtual Account"].push({ ...payment, "categoryPayment": "Virtual Account" });
+                } else if (payment.paymentMethod === "OV" || payment.paymentMethod === "SP" || payment.paymentMethod === "DA" || payment.paymentMethod === "SA" || payment.paymentMethod === "LQ" || payment.paymentMethod === "NQ" || payment.paymentMethod === "OL" || payment.paymentMethod === "IQ" || payment.paymentMethod === "QD" || payment.paymentMethod === "GQ") {
+                    categorizedPayments["E-Wallet & QRIS"].push({ ...payment, "categoryPayment": "E-Wallet & QRIS" });
+                } else if (payment.paymentMethod === "VC") {
+                    categorizedPayments["Kartu Debit/Kredit"].push({ ...payment, "categoryPayment": "Kartu Debit/Kredit" });
+                } else if (payment.paymentMethod === "FT" || payment.paymentMethod === "IR") {
+                    categorizedPayments["Retail Outlets"].push({ ...payment, "categoryPayment": "Retail Outlets" });
+                }
+            });
+
+            console.log(categorizedPayments);
+            setListPayment(categorizedPayments)
+        })
+
         setDetailCartTicket(response)
 
         let cartTicket = JSON.parse(JSON.stringify(response));
@@ -144,7 +172,7 @@ export default function Checkout() {
                 <div className="w-full my-5 flex justify-center">
                     <StepperCompt step={step} />
                 </div>
-                <div className="lg:mx-[300px]">
+                <div className="mx-5 md xl:mx-[300px]">
                     <div className="w-full flex">
                         <div className="w-full md:w-7/12 m-5 md:m-0 md:mr-5">
                             {step == 1 ? (formCustomer.map((d, i) => (
@@ -162,26 +190,39 @@ export default function Checkout() {
                                     address={d.address}
                                     handleChange={(e) => handleChange(e, i)}
                                 />
-                            ))) : (paymentJson.data.map((d, i) => {
-                                return (
-                                    <div key={i} className="bg-white">
-                                        <div className="border-b p-3">
-                                            <b>{d.type}</b>
-                                        </div>
-                                        <div className="p-5">
-                                            {d.list.map((x, index) => (<PaymentRadioBtnEl
-                                                id={x.id}
-                                                placeholder={x.title}
-                                                img={"/assets/logo-payment/" + x.img}
-                                                handleChange={(e) => setSelectedPayment(e.target.value)}
-                                                selectedValue={selectedPayment}
-                                                optionValue={x.id}
-                                                name={d.name}
-                                                key={index} />))}
-                                        </div>
-                                    </div>
-                                )
-                            })
+                            ))) : (
+                                <>
+                                    <CardPaymentCompt
+                                        listPayment={listPayment}
+                                        categoryPayment={"Virtual Account"}
+                                        setSelectedPayment={setSelectedPayment}
+                                        selectedPayment={selectedPayment}
+                                    />
+                                    <CardPaymentCompt
+                                        listPayment={listPayment}
+                                        categoryPayment={"E-Wallet & QRIS"}
+                                        setSelectedPayment={setSelectedPayment}
+                                        selectedPayment={selectedPayment}
+                                    />
+                                    <CardPaymentCompt
+                                        listPayment={listPayment}
+                                        categoryPayment={"Kartu Debit/Kredit"}
+                                        setSelectedPayment={setSelectedPayment}
+                                        selectedPayment={selectedPayment}
+                                    />
+                                    <CardPaymentCompt
+                                        listPayment={listPayment}
+                                        categoryPayment={"Retail Outlets"}
+                                        setSelectedPayment={setSelectedPayment}
+                                        selectedPayment={selectedPayment}
+                                    />
+
+
+
+                                </>
+
+
+
                             )}
 
 
@@ -198,6 +239,29 @@ export default function Checkout() {
                 </div>
             </div>
         </LayoutCustomer>
+    )
+}
+
+const CardPaymentCompt = ({ listPayment, categoryPayment, setSelectedPayment, selectedPayment }) => {
+    return (
+        <div className="bg-white mb-5">
+            <div className="border-b p-3">
+                <b>{categoryPayment}</b>
+            </div>
+            <div className="grid grid-cols-2 gap-4 p-5 ">
+                {listPayment[categoryPayment]?.map((x, i) => {
+                    return (<PaymentRadioBtnEl
+                        id={x.paymentMethod}
+                        placeholder={x.paymentName}
+                        img={x.paymentImage}
+                        handleChange={(e) => setSelectedPayment(e.target.value)}
+                        selectedValue={selectedPayment}
+                        optionValue={x.paymentMethod}
+                        name={x.paymentMethod}
+                        key={i} />)
+                })}
+            </div>
+        </div>
     )
 }
 

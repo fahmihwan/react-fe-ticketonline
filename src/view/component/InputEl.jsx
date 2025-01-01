@@ -177,11 +177,13 @@ export const PaymentRadioBtnEl = ({ name, id, placeholder, handleChange, selecte
             />
             <label
                 htmlFor={id}
-                className={`inline-flex h-12 mb-5 items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer ${optionValue == selectedValue && "peer-checked:border-blue-600 peer-checked:text-blue-600"} hover:text-gray-600 hover:bg-gray-100 `}
+                className={`inline-flex h-[60px] items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer ${optionValue == selectedValue && "peer-checked:border-blue-600 peer-checked:text-blue-600"} hover:text-gray-600 hover:bg-gray-100 `}
             >
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-between items-center w-full ">
                     <div className="w-full">{placeholder}</div>
-                    <img src={img} alt="" />
+                    <div className=''>
+                        <img src={img} alt="" width={100} />
+                    </div>
                 </div>
             </label>
         </>)

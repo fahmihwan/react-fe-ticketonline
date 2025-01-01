@@ -20,14 +20,14 @@ const routes = createBrowserRouter([
         path: "/",
         element: <Home />
     }, {
-        path: "/event/:id",
+        path: "/event/:slug",
         element: <DetailEvent />
     }, {
-        path: "/event/:id/tickets",
+        path: "/event/:slug/tickets",
         element: <CartTicket />
     },
     {
-        path: "/event/:id/checkout",
+        path: "/event/:slug/checkout",
         element: <Checkout />
     },
     {

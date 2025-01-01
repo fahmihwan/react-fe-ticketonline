@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import LayoutCustomer from "../layouts/LayoutCustomer";
+import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
+import { useEffectEvents } from "../../hook/useEffectEvents";
 
 export default function Home() {
+    const { data } = useEffectEvents(960); //customeHook
+    console.log(data);
+
+
+
     return (
         <LayoutCustomer>
             <div className=" mx-[200px] my-5">
@@ -18,12 +25,17 @@ export default function Home() {
                     <b className="text-2xl inline-block mb-5">Event</b>
                     <section>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <CardEventEL />
-                            <CardEventEL />
-                            <CardEventEL />
-                            <CardEventEL />
-                            <CardEventEL />
-                            <CardEventEL />
+                            {
+                                data?.map((d, i) => {
+                                    return (<CardEventEL key={i}
+                                        eventTitle={d.event_title}
+                                        schedule={d.schedule}
+                                        venue={d.venue}
+                                        startFrom={d.start_from}
+                                        id={d.id}
+                                    />)
+                                })
+                            }
                         </div>
 
                         <div className="my-5 flex justify-center">
@@ -53,20 +65,20 @@ export default function Home() {
         </LayoutCustomer>)
 }
 
-const CardEventEL = () => {
+const CardEventEL = ({ id, eventTitle, schedule, venue, startFrom }) => {
     return (
         <Link
-            to="/event/1"
+            to={`/event/${id}`}
             className="border rounded-md m-2 cursor-pointer">
             <img src="/assets/dummy/event-1.png" alt="" />
             <div className="p-2">
-                <b className="">ALPEN ATLANTIC</b>
-                <p className="text-[13px]">25 November 2024</p>
-                <p className="text-gray-500  text-[13px] truncate ...">SMPI AL AZHAR 2 PEJATEN | SMP Islam Al Azhar 2 Pejaten, Jalan Siaga Raya, RT.7/RW.5, West Pejaten, South Jakarta City Jakarta, Indonesia</p>
+                <b className="">{eventTitle}</b>
+                <p className="text-[13px]">{formatDateUtil(schedule)}</p>
+                <p className="text-gray-500  text-[13px] truncate ...">{venue}, Indonesia</p>
             </div>
             <div className="border border-t-2 flex justify-between p-2">
                 <p className="text-[13px] text-gray-500">Mulai Dari</p>
-                <b>Rp 15.000</b>
+                <b>{formatRupiahUtil(startFrom)}</b>
             </div>
         </Link>
     )
