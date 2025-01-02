@@ -2,7 +2,7 @@
 import { Datepicker } from 'flowbite-react';
 import dateJson from '../../data/date.json';
 import paymentJson from '../../data/paymentType.json';
-import { IconGederMenEl, IconGenderWomenEl } from './IconSvg';
+import { IconGederMenEl, IconGenderWomenEl, IconTimeEl } from './IconSvg';
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } from 'ckeditor5';
 
@@ -43,7 +43,7 @@ export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange
 
 
 
-export const TextareaEl = ({ type = 'text', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
+export const TextareaEl = ({ name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
     return (
 
         <div className="mb-5">
@@ -61,7 +61,7 @@ export const TextareaEl = ({ type = 'text', name, id, placeholder, handleChange,
                 name={name}
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 "
                 placeholder="Write your thoughts here..."
-                defaultValue={""}
+
             />
         </div>
     )
@@ -112,6 +112,7 @@ export const UploadFileEl = ({ type = 'file', name, id, placeholder, handleChang
             >
                 {placeholder}
             </label>
+
             <input
                 type={type}
                 id={id}
@@ -247,7 +248,7 @@ export const SelectEl = ({ type = 'text', name, id, placeholder, selectedValue, 
 
 
 
-export const InputTimeEl = ({ placeholder, handleChange, value, className }) => {
+export const InputTimeEl = ({ placeholder, name, handleChange, value, className }) => {
     return (<>
         <label
             htmlFor="time"
@@ -257,29 +258,16 @@ export const InputTimeEl = ({ placeholder, handleChange, value, className }) => 
         </label>
         <div className="relative">
             <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                <svg
-                    className="w-4 h-4 text-gray-500"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        fillRule="evenodd"
-                        d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
-                        clipRule="evenodd"
-                    />
-                </svg>
+                <IconTimeEl />
             </div>
             <input
+                name={name}
                 type="time"
                 onChange={(e) => handleChange(e)}
                 value={value}
                 id="time"
-                className="bg-gray-50 h-12 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                min="09:00"
-                max="18:00"
-                required=""
+                className="bg-gray-50 h-12 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+
             />
         </div>
     </>
@@ -288,6 +276,7 @@ export const InputTimeEl = ({ placeholder, handleChange, value, className }) => 
 
 
 export const InputDateEl = ({ placeholder, handleChange, value, className }) => {
+
     return (<div className='mb-5 '>
         <label
             className="block mb-1  ext-sm font-medium text-gray-900 dark:text-white"
@@ -295,7 +284,18 @@ export const InputDateEl = ({ placeholder, handleChange, value, className }) => 
         >
             {placeholder}
         </label>
-        <Datepicker style={{ height: "48px" }} />
+        <Datepicker
+            placeholder="Select date"
+            onChange={(e) => handleChange(e)}
+            style={{ height: "48px" }}
+            {...(!isNaN(new Date(value).getTime()) ? { value: new Date(value) } : {})}
+        />
+        {/* <Datepicker
+            // dateFormat="dd/MM/yyyy"
+            onChange={(e) => handleChange(e)}
+            style={{ height: "48px" }}
+            value={value}
+        /> */}
     </div>)
 }
 
@@ -325,7 +325,7 @@ export const InputCKEditorEl = ({ handleChange, value, placeholder }) => {
                     },
                     initialData: value,
                 }}
-                onChange={(event, editor) => handleChange(editor.getData())}
+                onChange={(event, editor) => handleChange(event, editor)}
             />
         </div>
 

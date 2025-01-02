@@ -4,7 +4,7 @@ import { IconPrimaryFormEl, IconSecondaryFormEl } from "../component/IconSvg";
 import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
-import paymentJson from '../../data/paymentType.json'
+
 import { getPaymentMethodDuitku } from "../../api/transaction";
 
 export default function Checkout() {

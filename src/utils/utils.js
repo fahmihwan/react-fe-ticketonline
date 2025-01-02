@@ -1,4 +1,4 @@
-
+import { DateTime } from 'luxon';
 export const formatRupiahUtil = (number) => {
     let format = new Intl.NumberFormat('id-ID', {
         currency: 'IDR',
@@ -14,17 +14,12 @@ export const formatDateUtil = (inputDate) => {
     return date.toLocaleDateString('id-ID', options); // Format Indonesia
 }
 
-import { DateTime } from 'luxon';
-
 export const formatTimeUtil = (datetimeString) => {
-
     // Membuat objek DateTime dengan zona waktu WIB
     const date = DateTime.fromISO(datetimeString, { zone: 'Asia/Jakarta' });
-
     // Mengambil jam dan menit dalam format dua digit
     const formattedHours = date.toFormat('HH');
     const formattedMinutes = date.toFormat('mm');
-
     // Mengembalikan hasil dengan WIB
     return `${formattedHours}:${formattedMinutes} WIB`;
 }

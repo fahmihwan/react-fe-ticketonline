@@ -29,6 +29,9 @@ export const createEvent = async (payload) => {
     formData.append('description', payload.description)
     formData.append('admin_id', payload.admin_id)
 
+    console.log(formData);
+    return false;
+
     try {
         const response = await apiClient.post("/event", formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
