@@ -23,3 +23,20 @@ export const formatTimeUtil = (datetimeString) => {
     // Mengembalikan hasil dengan WIB
     return `${formattedHours}:${formattedMinutes} WIB`;
 }
+
+export const formatDateTimeUtil = (inputDate) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(inputDate);
+
+    // Format tanggal menggunakan toLocaleDateString
+    const formattedDate = date.toLocaleDateString('id-ID', options);
+
+    // Format waktu (jam dan menit)
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+
+    // Gabungkan tanggal dan waktu
+    return `${formattedDate}  - ${formattedTime} WIB`;
+};
+

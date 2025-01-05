@@ -9,6 +9,34 @@ export const getEventWithCategories = async (total) => {
     }
 }
 
+export const getEventAdminPagination = async (page, size) => {
+
+    let params = `?`;
+
+    // Tambahkan parameter page jika ada
+    if (page !== undefined) {
+        params += `page=${page}&`;
+    }
+
+    // Tambahkan parameter size jika ada
+    if (size !== undefined) {
+        params += `size=${size}`;
+    }
+
+    // Hapus tanda '&' yang mungkin ada di akhir
+    if (params.endsWith('&')) {
+        params = params.slice(0, -1);
+    }
+
+    try {
+        const response = await apiClient.get(`/event/admin/pagination${params}`)
+        return response.data;
+    } catch (error) {
+        return error
+    }
+}
+
+
 
 
 export const findEventById = async (eventId) => {
@@ -26,13 +54,21 @@ export const createEvent = async (payload) => {
     formData.append('event_title', payload.event_title)
     formData.append('image', payload.image)
     formData.append('schedule', payload.schedule)
+    formData.append('venue', payload.venue)
     formData.append('description', payload.description)
     formData.append('admin_id', payload.admin_id)
 
-    console.log(formData);
-    return false;
-
+    console.log(payload.schedule);
+    // let formData = {
+    //     event_title: payload.event_title,
+    //     image: payload.image,
+    //     schedule: payload.schedule,
+    //     venue: payload.venue,
+    //     description: payload.description,
+    //     admin_id: payload.admin_id
+    // }
     try {
+        // const response = await apiClient.post("/event", formData)
         const response = await apiClient.post("/event", formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })

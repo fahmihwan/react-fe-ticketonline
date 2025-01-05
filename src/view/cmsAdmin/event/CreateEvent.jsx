@@ -3,6 +3,7 @@ import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
+import { createEvent } from '../../../api/event'
 
 
 const CreateEvent = () => {
@@ -17,9 +18,6 @@ const CreateEvent = () => {
         admin_id: 1
     });
 
-
-
-
     const handleChange = (e) => {
         let { name, value } = e.target
         setFormData({
@@ -27,11 +25,22 @@ const CreateEvent = () => {
         })
     }
 
+    const handleSubmit = async () => {
+        const dateString = `${formData.scheduleDate} ${formData.scheduleTime}`;
+        const isoDateString = dateString.replace(" ", "T");
+        const dateTime = new Date(isoDateString);
+        const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
 
+        // console.log(isoString);
+        await createEvent({
+            event_title: formData?.event_title,
+            schedule: isoString,
+            venue: formData?.venue,
+            image: formData?.image,
+            description: formData?.description,
+            admin_id: 1
+        })
 
-
-    const handleSubmit = () => {
-        console.log(formData);
     }
     return (
         <LayoutAdmin>
@@ -53,9 +62,10 @@ const CreateEvent = () => {
                     />
                     <UploadFileEl
                         placeholder="Upload image"
-                        handleChange={(e) => handleChange(e)}
+                        handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
+                        // handleChange={(e) => console.log(e.target.files[0])}
                         name="image"
-                        value={formData?.image}
+                    // value={formData?.image}
                     />
                     <TextareaEl placeholder="Venue"
                         handleChange={(e) => handleChange(e)}
