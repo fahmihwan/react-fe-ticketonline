@@ -39,7 +39,7 @@ export const getEventAdminPagination = async (page, size) => {
 
 
 
-export const findEventById = async (eventId) => {
+export const findEventBySlug = async (eventId) => {
     try {
         const response = await apiClient.get(`/event/${eventId}`)
         return response.data;
@@ -55,32 +55,42 @@ export const createEvent = async (payload) => {
     formData.append('image', payload.image)
     formData.append('schedule', payload.schedule)
     formData.append('venue', payload.venue)
+    formData.append('slug', payload.slug)
     formData.append('description', payload.description)
     formData.append('admin_id', payload.admin_id)
 
-    console.log(payload.schedule);
-    // let formData = {
-    //     event_title: payload.event_title,
-    //     image: payload.image,
-    //     schedule: payload.schedule,
-    //     venue: payload.venue,
-    //     description: payload.description,
-    //     admin_id: payload.admin_id
-    // }
     try {
-        // const response = await apiClient.post("/event", formData)
         const response = await apiClient.post("/event", formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
         return response.data;
     } catch (error) {
+        alert("terjadi kesalahan")
         return error
     }
 }
 
 
-export const updateEvent = () => {
-    return null
+export const updateEvent = async (payload) => {
+    const formData = new FormData()
+
+    formData.append('event_title', payload.event_title)
+    formData.append('image', payload.image)
+    formData.append('schedule', payload.schedule)
+    formData.append('venue', payload.venue)
+    formData.append('slug', payload.slug)
+    formData.append('description', payload.description)
+    formData.append('admin_id', payload.admin_id)
+
+    try {
+        const response = await apiClient.put(`/event/${payload?.paramsSlug}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        return response.data;
+    } catch (error) {
+        alert("terjadi kesalahan")
+        return error
+    }
 }
 
 
@@ -110,3 +120,15 @@ export const findByIdEventWIthCategoryTickets = async (eventId) => {
         return error
     }
 }
+
+
+//=========================================================================================================
+
+// export const findEventById = async (eventId) => {
+//     try {
+//         const response = await apiClient.get(`/event/${eventId}`)
+//         return response.data;
+//     } catch (error) {
+//         return error
+//     }
+// }

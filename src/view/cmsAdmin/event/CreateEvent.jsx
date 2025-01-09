@@ -1,53 +1,154 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
-import { createEvent } from '../../../api/event'
+import { createEvent, findEventBySlug, updateEvent } from '../../../api/event'
+import slugify from 'slugify'
+import { explodeFormatDateTimeToInputElementUtil } from '../../../utils/utils'
 
 
 const CreateEvent = () => {
+    const { slug } = useParams();
+
+    const navigate = useNavigate();
+    const [previewImg, setPreviewImg] = useState('')
+
 
     const [formData, setFormData] = useState({
-        event_title: "",
-        scheduleDate: "",
-        scheduleTime: "",
-        venue: "",
+        event_title: "Euforia selatan",
+        slug: "euforia-selatan",
+        scheduleDate: "2025-05-10",
+        scheduleTime: "06:24",
+        venue: "dsds",
         image: "",
-        description: "",
+        description: "<p>dsd</p>",
         admin_id: 1
     });
 
-    const handleChange = (e) => {
-        let { name, value } = e.target
-        setFormData({
-            ...formData, [name]: value
-        })
+    const fetch = async (slug) => {
+        await findEventBySlug(slug)
+            .then((res) => {
+                const response = res.data;
+                const { dateFormat, timeFormat } = explodeFormatDateTimeToInputElementUtil(response.schedule)
+                setPreviewImg(response.image)
+                setFormData({
+                    event_title: response.eventTitle,
+                    slug: response.slug,
+                    scheduleDate: dateFormat,
+                    scheduleTime: timeFormat,
+                    venue: response.venue,
+                    image: "",
+                    description: response.description,
+                    admin_id: 1
+                })
+
+            })
+            .catch((err) => alert(err))
     }
 
-    const handleSubmit = async () => {
+    useEffect(() => {
+        if (slug) {
+            fetch(slug)
+        }
+    }, [])
+
+
+    const handleChange = (e) => {
+        let { name, value } = e.target
+        if (name == 'event_title') {
+            const generatedSlug = slugify(value, {
+                lower: true, // Mengubah huruf menjadi kecil
+                strict: true, // Menghapus karakter non-alfanumerik
+            });
+            setFormData({
+                ...formData, event_title: value, slug: generatedSlug
+            })
+        } else if (name == "image") {
+            const file = e.target.files[0]
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImg(reader.result)
+            };
+            reader.readAsDataURL(file);
+
+            setFormData({
+                ...formData, image: file,
+            })
+        } else {
+            setFormData({
+                ...formData, [name]: value
+            })
+        }
+
+    }
+
+    const handleSubmit = async (paramsSlug) => {
         const dateString = `${formData.scheduleDate} ${formData.scheduleTime}`;
         const isoDateString = dateString.replace(" ", "T");
         const dateTime = new Date(isoDateString);
         const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
+        const isUpdate = paramsSlug;
 
-        // console.log(isoString);
-        await createEvent({
-            event_title: formData?.event_title,
-            schedule: isoString,
-            venue: formData?.venue,
-            image: formData?.image,
-            description: formData?.description,
-            admin_id: 1
-        })
+
+
+
+        if (typeof isUpdate !== 'undefined') {
+            await updateEvent({
+                event_title: formData?.event_title,
+                schedule: isoString,
+                slug: formData?.slug,
+                venue: formData?.venue,
+                image: formData?.image,
+                description: formData?.description,
+                admin_id: 1,
+                paramsSlug: paramsSlug
+            }).then((res) => {
+                if (res.success) {
+                    navigate('/admin/event')
+                }
+            })
+
+        } else {
+            await createEvent({
+                event_title: formData?.event_title,
+                schedule: isoString,
+                slug: formData?.slug,
+                venue: formData?.venue,
+                image: formData?.image,
+                description: formData?.description,
+                admin_id: 1
+            }).then((res) => {
+                if (res.success) {
+                    navigate('/admin/event')
+                }
+            })
+        }
+
+
+
 
     }
+
+
+    // const handleUpdate = async () => {
+    //     const dateString = `${formData.scheduleDate} ${formData.scheduleTime}`;
+    //     const isoDateString = dateString.replace(" ", "T");
+    //     const dateTime = new Date(isoDateString);
+    //     const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
+
+
+    // }
+
+
+
     return (
         <LayoutAdmin>
 
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-5'>
-                    <p className='text-3xl font-bold '>Create event</p>
+                    <p className='text-3xl font-bold '>{slug ? "Edit Event" : "Create Event"}</p>
                 </div>
             </div>
             <div className='w-full flex'>
@@ -60,10 +161,18 @@ const CreateEvent = () => {
                         name="event_title"
                         value={formData?.event_title}
                     />
+                    <TextInputEl
+                        placeholder="Slug"
+                        handleChange={(e) => handleChange(e)}
+                        readOnly={true}
+
+                        name="slug"
+                        value={formData?.slug}
+                    />
                     <UploadFileEl
                         placeholder="Upload image"
-                        handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
-                        // handleChange={(e) => console.log(e.target.files[0])}
+                        // handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
+                        handleChange={(e) => handleChange(e)}
                         name="image"
                     // value={formData?.image}
                     />
@@ -110,13 +219,18 @@ const CreateEvent = () => {
                         <Link to="/admin/event" className='mr-3'>
                             <Button  >cancel</Button>
                         </Link>
-                        <Button color="blue" onClick={handleSubmit}>Submit</Button>
+                        <Button color="blue" onClick={() => handleSubmit(slug)}>{slug ? 'Update' : 'Submit'}</Button>
                     </div>
+                </div>
+                <div>
+                    <img src={previewImg} className='w-full h-auto max-w-xl rounded-lg' alt="" />
+
                 </div>
 
 
-
             </div>
+
+
 
         </LayoutAdmin>
     )

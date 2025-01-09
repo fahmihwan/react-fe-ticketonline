@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { findByIdEventWIthCategoryTickets, findEventById, getEventAdminPagination, getEventWithCategories } from '../api/event';
+import { findByIdEventWIthCategoryTickets, findEventBySlug, getEventAdminPagination, getEventWithCategories } from '../api/event';
 
 export const useEffectEvents = (total) => {
     const [data, setData] = useState(null);
@@ -37,7 +37,8 @@ export const useEffectDetailEvent = (eventId) => {
             return;
         }
         try {
-            const response = await findEventById(eventId);
+            // const response = await findEventById(eventId);
+            const response = await findEventBySlug(eventId);
             setData(response.data);
         } catch (error) {
             setError(error);

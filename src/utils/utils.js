@@ -40,3 +40,17 @@ export const formatDateTimeUtil = (inputDate) => {
     return `${formattedDate}  - ${formattedTime} WIB`;
 };
 
+
+export const explodeFormatDateTimeToInputElementUtil = (inputDateTime) => {
+    const date = new Date(inputDateTime);  // Mengonversi string input menjadi objek Date
+    const year = date.getFullYear();   // Mendapatkan tahun
+    const month = String(date.getMonth() + 1).padStart(2, '0');  // Mendapatkan bulan (diubah ke format 2 digit)
+    const day = String(date.getDate()).padStart(2, '0');         // Mendapatkan tanggal (diubah ke format 2 digit)
+    const hours = String(date.getHours()).padStart(2, '0');      // Mendapatkan jam (diubah ke format 2 digit)
+    const minutes = String(date.getMinutes()).padStart(2, '0');  // Mendapatkan menit (diubah ke format 2 digit)
+
+    const dateFormat = `${year}-${month}-${day}`
+    const timeFormat = `${hours}:${minutes}`
+
+    return { dateFormat, timeFormat }
+}

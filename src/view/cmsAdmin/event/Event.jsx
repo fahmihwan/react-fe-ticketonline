@@ -53,12 +53,13 @@ const Event = () => {
                                 <th>
                                     {paginate.offset + i + 1}
                                 </th>
-                                <th
+                                <td
                                     scope="row"
                                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                 >
-                                    {d?.event_title}
-                                </th>
+                                    <p>{d?.event_title}</p>
+                                    <p className='text-gray-500'>slug : {d?.slug}</p>
+                                </td>
                                 <td className="px-6 py-4">
                                     <div>
                                         <img src={d?.image} alt="" width={150} />
@@ -72,7 +73,7 @@ const Event = () => {
                                 <td className="px-6 py-4">
                                     <div className="flex">
                                         <Link
-                                            to=""
+                                            to={`/admin/event/${d?.slug}/edit`}
                                             className="font-medium mr-5 text-yellow-400  hover:underline"
                                         >
                                             <IconEditEl />
