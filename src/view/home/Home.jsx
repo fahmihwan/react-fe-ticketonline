@@ -20,6 +20,9 @@ export default function Home() {
                         <img src="/assets/dummy/slider-1.png" alt="" />
                     </div>
                 </div>
+                <div>
+                    {/*  */}
+                </div>
 
                 <div>
                     <b className="text-2xl inline-block mb-5">Event</b>
@@ -29,6 +32,8 @@ export default function Home() {
                                 data?.map((d, i) => {
                                     return (<CardEventEL key={i}
                                         eventTitle={d.event_title}
+                                        slug={d?.slug}
+                                        image={d?.image}
                                         schedule={d.schedule}
                                         venue={d.venue}
                                         startFrom={d.start_from}
@@ -65,12 +70,12 @@ export default function Home() {
         </LayoutCustomer>)
 }
 
-const CardEventEL = ({ id, eventTitle, schedule, venue, startFrom }) => {
+const CardEventEL = ({ id, eventTitle, image, schedule, venue, startFrom, slug }) => {
     return (
         <Link
-            to={`/event/${id}`}
+            to={`/event/${slug}`}
             className="border rounded-md m-2 cursor-pointer">
-            <img src="/assets/dummy/event-1.png" alt="" />
+            <img src={`${image}`} alt="" />
             <div className="p-2">
                 <b className="">{eventTitle}</b>
                 <p className="text-[13px]">{formatDateUtil(schedule)}</p>

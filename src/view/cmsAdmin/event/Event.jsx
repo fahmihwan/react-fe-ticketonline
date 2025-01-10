@@ -6,9 +6,33 @@ import { useEffectEventPagination } from '../../../hook/useEffectEvents'
 import { PaginationEl } from '../../component/Pagination'
 import { formatDateTimeUtil } from '../../../utils/utils'
 import { IconEditEl, IconPlusAdminAddEl, IconTrashEl } from '../../component/IconSvg'
+import { removeEvent } from '../../../api/event'
 
 const Event = () => {
-    const { responseData, paginate, setPaginate } = useEffectEventPagination(); //customeHook
+    const { responseData, paginate, setPaginate, fetchData } = useEffectEventPagination(); //customeHook
+
+
+    const handleDelete = async (id) => {
+        removeEvent(id).then(async (res) => {
+            const isDelete = confirm("Apakah anda ingin menghapus data?");
+            if (isDelete) {
+                let page = paginate.currentPage;
+                let size = paginate.size
+
+                if (responseData.content.length == 1) {
+                    page != 0 ? page -= 1 : page = 0
+                    setPaginate({
+                        ...paginate, currentPage: page
+                    })
+                }
+                await fetchData(page, size);
+
+            }
+
+        })
+    }
+
+
     return (
         <LayoutAdmin>
             <div className='w-full'>
@@ -67,9 +91,7 @@ const Event = () => {
                                 </td>
                                 <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
                                 <td className="px-6 py-4">
-                                    <div
-                                        dangerouslySetInnerHTML={{ __html: d?.description }}
-                                    /></td>
+                                    <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
                                 <td className="px-6 py-4">
                                     <div className="flex">
                                         <Link
@@ -78,7 +100,8 @@ const Event = () => {
                                         >
                                             <IconEditEl />
                                         </Link>
-                                        <button>
+                                        <button
+                                            onClick={(e) => handleDelete(d?.id)}>
                                             <IconTrashEl />
                                         </button>
                                     </div>

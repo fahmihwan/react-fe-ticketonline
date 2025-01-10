@@ -91,9 +91,6 @@ const CreateEvent = () => {
         const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
         const isUpdate = paramsSlug;
 
-
-
-
         if (typeof isUpdate !== 'undefined') {
             await updateEvent({
                 event_title: formData?.event_title,

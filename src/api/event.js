@@ -39,9 +39,9 @@ export const getEventAdminPagination = async (page, size) => {
 
 
 
-export const findEventBySlug = async (eventId) => {
+export const findEventBySlug = async (slug) => {
     try {
-        const response = await apiClient.get(`/event/${eventId}`)
+        const response = await apiClient.get(`/event/${slug}`)
         return response.data;
     } catch (error) {
         return error

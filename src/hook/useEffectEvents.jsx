@@ -105,7 +105,7 @@ export const useEffectEventPagination = () => {
         fetchData(paginate.currentPage, paginate.size)
     }, [paginate.currentPage])
 
-    return { responseData, error, paginate, setPaginate }
+    return { responseData, error, paginate, setPaginate, fetchData }
 
 
 }

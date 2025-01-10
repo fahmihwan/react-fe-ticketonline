@@ -6,19 +6,19 @@ import { formatDateUtil, formatRupiahUtil, formatTimeUtil } from "../../utils/ut
 
 export default function DetailEvent() {
     const [showFullText, setShowFullText] = useState(false);
-
-    const { data } = useEffectDetailEvent(2); //customeHook
     const { slug } = useParams();
+
+    const { data } = useEffectDetailEvent(slug); //customeHook
 
     return (
         <LayoutCustomer>
             <div className="mx-[20px] xl:mx-[300px]  my-5">
                 <div className="w-full md:flex">
                     <div className="w-full mb-[30px] md:mb-0 md:w-7/12 mr-5">
-                        <img src="/assets/dummy/event-1.png" alt="" />
+                        <img src={`${data?.image}`} alt="" />
                         <p className="font-extrabold text-xl py-5">Deskripsi</p>
                         <div className={`${!showFullText && 'h-32'} overflow-hidden`}>
-                            {data?.description}
+                            <div dangerouslySetInnerHTML={{ __html: data?.description }} />
                             {/* 🎵 Alpen Atlantic 🎵
                             ALPEN CUP 2024 ATLANTIC merupakan acara kompetisi antar sekolah dan pentas seni yang diselenggarakan oleh SMPI Al Azhar 2 Pejaten.
 
