@@ -81,7 +81,7 @@ const routes = createBrowserRouter([
         element: <Ticket />
     },
     {
-        path: "/admin/ticket/:id/create",
+        path: "/admin/ticket/:slug/create",
         element: <CreateTicket />
     },
     {

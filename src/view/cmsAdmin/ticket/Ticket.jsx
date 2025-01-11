@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link } from 'react-router-dom'
 import { Button } from 'flowbite-react';
@@ -57,28 +56,16 @@ const Ticket = () => {
                                                 <div className='flex justify-between'>
                                                     <div>
                                                         <b>{x.category_name}</b><br />
-                                                        <p className='pr-5'>description : {x.description}</p>
+
+                                                        <div dangerouslySetInnerHTML={{ __html: x?.description }} />
                                                     </div>
                                                     <div className='flex '>
                                                         <div className=''>
                                                             <b className='text-xl'>{formatRupiahUtil(x.price)}</b> <br />
                                                             <p>Qty {x.quotaTicket}</p>
                                                         </div>
-                                                        <div>
-                                                            <div className="flex flex-col items-center h-full ml-5">
-                                                                <Link
-                                                                    to=""
-                                                                    className="font-medium  text-yellow-400  hover:underline block mb-4"
-                                                                >
-                                                                    <IconEditEl />
-                                                                </Link>
-                                                                <button>
-                                                                    <IconTrashEl />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
 
+                                                    </div>
                                                 </div>
                                             </li>)
                                         })}
@@ -86,7 +73,7 @@ const Ticket = () => {
                                     </ul>
                                 </td>
                                 <td>
-                                    <Link to="/admin/event/create">
+                                    <Link to={`/admin/ticket/${d?.slug}/create`}>
                                         <Button color="blue">
                                             <div className='flex justify-center items-center'>
                                                 <IconPlusAdminAddEl />

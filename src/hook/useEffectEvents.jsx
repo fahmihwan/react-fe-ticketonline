@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { findByIdEventWIthCategoryTickets, findEventBySlug, getEventAdminPagination, getEventWithCategories } from '../api/event';
+import { findBySlugWithCategoryTickets, findEventBySlug, getEventAdminPagination, getEventWithCategories } from '../api/event';
 
 export const useEffectEvents = (total) => {
     const [data, setData] = useState(null);
@@ -53,17 +53,17 @@ export const useEffectDetailEvent = (eventId) => {
 }
 
 
-export const useEffecEventWithCategoryTickets = (eventId) => {
+export const useEffecEventWithCategoryTickets = (slug) => {
     const [responseData, setResponseData] = useState(null);
     const [error, setError] = useState(null);
 
-    const fetchData = async (eventId) => {
-        if (!eventId) {
+    const fetchData = async (slug) => {
+        if (!slug) {
             setError("Total is required");
             return;
         }
         try {
-            const response = await findByIdEventWIthCategoryTickets(eventId);
+            const response = await findBySlugWithCategoryTickets(slug);
             setResponseData(response.data);
         } catch (error) {
             setError(error);
@@ -71,10 +71,10 @@ export const useEffecEventWithCategoryTickets = (eventId) => {
     }
 
     useEffect(() => {
-        fetchData(eventId)
-    }, [eventId])
+        fetchData(slug)
+    }, [slug])
 
-    return { responseData, error }
+    return { responseData, error, fetchData }
 }
 
 export const useEffectEventPagination = () => {

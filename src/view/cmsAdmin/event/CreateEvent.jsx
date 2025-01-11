@@ -129,15 +129,6 @@ const CreateEvent = () => {
     }
 
 
-    // const handleUpdate = async () => {
-    //     const dateString = `${formData.scheduleDate} ${formData.scheduleTime}`;
-    //     const isoDateString = dateString.replace(" ", "T");
-    //     const dateTime = new Date(isoDateString);
-    //     const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
-
-
-    // }
-
 
 
     return (

@@ -20,11 +20,11 @@ export const createCategoryTicket = async (payload) => {
 //     }
 // }
 
-// export const removeCategoryTicket = async (eventId) => {
-//     try {
-//         const response = await apiClient.delete(`/event/remove/${eventId}`)
-//         return response.data;
-//     } catch (error) {
-//         return error
-//     }
-// }
+export const removeCategoryTicket = async (categoryTicketId) => {
+    try {
+        const response = await apiClient.delete(`/cetegory-ticket/remove/${categoryTicketId}`)
+        return response.data;
+    } catch (error) {
+        return error
+    }
+}

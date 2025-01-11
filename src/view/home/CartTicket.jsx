@@ -3,7 +3,7 @@ import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconMinusEl, IconPlusEl } from "../component/IconSvg";
 import { Link, useParams } from "react-router-dom";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
-import { findByIdEventWIthCategoryTickets } from "../../api/event";
+import { findBySlugWithCategoryTickets } from "../../api/event";
 
 export default function CartTicket() {
 
@@ -16,9 +16,10 @@ export default function CartTicket() {
         if (!slug) {
             return;
         }
+
         try {
             let customeResponse = [];
-            const response = await findByIdEventWIthCategoryTickets(slug);
+            const response = await findBySlugWithCategoryTickets(slug);
             let responseDetailEvent = response?.data;
             let responseTicket = await response?.data?.category_tickets;
 

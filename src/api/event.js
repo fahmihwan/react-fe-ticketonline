@@ -112,9 +112,10 @@ export const removeEvent = async (eventId) => {
     }
 }
 
-export const findByIdEventWIthCategoryTickets = async (eventId) => {
+// export const findByIdEventWIthCategoryTickets = async (slug) => {
+export const findBySlugWithCategoryTickets = async (slug) => {
     try {
-        const response = await apiClient.get(`/event/${eventId}/with-category-tickets`)
+        const response = await apiClient.get(`/event/${slug}/with-category-tickets`)
         return response.data;
     } catch (error) {
         return error
