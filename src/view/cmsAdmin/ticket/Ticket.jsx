@@ -55,8 +55,7 @@ const Ticket = () => {
                                             return (<li key={i} className='block w-full p-2 bg-white border border-gray-200 rounded-lg shadow mb-5'>
                                                 <div className='flex justify-between'>
                                                     <div>
-                                                        <b>{x.category_name}</b><br />
-
+                                                        <b>{x.categoryName}</b><br />
                                                         <div dangerouslySetInnerHTML={{ __html: x?.description }} />
                                                     </div>
                                                     <div className='flex '>

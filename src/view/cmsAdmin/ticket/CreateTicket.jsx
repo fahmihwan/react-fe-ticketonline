@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
-import { Link, useParams } from 'react-router-dom'
+import { Await, Link, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, TextInputEl } from '../../component/InputEl'
 import { createCategoryTicket, removeCategoryTicket } from '../../../api/categoryTicket'
@@ -24,7 +24,8 @@ const CreateTicket = () => {
         description: "<p>dsd</p>",
     });
     const handleSubmit = async () => {
-        createCategoryTicket(formData).then((res) => console.log(res)).catch((err) => console.log(err))
+        await createCategoryTicket(formData).then((res) => console.log(res)).catch((err) => console.log(err))
+        await fetchData(slug)
     }
 
     const handleChange = (e) => {
@@ -35,14 +36,13 @@ const CreateTicket = () => {
     }
 
     const handleDelete = async (id) => {
-        // console.log(id);
         const isDelete = confirm("Apakah anda ingin menghapus data?");
         if (isDelete) {
             await removeCategoryTicket(id)
             await fetchData(slug)
         }
-
     }
+
     return (
         <LayoutAdmin>
             <div className='w-full'>
@@ -132,12 +132,11 @@ const TicketListCompt = ({ id, categoryName, price, quotaTicket, description, ha
             </div>
             <div>
                 <Button
-                    color='red'
+                    color='failure'
                     className='flex items-center justify-center align-middle'
                     onClick={(e) => handleDelete(e)}
                 >
-                    <IconTrashEl />
-                    Delete</Button>
+                    <IconTrashEl color={"text-white"} /></Button>
             </div>
         </div>
 

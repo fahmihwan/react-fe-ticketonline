@@ -103,7 +103,7 @@ export const TextInputSearchEl = (type = 'search', name, id, placeholder, handle
     )
 }
 
-export const UploadFileEl = ({ type = 'file', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
+export const UploadFileEl = ({ name, id, placeholder, handleChange, value, readOnly = false, className, isError = "" }) => {
     return (
         <div className='mb-5'>
             <label
@@ -114,7 +114,7 @@ export const UploadFileEl = ({ type = 'file', name, id, placeholder, handleChang
             </label>
 
             <input
-                type={type}
+                type="file"
                 id={id}
                 onChange={(e) => handleChange(e)}
                 value={value}

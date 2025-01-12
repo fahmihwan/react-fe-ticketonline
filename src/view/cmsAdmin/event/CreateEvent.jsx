@@ -21,7 +21,7 @@ const CreateEvent = () => {
         scheduleDate: "2025-05-10",
         scheduleTime: "06:24",
         venue: "dsds",
-        image: "",
+        image: null,
         description: "<p>dsd</p>",
         admin_id: 1
     });
@@ -143,72 +143,82 @@ const CreateEvent = () => {
                 <div
                     className="block md:w-full lg:w-1/2   mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow  "
                 >
-                    <TextInputEl
-                        placeholder="Event title"
-                        handleChange={(e) => handleChange(e)}
-                        name="event_title"
-                        value={formData?.event_title}
-                    />
-                    <TextInputEl
-                        placeholder="Slug"
-                        handleChange={(e) => handleChange(e)}
-                        readOnly={true}
+                    <form
+                        action=""
+                        method="dialog"
+                        encType="multipart/form-data"
+                        onSubmit={() => handleSubmit(slug)}
+                    >
 
-                        name="slug"
-                        value={formData?.slug}
-                    />
-                    <UploadFileEl
-                        placeholder="Upload image"
-                        // handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
-                        handleChange={(e) => handleChange(e)}
-                        name="image"
-                    // value={formData?.image}
-                    />
-                    <TextareaEl placeholder="Venue"
-                        handleChange={(e) => handleChange(e)}
-                        name="venue"
-                        value={formData?.venue}
-                    />
 
-                    <div className='w-full flex'>
-                        <div className='mr-2 w-9/12'>
-                            <InputDateEl
-                                placeholder="Schedule"
-                                handleChange={(date) => {
-                                    const year = date.getFullYear()
-                                    const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero untuk bulan
-                                    const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero untuk hari
-                                    const formattedDate = `${year}-${month}-${day}`;
-                                    console.log(formattedDate);
-                                    setFormData({ ...formData, "scheduleDate": formattedDate })
-                                }}
-                                value={formData?.scheduleDate}
-                            />
-                        </div>
-                        <div className='w-3/12'>
-                            <InputTimeEl
-                                placeholder="Time"
-                                handleChange={(e) => handleChange(e)}
-                                name="scheduleTime"
-                                value={formData?.scheduleTime}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <InputCKEditorEl
-                            value={formData?.description}
-                            placeholder="Description"
-                            handleChange={(event, editor) => {
-                                setFormData({ ...formData, "description": editor.getData() })
-                            }}
+                        <TextInputEl
+                            placeholder="Event title"
+                            handleChange={(e) => handleChange(e)}
+                            name="event_title"
+                            value={formData?.event_title}
                         />
-                    </div>
-                    <div className='my-5 flex justify-end'>
-                        <Link to="/admin/event" className='mr-3'>
-                            <Button  >cancel</Button>
-                        </Link>
-                        <Button color="blue" onClick={() => handleSubmit(slug)}>{slug ? 'Update' : 'Submit'}</Button>
-                    </div>
+                        <TextInputEl
+                            placeholder="Slug"
+                            handleChange={(e) => handleChange(e)}
+                            readOnly={true}
+
+                            name="slug"
+                            value={formData?.slug}
+                        />
+                        <UploadFileEl
+                            placeholder="Upload image"
+                            // handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
+                            handleChange={(e) => handleChange(e)}
+                            name="image"
+                        // value={formData?.image}
+                        />
+                        <TextareaEl placeholder="Venue"
+                            handleChange={(e) => handleChange(e)}
+                            name="venue"
+                            value={formData?.venue}
+                        />
+
+                        <div className='w-full flex'>
+                            <div className='mr-2 w-9/12'>
+                                <InputDateEl
+                                    placeholder="Schedule"
+                                    handleChange={(date) => {
+                                        const year = date.getFullYear()
+                                        const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero untuk bulan
+                                        const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero untuk hari
+                                        const formattedDate = `${year}-${month}-${day}`;
+                                        console.log(formattedDate);
+                                        setFormData({ ...formData, "scheduleDate": formattedDate })
+                                    }}
+                                    value={formData?.scheduleDate}
+                                />
+                            </div>
+                            <div className='w-3/12'>
+                                <InputTimeEl
+                                    placeholder="Time"
+                                    handleChange={(e) => handleChange(e)}
+                                    name="scheduleTime"
+                                    value={formData?.scheduleTime}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <InputCKEditorEl
+                                value={formData?.description}
+                                placeholder="Description"
+                                handleChange={(event, editor) => {
+                                    setFormData({ ...formData, "description": editor.getData() })
+                                }}
+                            />
+                        </div>
+                        <div className='my-5 flex justify-end'>
+                            <Link to="/admin/event" className='mr-3'>
+                                <Button  >cancel</Button>
+                            </Link>
+                            <Button color="blue" type='submit'>{slug ? 'Update' : 'Submit'}</Button>
+                            {/* <Button color="blue" onClick={() => handleSubmit(slug)}>{slug ? 'Update' : 'Submit'}</Button> */}
+                        </div>
+                    </form>
                 </div>
                 <div>
                     <img src={previewImg} className='w-full h-auto max-w-xl rounded-lg' alt="" />
