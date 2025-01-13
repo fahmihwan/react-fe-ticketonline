@@ -1,9 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy, Suspense } from "react";
-
-
-// const Home = lazy(() => import("../view/home/Home"));
-// const Login = lazy(() => import("../view/profile/Login"));
+import { lazy } from "react";
+import CreateLineup from "../view/cmsAdmin/event/CreateLineup";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -20,21 +17,6 @@ const Ticket = lazy(() => import("../view/cmsAdmin/ticket/Ticket"));
 const Transaction = lazy(() => import("../view/cmsAdmin/transaction/Transaction"));
 const Profile = lazy(() => import("../view/cmsAdmin/profile/Profile"));
 const DetailTransaction = lazy(() => import("../view/transaction/DetailTransaction"));
-
-// import Home from "../view/home/Home";
-// import DetailEvent from "../view/home/DetailEvent";
-// import CartTicket from "../view/home/CartTicket";
-// import Checkout from "../view/transaction/Checkout";
-
-// import TransactionHistory from "../view/transaction/TransactionHistory";
-// import Dashboard from "../view/cmsAdmin/Dashboard";
-// import Event from "../view/cmsAdmin/event/Event";
-// import CreateEvent from "../view/cmsAdmin/event/CreateEvent";
-// import CreateTicket from "../view/cmsAdmin/ticket/CreateTicket";
-// import Ticket from "../view/cmsAdmin/ticket/Ticket";
-// import Transaction from "../view/cmsAdmin/transaction/Transaction";
-// import Profile from "../view/cmsAdmin/profile/Profile";
-// import DetailTransaction from "../view/transaction/DetailTransaction";
 
 
 const routes = createBrowserRouter([
@@ -71,6 +53,10 @@ const routes = createBrowserRouter([
     {
         path: "/admin/event/create",
         element: <CreateEvent />
+    },
+    {
+        path: "/admin/event/:slug/lineup",
+        element: <CreateLineup />
     },
     {
         path: "/admin/event/:slug/edit",

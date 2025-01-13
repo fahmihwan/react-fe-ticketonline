@@ -7,6 +7,7 @@ import { createCategoryTicket, removeCategoryTicket } from '../../../api/categor
 import { useEffecEventWithCategoryTickets } from '../../../hook/useEffectEvents'
 import { formatRupiahUtil } from '../../../utils/utils'
 import { IconTrashEl } from '../../component/IconSvg'
+import DetailAdminComponent from '../../component/DetailAdminComponent'
 
 
 
@@ -45,8 +46,10 @@ const CreateTicket = () => {
 
     return (
         <LayoutAdmin>
+            <DetailAdminComponent />
+
             <div className='w-full'>
-                <div className='flex items-center  justify-between px-5 mb-5'>
+                <div className='flex items-center  justify-between px-5 mb-0'>
                     <p className='text-3xl font-bold '>Create Ticket</p>
                 </div>
             </div>

@@ -45,9 +45,6 @@ export default function Checkout() {
     };
 
 
-
-
-
     const fetchPaymentMethod = async (params) => {
         try {
             const response = await getPaymentMethodDuitku(params)
@@ -59,7 +56,6 @@ export default function Checkout() {
 
 
     useEffect(() => {
-
         let categorizedPayments = {
             "Virtual Account": [],
             "E-Wallet & QRIS": [],

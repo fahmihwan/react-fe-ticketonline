@@ -7,6 +7,7 @@ import { PaginationEl } from '../../component/Pagination'
 import { formatDateTimeUtil } from '../../../utils/utils'
 import { IconEditEl, IconPlusAdminAddEl, IconTrashEl } from '../../component/IconSvg'
 import { removeEvent } from '../../../api/event'
+import { list } from 'postcss'
 
 const Event = () => {
     const { responseData, paginate, setPaginate, fetchData } = useEffectEventPagination(); //customeHook
@@ -66,6 +67,9 @@ const Event = () => {
                             <th scope="col" className="px-6 py-3">
                                 Description
                             </th>
+                            <th scope="col" className="px-6 py-3 w-44">
+                                Line Up
+                            </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
                             </th>
@@ -92,8 +96,27 @@ const Event = () => {
                                 <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
                                 <td className="px-6 py-4">
                                     <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
+                                <td className='px-6 py-4'>
+
+                                    <ul className='list-disc'>
+                                        {d?.listLineUps.map((x, i) => (
+                                            <li key={i}>{x.talentName}</li>
+                                        ))}
+                                    </ul>
+
+
+                                </td>
                                 <td className="px-6 py-4">
-                                    <div className="flex">
+                                    <div className="flex items-center">
+                                        <Link to={`/admin/event/${d?.slug}/lineup`} className='mr-5'>
+                                            <Button color="blue" size='xs'>
+                                                <div className='flex justify-center items-center'>
+                                                    <IconPlusAdminAddEl />
+                                                    <span className='ml-1'>Add Talent</span>
+                                                </div>
+                                            </Button>
+                                        </Link>
+
                                         <Link
                                             to={`/admin/event/${d?.slug}/edit`}
                                             className="font-medium mr-5 text-yellow-400  hover:underline"

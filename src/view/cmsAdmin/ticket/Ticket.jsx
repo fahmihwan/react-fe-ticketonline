@@ -12,7 +12,7 @@ const Ticket = () => {
         <LayoutAdmin>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
-                    <p className='text-3xl font-bold '>Event</p>
+                    <p className='text-3xl font-bold '>Ticket</p>
 
                 </div>
             </div>
@@ -73,7 +73,7 @@ const Ticket = () => {
                                 </td>
                                 <td>
                                     <Link to={`/admin/ticket/${d?.slug}/create`}>
-                                        <Button color="blue">
+                                        <Button color="blue" size='xs'>
                                             <div className='flex justify-center items-center'>
                                                 <IconPlusAdminAddEl />
                                                 <span className='ml-1'>Add ticket</span>

@@ -250,7 +250,8 @@ export const IconEditEl = () => {
 }
 
 
-export const IconTrashEl = (color = "text-red-600") => {
+export const IconTrashEl = ({ color = "text-red-600" }) => {
+
     return (
         <svg
             className={`w-6 h-6  ${color} `}
