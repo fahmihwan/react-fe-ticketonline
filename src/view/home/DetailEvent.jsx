@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { Link, useParams } from "react-router-dom";
-import { useEffectDetailEvent } from "../../hook/useEffectEvents";
 import { formatDateUtil, formatRupiahUtil, formatTimeUtil } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventBySlug } from "../../redux/feature/eventSlice";

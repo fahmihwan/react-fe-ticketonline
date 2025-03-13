@@ -1,60 +1,70 @@
 import { useEffect, useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconMinusEl, IconPlusEl } from "../component/IconSvg";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
-import { findBySlugWithCategoryTickets } from "../../api/event";
+import { useDispatch, useSelector } from "react-redux";
+import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
+import { createCartTicket } from "../../redux/feature/transactionSlice";
 
 export default function CartTicket() {
 
     const { slug } = useParams();
+
+    const event = useSelector((state) => state.event.detailEvent || {})
+    // const eventHome = useSelector((state) => state.event.eventData || [])
+    const dispatch = useDispatch()
+    console.log(event, 'sksksk');
+
+
+    // useSelector()
+
     const [listTicket, setListTicket] = useState([]);
     const [totalCheckout, setTotalCheckout] = useState(0)
     const [detailEvent, setDetailEvent] = useState({});
 
-    const fetchData = async (slug) => {
-        if (!slug) {
-            return;
-        }
-
-        try {
-            let customeResponse = [];
-            const response = await findBySlugWithCategoryTickets(slug);
-            let responseDetailEvent = response?.data;
-            let responseTicket = await response?.data?.category_tickets;
-
-            setDetailEvent({
-                id: responseDetailEvent?.id,
-                event_title: responseDetailEvent?.event_title,
-                schedule: responseDetailEvent?.schedule,
-                image: responseDetailEvent?.image,
-                venue: responseDetailEvent?.venue
-            })
-
-
-            if (responseTicket.length > 0) {
-                customeResponse = await responseTicket?.map((d) => {
-                    return {
-                        id: d?.id,
-                        category_name: d?.category_name,
-                        price: d?.price,
-                        total: 0,
-                        stock: d?.quotaTicket
-                    };
-                })
-
-                setListTicket(customeResponse)
-                setTotalCheckout(await customeResponse?.reduce((acc, item) => acc + (item.total), 0))
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
 
     useEffect(() => {
-        fetchData(slug)
+        if (!slug) {
+            return
+        }
+
+        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
     }, [slug])
+
+    useEffect(() => {
+        if (event) {
+            setDetailEvent({
+                id: event?.id,
+                event_title: event?.event_title,
+                schedule: event?.schedule,
+                image: event?.image,
+                venue: event?.venue
+            })
+        }
+
+
+        let responseTicket = event?.category_tickets
+
+        if (responseTicket?.length > 0) {
+            let customeResponse = [];
+            customeResponse = responseTicket?.map((d) => {
+                return {
+                    id: d?.id,
+                    categoryName: d?.categoryName,
+                    price: d?.price,
+                    total: 0,
+                    stock: d?.quotaTicket
+                };
+            })
+
+            setListTicket(customeResponse)
+            setTotalCheckout(customeResponse?.reduce((acc, item) => acc + (item.total), 0))
+        }
+
+    }, [event])
+
 
     const fnCountTicket = (item, option) => {
         let getTicket = listTicket.find((d) => d.id == item.id)
@@ -85,6 +95,23 @@ export default function CartTicket() {
         return formatRupiahUtil(result?.totalPrice)
     }
 
+    const handleSubmit = () => {
+        const tickets = listTicket.filter((d) => d.total !== 0).map((d) => {
+            return {
+                categoryTicketId: d.id,
+                total: d.total
+            }
+        })
+
+        let payload = {
+            slug: slug,
+            detailTransactions: tickets
+        }
+
+        dispatch(createCartTicket({ payload: payload }))
+
+    }
+
 
 
     return (
@@ -98,7 +125,7 @@ export default function CartTicket() {
                                 <div key={index}>
                                     <div className="border border-gray-300 flex justify-between items-center py-5 px-5 mb-5" >
                                         <div>
-                                            <p>{item?.category_name}</p>
+                                            <p>{item?.categoryName}</p>
                                             <b>{formatRupiahUtil(item?.price)}</b>
                                         </div>
                                         <div>
@@ -176,7 +203,7 @@ export default function CartTicket() {
                                                 if (d?.total != 0) {
                                                     return (
                                                         <tr key={i} className="text-gray-500">
-                                                            <td>{d.category_name}</td>
+                                                            <td>{d.categoryName}</td>
                                                             <td className="text-end">{d?.total} X {formatRupiahUtil(d?.price)}</td>
                                                         </tr>
                                                     )
@@ -202,11 +229,22 @@ export default function CartTicket() {
                                 {/* <b>Rp 110.000</b> */}
                             </div>
 
+                            {/* 
                             {totalCheckout != 0 ? (<Link
                                 to={`/event/${slug}/checkout`}
                                 type="button" className="block text-center text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                                 Checkout
                             </Link>) : (<button
+                                disabled={true}
+                                type="button" className="block text-center text-white mt-5 w-full bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                                Checkout</button>)} */}
+
+                            {totalCheckout != 0 ? (<button
+                                onClick={handleSubmit}
+                                // to={`/event/${slug}/checkout`}
+                                type="button" className="block text-center text-white mt-5 w-full bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                                Checkout
+                            </button>) : (<button
                                 disabled={true}
                                 type="button" className="block text-center text-white mt-5 w-full bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                                 Checkout</button>)}

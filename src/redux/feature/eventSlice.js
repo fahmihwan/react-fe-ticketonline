@@ -1,33 +1,6 @@
-
-// export const getEventWithCategories = async (total) => {
-//     try {
-//         const response = await apiClient.get(`/event/${total}/events`)
-//         return response.data;
-//     } catch (error) {
-//         return error
-//     }
-// }
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import apiClient from "../../api/api";
-import DetailEvent from "../../view/home/DetailEvent";
 
-
-// export const fetchDashboardStatus = createAsyncThunk(
-//     "dashboard/fetchDashboardStatus",
-//     async ({ month, year }, { rejectWithValue }) => {
-//       try {
-//         const response = await axiosInstance.get(
-//           `/transactions/dashboard/info-status` +
-//             (month ? `?month=${month}` : "") +
-//             (year ? `&year=${year}` : "")
-//         );
-//         return response.data;
-//       } catch (e) {
-//         return rejectWithValue(e.response.data);
-//       }
-//     }
-//   );
 
 const fetchEventHome = createAsyncThunk("home/fetchEventsHome", async ({ total }, { rejectWithValue }) => {
     try {
@@ -80,6 +53,14 @@ const getEventAdminPagination = createAsyncThunk(
 
 
 
+const findBySlugWithCategoryTickets = createAsyncThunk("home/findBySlugWithCategoryTickets", async ({ slug }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/event/${slug}/with-category-tickets`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
 
 const eventSlice = createSlice({
     name: "eventSlice",
@@ -145,7 +126,25 @@ const eventSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(findBySlugWithCategoryTickets.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(findBySlugWithCategoryTickets.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                detailEvent: action.payload.data,
+                status: "success",
+            })
+        }).addCase(findBySlugWithCategoryTickets.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
+
     }
 })
 
@@ -153,6 +152,7 @@ const eventSlice = createSlice({
 export {
     fetchEventHome,
     fetchEventBySlug,
-    getEventAdminPagination
+    getEventAdminPagination,
+    findBySlugWithCategoryTickets
 };
 export default eventSlice.reducer

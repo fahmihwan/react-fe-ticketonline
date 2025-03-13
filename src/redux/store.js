@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import eventReducer from "./feature/eventSlice";
+import transactionReducer from "./feature/transactionSlice";
 
 const store = configureStore({
     reducer: {
-        event: eventReducer
+        event: eventReducer,
+        transaction: transactionReducer
         //   auth: authReducer,
         //   mountain: mountainReducer,
         //   tourGuide: TourGuideReducer,
