@@ -10,14 +10,8 @@ import { createCartTicket } from "../../redux/feature/transactionSlice";
 export default function CartTicket() {
 
     const { slug } = useParams();
-
-    const event = useSelector((state) => state.event.detailEvent || {})
-    // const eventHome = useSelector((state) => state.event.eventData || [])
     const dispatch = useDispatch()
-    console.log(event, 'sksksk');
-
-
-    // useSelector()
+    const event = useSelector((state) => state.event.detailEvent || {})
 
     const [listTicket, setListTicket] = useState([]);
     const [totalCheckout, setTotalCheckout] = useState(0)
