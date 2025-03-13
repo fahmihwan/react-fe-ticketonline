@@ -2,11 +2,19 @@ import { Link } from "react-router-dom";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
 import { useEffectEvents } from "../../hook/useEffectEvents";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchEventHome } from "../../redux/feature/eventSlice";
 
 export default function Home() {
-    const { data } = useEffectEvents(960); //customeHook
-    console.log(data);
+    const eventHome = useSelector((state) => state.event.eventData || [])
 
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(fetchEventHome({ total: 960 }))
+    }, [])
+
+    // dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size }))
 
 
     return (
@@ -29,7 +37,7 @@ export default function Home() {
                     <section>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             {
-                                data?.map((d, i) => {
+                                eventHome?.map((d, i) => {
                                     return (<CardEventEL key={i}
                                         eventTitle={d.event_title}
                                         slug={d?.slug}

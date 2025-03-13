@@ -5,9 +5,14 @@ import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
 
-import { getPaymentMethodDuitku } from "../../api/transaction";
+
+import { useDispatch, useSelector } from "react-redux";
+import { getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 
 export default function Checkout() {
+    const dispatch = useDispatch()
+    const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
+
     const [formCustomer, setFormCustomer] = useState([]);
     const [detailCartTicket, setDetailCartTicket] = useState([]);
     const [selectedPayment, setSelectedPayment] = useState('')
@@ -45,42 +50,38 @@ export default function Checkout() {
     };
 
 
-    const fetchPaymentMethod = async (params) => {
-        try {
-            const response = await getPaymentMethodDuitku(params)
-            return response.data
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
+    useEffect(() => {
+        dispatch(getPaymentMethodDuitku({ payload: { amount: 2000 } }))
+    }, [])
 
     useEffect(() => {
+        if (!paymentDuitku) {
+            return
+        }
+        let res = paymentDuitku
+
+
+        let response = []
+
         let categorizedPayments = {
             "Virtual Account": [],
             "E-Wallet & QRIS": [],
             "Kartu Debit/Kredit": [],
             "Retail Outlets": [],
         };
+        res?.paymentFee.forEach(payment => {
+            if (payment.paymentMethod.startsWith("VA") || payment.paymentMethod === "B1" || payment.paymentMethod === "BT" || payment.paymentMethod === "A1" || payment.paymentMethod === "I1" || payment.paymentMethod === "M2" || payment.paymentMethod === "AG" || payment.paymentMethod === "BC" || payment.paymentMethod === "BR" || payment.paymentMethod === "NC" || payment.paymentMethod === "BV") {
+                categorizedPayments["Virtual Account"].push({ ...payment, "categoryPayment": "Virtual Account" });
+            } else if (payment.paymentMethod === "OV" || payment.paymentMethod === "SP" || payment.paymentMethod === "DA" || payment.paymentMethod === "SA" || payment.paymentMethod === "LQ" || payment.paymentMethod === "NQ" || payment.paymentMethod === "OL" || payment.paymentMethod === "IQ" || payment.paymentMethod === "QD" || payment.paymentMethod === "GQ") {
+                categorizedPayments["E-Wallet & QRIS"].push({ ...payment, "categoryPayment": "E-Wallet & QRIS" });
+            } else if (payment.paymentMethod === "VC") {
+                categorizedPayments["Kartu Debit/Kredit"].push({ ...payment, "categoryPayment": "Kartu Debit/Kredit" });
+            } else if (payment.paymentMethod === "FT" || payment.paymentMethod === "IR") {
+                categorizedPayments["Retail Outlets"].push({ ...payment, "categoryPayment": "Retail Outlets" });
+            }
+        });
 
-        let response = []
-        fetchPaymentMethod({ amount: 20000 }).then((res) => {
-            console.log(res?.paymentFee?.length);
-            res?.paymentFee.forEach(payment => {
-                if (payment.paymentMethod.startsWith("VA") || payment.paymentMethod === "B1" || payment.paymentMethod === "BT" || payment.paymentMethod === "A1" || payment.paymentMethod === "I1" || payment.paymentMethod === "M2" || payment.paymentMethod === "AG" || payment.paymentMethod === "BC" || payment.paymentMethod === "BR" || payment.paymentMethod === "NC" || payment.paymentMethod === "BV") {
-                    categorizedPayments["Virtual Account"].push({ ...payment, "categoryPayment": "Virtual Account" });
-                } else if (payment.paymentMethod === "OV" || payment.paymentMethod === "SP" || payment.paymentMethod === "DA" || payment.paymentMethod === "SA" || payment.paymentMethod === "LQ" || payment.paymentMethod === "NQ" || payment.paymentMethod === "OL" || payment.paymentMethod === "IQ" || payment.paymentMethod === "QD" || payment.paymentMethod === "GQ") {
-                    categorizedPayments["E-Wallet & QRIS"].push({ ...payment, "categoryPayment": "E-Wallet & QRIS" });
-                } else if (payment.paymentMethod === "VC") {
-                    categorizedPayments["Kartu Debit/Kredit"].push({ ...payment, "categoryPayment": "Kartu Debit/Kredit" });
-                } else if (payment.paymentMethod === "FT" || payment.paymentMethod === "IR") {
-                    categorizedPayments["Retail Outlets"].push({ ...payment, "categoryPayment": "Retail Outlets" });
-                }
-            });
-
-            console.log(categorizedPayments);
-            setListPayment(categorizedPayments)
-        })
+        setListPayment(categorizedPayments)
 
         setDetailCartTicket(response)
 
@@ -130,8 +131,7 @@ export default function Checkout() {
 
         setFormCustomer(makeArrForm);
 
-
-    }, [])
+    }, [paymentDuitku])
 
     const handleChange = (e, index) => {
         let { name, value } = e.target
@@ -148,21 +148,13 @@ export default function Checkout() {
         setFormCustomer(updateForm)
     }
     const handleSubmit = () => {
-        // console.log(formCustomer);
-        // if (step == 2) {
-
-        // }
-
         setStep(2)
-        // navigate('/payment');
-
     }
 
     return (
         <LayoutCustomer>
             <div className="w-full bg-gray-100 border">
                 <div className="bg-yellow-300 w-full py-1 text-center">
-                    {/* <b>7:56</b> Waktu pengisian data */}
                     <b> {formatTime(timeLeft)}</b> Waktu pengisian data
                 </div>
                 <div className="w-full my-5 flex justify-center">
