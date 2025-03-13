@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { Link, useParams } from "react-router-dom";
 import { useEffectDetailEvent } from "../../hook/useEffectEvents";
 import { formatDateUtil, formatRupiahUtil, formatTimeUtil } from "../../utils/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchEventBySlug } from "../../redux/feature/eventSlice";
 
 export default function DetailEvent() {
     const [showFullText, setShowFullText] = useState(false);
     const { slug } = useParams();
 
-    const { data } = useEffectDetailEvent(slug); //customeHook
+    const dispatch = useDispatch()
+    const data = useSelector((state) => state.event.detailEvent)
+
+    useEffect(() => {
+        dispatch(fetchEventBySlug({ slug: slug }))
+    }, [])
+
 
     return (
         <LayoutCustomer>
