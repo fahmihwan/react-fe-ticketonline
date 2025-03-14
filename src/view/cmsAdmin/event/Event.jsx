@@ -2,35 +2,57 @@
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Button } from 'flowbite-react'
 import { Link } from 'react-router-dom'
-import { useEffectEventPagination } from '../../../hook/useEffectEvents'
 import { PaginationEl } from '../../component/Pagination'
 import { formatDateTimeUtil } from '../../../utils/utils'
 import { IconEditEl, IconPlusAdminAddEl, IconTrashEl } from '../../component/IconSvg'
-import { removeEvent } from '../../../api/event'
-import { list } from 'postcss'
+import { useDispatch, useSelector } from 'react-redux'
+
+import {
+    getEventAdminPagination,
+    removeEvent
+} from "../../../redux/feature/eventSlice";
+import { useEffect, useState } from 'react'
 
 const Event = () => {
-    const { responseData, paginate, setPaginate, fetchData } = useEffectEventPagination(); //customeHook
+    const dispatch = useDispatch();
+    const events = useSelector((state) => state.event.eventData || [])
+    const status = useSelector((state) => state.event.status)
+
+
+    const [paginate, setPaginate] = useState({
+        currentPage: 0,
+        size: 5,
+        totalPages: 0,
+        offset: 0,
+    })
+
+    useEffect(() => {
+        if (events) {
+            setPaginate({ ...paginate, offset: events?.pageable?.offset, totalPages: events?.totalPages })
+        }
+    }, [events])
+
+    useEffect(() => {
+        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size }))
+    }, [paginate?.currentPage, dispatch, events?.size])
 
 
     const handleDelete = async (id) => {
-        removeEvent(id).then(async (res) => {
-            const isDelete = confirm("Apakah anda ingin menghapus data?");
-            if (isDelete) {
-                let page = paginate.currentPage;
-                let size = paginate.size
+        const isDelete = confirm("Apakah anda ingin menghapus data?");
+        if (isDelete) {
+            await dispatch(removeEvent({ eventId: id }))
 
-                if (responseData.content.length == 1) {
-                    page != 0 ? page -= 1 : page = 0
-                    setPaginate({
-                        ...paginate, currentPage: page
-                    })
-                }
-                await fetchData(page, size);
+            let page = paginate?.currentPage;
+            let size = paginate?.size
 
+            if (events.content.length == 1) {
+                page != 0 ? page -= 1 : page = 0
+                setPaginate({
+                    ...paginate, currentPage: page
+                })
             }
-
-        })
+            await dispatch(getEventAdminPagination({ page: page, size: size }))
+        }
     }
 
 
@@ -76,61 +98,63 @@ const Event = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {responseData?.content?.map((d, i) => (
-                            <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th>
-                                    {paginate.offset + i + 1}
-                                </th>
-                                <td
-                                    scope="row"
-                                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                >
-                                    <p>{d?.event_title}</p>
-                                    <p className='text-gray-500'>slug : {d?.slug}</p>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div>
-                                        <img src={d?.image} alt="" width={150} />
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
-                                <td className="px-6 py-4">
-                                    <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
-                                <td className='px-6 py-4'>
-
-                                    <ul className='list-disc'>
-                                        {d?.listLineUps.map((x, i) => (
-                                            <li key={i}>{x.talentName}</li>
-                                        ))}
-                                    </ul>
-
-
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center">
-                                        <Link to={`/admin/event/${d?.slug}/lineup`} className='mr-5'>
-                                            <Button color="blue" size='xs'>
-                                                <div className='flex justify-center items-center'>
-                                                    <IconPlusAdminAddEl />
-                                                    <span className='ml-1'>Add Talent</span>
-                                                </div>
-                                            </Button>
-                                        </Link>
-
-                                        <Link
-                                            to={`/admin/event/${d?.slug}/edit`}
-                                            className="font-medium mr-5 text-yellow-400  hover:underline"
+                        {
+                            status == 'loading' ? ('wkwk') : (
+                                events?.content?.map((d, i) => (
+                                    <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th>
+                                            {paginate?.offset + i + 1}
+                                        </th>
+                                        <td
+                                            scope="row"
+                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                         >
-                                            <IconEditEl />
-                                        </Link>
-                                        <button
-                                            onClick={(e) => handleDelete(d?.id)}>
-                                            <IconTrashEl />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                            <p>{d?.event_title}</p>
+                                            <p className='text-gray-500'>slug : {d?.slug}</p>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div>
+                                                <img src={d?.image} alt="" width={150} />
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
+                                        <td className="px-6 py-4">
+                                            <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
+                                        <td className='px-6 py-4'>
+
+                                            <ul className='list-disc'>
+                                                {d?.listLineUps.map((x, i) => (
+                                                    <li key={i}>{x.talentName}</li>
+                                                ))}
+                                            </ul>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center">
+                                                <Link to={`/admin/event/${d?.slug}/lineup`} className='mr-5'>
+                                                    <Button color="blue" size='xs'>
+                                                        <div className='flex justify-center items-center'>
+                                                            <IconPlusAdminAddEl />
+                                                            <span className='ml-1'>Add Talent</span>
+                                                        </div>
+                                                    </Button>
+                                                </Link>
+
+                                                <Link
+                                                    to={`/admin/event/${d?.slug}/edit`}
+                                                    className="font-medium mr-5 text-yellow-400  hover:underline"
+                                                >
+                                                    <IconEditEl />
+                                                </Link>
+                                                <button
+                                                    onClick={(e) => handleDelete(d?.id)}>
+                                                    <IconTrashEl />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )
+                        }
                     </tbody>
                 </table>
                 <PaginationEl

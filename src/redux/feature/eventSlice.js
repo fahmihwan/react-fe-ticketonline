@@ -62,6 +62,17 @@ const findBySlugWithCategoryTickets = createAsyncThunk("home/findBySlugWithCateg
     }
 })
 
+
+const removeEvent = createAsyncThunk("home/removeEvent", async ({ eventId }, { rejectWithValue }) => {
+    try {
+        // const response = await apiClient.get(`/event/${slug}/with-category-tickets`)
+        const response = await apiClient.delete(`/event/remove/${eventId}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const eventSlice = createSlice({
     name: "eventSlice",
     initialState: {
@@ -143,6 +154,23 @@ const eventSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(removeEvent.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(removeEvent.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                detailEvent: action.payload.data,
+                status: "success",
+            })
+        }).addCase(removeEvent.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
 
     }
@@ -153,6 +181,7 @@ export {
     fetchEventHome,
     fetchEventBySlug,
     getEventAdminPagination,
-    findBySlugWithCategoryTickets
+    findBySlugWithCategoryTickets,
+    removeEvent
 };
 export default eventSlice.reducer
