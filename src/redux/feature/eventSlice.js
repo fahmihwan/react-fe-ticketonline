@@ -20,36 +20,31 @@ const fetchEventBySlug = createAsyncThunk("home/fetchEventBySlug", async ({ slug
     }
 })
 
-const getEventAdminPagination = createAsyncThunk(
-    "home/fetchEventAdmin",
-    async ({
-        page, size
-    }) => {
-        let params = `?`;
+const getEventAdminPagination = createAsyncThunk("home/fetchEventAdmin", async ({ page, size }, { rejectWithValue }) => {
+    let params = `?`;
 
-        // Tambahkan parameter page jika ada
-        if (page !== undefined) {
-            params += `page=${page}&`;
-        }
+    // Tambahkan parameter page jika ada
+    if (page !== undefined) {
+        params += `page=${page}&`;
+    }
 
-        // Tambahkan parameter size jika ada
-        if (size !== undefined) {
-            params += `size=${size}`;
-        }
+    // Tambahkan parameter size jika ada
+    if (size !== undefined) {
+        params += `size=${size}`;
+    }
 
-        // Hapus tanda '&' yang mungkin ada di akhir
-        if (params.endsWith('&')) {
-            params = params.slice(0, -1);
-        }
+    // Hapus tanda '&' yang mungkin ada di akhir
+    if (params.endsWith('&')) {
+        params = params.slice(0, -1);
+    }
 
-        try {
-            const response = await apiClient.get(`/event/admin/pagination${params}`)
-            // const response = await apiClient.get(`/event/admin/pagination?page=0&size=5`)
-            return response.data
-        } catch (error) {
-            return error.response.data
-        }
-    })
+    try {
+        const response = await apiClient.get(`/event/admin/pagination${params}`)
+        return response?.data
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
 
 
 
@@ -65,13 +60,56 @@ const findBySlugWithCategoryTickets = createAsyncThunk("home/findBySlugWithCateg
 
 const removeEvent = createAsyncThunk("home/removeEvent", async ({ eventId }, { rejectWithValue }) => {
     try {
-        // const response = await apiClient.get(`/event/${slug}/with-category-tickets`)
         const response = await apiClient.delete(`/event/remove/${eventId}`)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)
     }
 })
+
+
+
+const createEvent = createAsyncThunk("home/createEvent", async ({ payload }, { rejectWithValue }) => {
+    const formData = new FormData()
+    formData.append('event_title', payload.event_title)
+    formData.append('image', payload.image)
+    formData.append('schedule', payload.schedule)
+    formData.append('venue', payload.venue)
+    formData.append('slug', payload.slug)
+    formData.append('description', payload.description)
+    formData.append('admin_id', payload.admin_id)
+    try {
+        const response = await apiClient.post("/event", formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
+const updateEvent = createAsyncThunk("home/updateEvent", async ({ payload, slug }, { rejectWithValue }) => {
+    console.log('asuu');
+    const formData = new FormData()
+    formData.append('event_title', payload.event_title)
+    formData.append('image', payload.image)
+    formData.append('schedule', payload.schedule)
+    formData.append('venue', payload.venue)
+    formData.append('slug', payload.slug)
+    formData.append('description', payload.description)
+    formData.append('admin_id', payload.admin_id)
+
+    try {
+        const response = await apiClient.put(`/event/${slug}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 
 const eventSlice = createSlice({
     name: "eventSlice",
@@ -171,6 +209,40 @@ const eventSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(createEvent.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(createEvent.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                detailEvent: action.payload.data,
+                status: "success",
+            })
+        }).addCase(createEvent.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(updateEvent.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(updateEvent.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                detailEvent: action.payload.data,
+                status: "success",
+            })
+        }).addCase(updateEvent.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
 
     }
@@ -182,6 +254,8 @@ export {
     fetchEventBySlug,
     getEventAdminPagination,
     findBySlugWithCategoryTickets,
-    removeEvent
+    removeEvent,
+    createEvent,
+    updateEvent
 };
 export default eventSlice.reducer

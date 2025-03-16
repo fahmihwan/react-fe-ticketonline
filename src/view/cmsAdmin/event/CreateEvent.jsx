@@ -1,99 +1,69 @@
 import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button, Datepicker } from 'flowbite-react'
+import { Button } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
-import { createEvent, findEventBySlug, updateEvent } from '../../../api/event'
+import { createEvent, findEventBySlug } from '../../../api/event'
 import slugify from 'slugify'
 import { explodeFormatDateTimeToInputElementUtil } from '../../../utils/utils'
 import moment from 'moment'
-import { Bold, Essentials, ClassicEditor, Italic, Mention, Paragraph, Undo } from 'ckeditor5'
-import { CKEditor } from '@ckeditor/ckeditor5-react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchEventBySlug, updateEvent } from '../../../redux/feature/eventSlice'
 
 
 
 const CreateEvent = () => {
+    const dispatch = useDispatch()
+    const detailEvent = useSelector((state) => state.event.detailEvent || [])
+
+
     const { slug } = useParams();
 
     const navigate = useNavigate();
     const [previewImg, setPreviewImg] = useState('')
-
-
-    // const [formData, setFormData] = useState({
-    //     event_title: null,
-    //     slug: null,
-    //     scheduleDate: new Date(),
-    //     scheduleTime: null,
-    //     venue: null,
-    //     image: null,
-    //     description: null,
-    //     admin_id: 1
-    // });
     const [eventTitle, setEventTitle] = useState("");
     const [newSlug, setNewSlug] = useState("");
     const [scheduleDate, setScheduleDate] = useState(new Date());
-    const [scheduleTime, setScheduleTime] = useState(new Date());
-
+    const [scheduleTime, setScheduleTime] = useState('');
     const [venue, setVenue] = useState("");
     const [image, setImage] = useState(null);
     const [description, setDescription] = useState("");
     const [adminId, setAdminId] = useState(1);
 
 
-    const fetch = async (slug) => {
-        await findEventBySlug(slug)
-            .then((res) => {
-                const response = res.data;
-                const { dateFormat, timeFormat } = explodeFormatDateTimeToInputElementUtil(response.schedule)
-
-                setPreviewImg(response.image)
-                setEventTitle(response.eventTitle || "");
-                setNewSlug(response.slug || "");
-                setScheduleDate(dateFormat || "");
-                setScheduleTime(timeFormat || "");
-                setVenue(response.venue || "");
-                setImage(response.image || null);  // Default image adalah null
-                setDescription(response.description || "");
-                setAdminId(1)
-
-            })
-            .catch((err) => alert(err))
-    }
 
     useEffect(() => {
+
         if (slug) {
-            fetch(slug)
+            dispatch(fetchEventBySlug({ slug: slug })).then((res) => {
+                let data = res.payload.data
+                const { dateFormat, timeFormat } = explodeFormatDateTimeToInputElementUtil(data.schedule)
+                setPreviewImg(data.image)
+                setEventTitle(data.eventTitle || "");
+                setNewSlug(data.slug || "");
+                setScheduleDate(dateFormat || "");
+                setScheduleTime(timeFormat || "");
+                setVenue(data.venue || "");
+                setImage(data.image || null);
+                setDescription(data.description || "");
+                setAdminId(1)
+            })
+        } else {
+            resetForm()
         }
     }, [slug])
 
 
-
     const handleSubmit = async (paramsSlug) => {
         const dateString = `${scheduleDate} ${scheduleTime}`;
-        const isoDateString = dateString.replace(" ", "T");
-        const dateTime = new Date(isoDateString);
-        const isoString = dateTime.toISOString().split('Z')[0];
-        //convert LocalDateTime
+        const dateTime = moment(dateString, 'YYYY-MM-DD HH:mm');
+        const isoString = dateTime.format('YYYY-MM-DDTHH:mm');
+
         const isUpdate = paramsSlug;
 
         if (typeof isUpdate !== 'undefined') {
-            await updateEvent({
-                event_title: eventTitle,
-                schedule: isoString,
-                slug: newSlug,
-                venue: venue,
-                image: image,
-                description: description,
-                admin_id: 1,
-                paramsSlug: paramsSlug
-            }).then((res) => {
-                if (res.success) {
-                    navigate('/admin/event')
-                }
-            })
 
-        } else {
-            await createEvent({
+            let payload = {
                 event_title: eventTitle,
                 schedule: isoString,
                 slug: newSlug,
@@ -101,15 +71,43 @@ const CreateEvent = () => {
                 image: image,
                 description: description,
                 admin_id: 1,
-            }).then((res) => {
-                if (res.success) {
-                    navigate('/admin/event')
-                }
-            })
+            }
+
+            const result = await dispatch(updateEvent({ payload: payload, slug: paramsSlug }))
+            if (result?.payload?.success) {
+                resetForm()
+                navigate('/admin/event')
+            }
+        } else {
+            let payload = {
+                event_title: eventTitle,
+                schedule: isoString,
+                slug: newSlug,
+                venue: venue,
+                image: image,
+                description: description,
+                admin_id: 1,
+            }
+            const result = await dispatch(createEvent({ payload: payload }))
+            if (result?.payload?.success) {
+                resetForm()
+                navigate('/admin/event')
+            }
         }
     }
 
 
+
+    const resetForm = () => {
+        setPreviewImg('');
+        setEventTitle('');
+        setNewSlug('');
+        setScheduleDate(new Date());
+        setScheduleTime('');
+        setVenue('');
+        setImage(null);
+        setDescription('');
+    };
 
 
     return (
@@ -151,7 +149,6 @@ const CreateEvent = () => {
                             placeholder="Slug"
                             handleChange={(e) => setNewSlug(e.target.value)}
                             readOnly={true}
-
                             name="slug"
                             value={newSlug}
                         />
@@ -183,6 +180,7 @@ const CreateEvent = () => {
                                 <InputDateEl
                                     placeholder="Schedule"
                                     handleChange={(date) => {
+                                        console.log(date);
                                         const formattedDate = moment(date).format('YYYY-MM-DD');
                                         setScheduleDate(formattedDate)
                                     }}
@@ -192,7 +190,16 @@ const CreateEvent = () => {
                             <div className='w-3/12'>
                                 <InputTimeEl
                                     placeholder="Time"
-                                    handleChange={(e) => setScheduleTime(e)}
+                                    handleChange={(e) => {
+                                        console.log(e.target.value);
+
+                                        // const formattedTime = moment(e.target.value).format('HH:mm');
+                                        // const dateTime = moment(e.target.value, 'HH:mm');
+                                        // const isoString = dateTime.toISOString().split('Z')[0];  // Menghilangkan 'Z' dari hasil ISO string
+
+                                        // console.log(dateTime);
+                                        setScheduleTime(e.target.value)
+                                    }}
                                     name="scheduleTime"
                                     value={scheduleTime}
                                 />
