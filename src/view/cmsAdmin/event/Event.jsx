@@ -87,6 +87,9 @@ const Event = () => {
                                 Schedule
                             </th>
                             <th scope="col" className="px-6 py-3">
+                                Venue
+                            </th>
+                            <th scope="col" className="px-6 py-3">
                                 Description
                             </th>
                             <th scope="col" className="px-6 py-3 w-44">
@@ -118,6 +121,7 @@ const Event = () => {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
+                                        <td className="px-6 py-4">{d?.venue}</td>
                                         <td className="px-6 py-4">
                                             <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
                                         <td className='px-6 py-4'>

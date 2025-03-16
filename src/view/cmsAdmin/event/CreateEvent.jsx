@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { Button } from 'flowbite-react'
+import { Button, Datepicker } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
 import { createEvent, findEventBySlug, updateEvent } from '../../../api/event'
 import slugify from 'slugify'
 import { explodeFormatDateTimeToInputElementUtil } from '../../../utils/utils'
+import moment from 'moment'
+import { Bold, Essentials, ClassicEditor, Italic, Mention, Paragraph, Undo } from 'ckeditor5'
+import { CKEditor } from '@ckeditor/ckeditor5-react'
+
 
 
 const CreateEvent = () => {
@@ -15,33 +19,42 @@ const CreateEvent = () => {
     const [previewImg, setPreviewImg] = useState('')
 
 
-    const [formData, setFormData] = useState({
-        event_title: "Euforia selatan",
-        slug: "euforia-selatan",
-        scheduleDate: "2025-05-10",
-        scheduleTime: "06:24",
-        venue: "dsds",
-        image: null,
-        description: "<p>dsd</p>",
-        admin_id: 1
-    });
+    // const [formData, setFormData] = useState({
+    //     event_title: null,
+    //     slug: null,
+    //     scheduleDate: new Date(),
+    //     scheduleTime: null,
+    //     venue: null,
+    //     image: null,
+    //     description: null,
+    //     admin_id: 1
+    // });
+    const [eventTitle, setEventTitle] = useState("");
+    const [newSlug, setNewSlug] = useState("");
+    const [scheduleDate, setScheduleDate] = useState(new Date());
+    const [scheduleTime, setScheduleTime] = useState(new Date());
+
+    const [venue, setVenue] = useState("");
+    const [image, setImage] = useState(null);
+    const [description, setDescription] = useState("");
+    const [adminId, setAdminId] = useState(1);
+
 
     const fetch = async (slug) => {
         await findEventBySlug(slug)
             .then((res) => {
                 const response = res.data;
                 const { dateFormat, timeFormat } = explodeFormatDateTimeToInputElementUtil(response.schedule)
+
                 setPreviewImg(response.image)
-                setFormData({
-                    event_title: response.eventTitle,
-                    slug: response.slug,
-                    scheduleDate: dateFormat,
-                    scheduleTime: timeFormat,
-                    venue: response.venue,
-                    image: "",
-                    description: response.description,
-                    admin_id: 1
-                })
+                setEventTitle(response.eventTitle || "");
+                setNewSlug(response.slug || "");
+                setScheduleDate(dateFormat || "");
+                setScheduleTime(timeFormat || "");
+                setVenue(response.venue || "");
+                setImage(response.image || null);  // Default image adalah null
+                setDescription(response.description || "");
+                setAdminId(1)
 
             })
             .catch((err) => alert(err))
@@ -51,54 +64,26 @@ const CreateEvent = () => {
         if (slug) {
             fetch(slug)
         }
-    }, [])
+    }, [slug])
 
 
-    const handleChange = (e) => {
-        let { name, value } = e.target
-        if (name == 'event_title') {
-            const generatedSlug = slugify(value, {
-                lower: true, // Mengubah huruf menjadi kecil
-                strict: true, // Menghapus karakter non-alfanumerik
-            });
-            setFormData({
-                ...formData, event_title: value, slug: generatedSlug
-            })
-        } else if (name == "image") {
-            const file = e.target.files[0]
-
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImg(reader.result)
-            };
-            reader.readAsDataURL(file);
-
-            setFormData({
-                ...formData, image: file,
-            })
-        } else {
-            setFormData({
-                ...formData, [name]: value
-            })
-        }
-
-    }
 
     const handleSubmit = async (paramsSlug) => {
-        const dateString = `${formData.scheduleDate} ${formData.scheduleTime}`;
+        const dateString = `${scheduleDate} ${scheduleTime}`;
         const isoDateString = dateString.replace(" ", "T");
         const dateTime = new Date(isoDateString);
-        const isoString = dateTime.toISOString().split('Z')[0]; //convert LocalDateTime
+        const isoString = dateTime.toISOString().split('Z')[0];
+        //convert LocalDateTime
         const isUpdate = paramsSlug;
 
         if (typeof isUpdate !== 'undefined') {
             await updateEvent({
-                event_title: formData?.event_title,
+                event_title: eventTitle,
                 schedule: isoString,
-                slug: formData?.slug,
-                venue: formData?.venue,
-                image: formData?.image,
-                description: formData?.description,
+                slug: newSlug,
+                venue: venue,
+                image: image,
+                description: description,
                 admin_id: 1,
                 paramsSlug: paramsSlug
             }).then((res) => {
@@ -109,23 +94,19 @@ const CreateEvent = () => {
 
         } else {
             await createEvent({
-                event_title: formData?.event_title,
+                event_title: eventTitle,
                 schedule: isoString,
-                slug: formData?.slug,
-                venue: formData?.venue,
-                image: formData?.image,
-                description: formData?.description,
-                admin_id: 1
+                slug: newSlug,
+                venue: venue,
+                image: image,
+                description: description,
+                admin_id: 1,
             }).then((res) => {
                 if (res.success) {
                     navigate('/admin/event')
                 }
             })
         }
-
-
-
-
     }
 
 
@@ -139,7 +120,7 @@ const CreateEvent = () => {
                     <p className='text-3xl font-bold '>{slug ? "Edit Event" : "Create Event"}</p>
                 </div>
             </div>
-            <div className='w-full flex'>
+            <div className='w-full xl:flex'>
                 <div
                     className="block md:w-full lg:w-1/2   mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow  "
                 >
@@ -153,29 +134,48 @@ const CreateEvent = () => {
 
                         <TextInputEl
                             placeholder="Event title"
-                            handleChange={(e) => handleChange(e)}
+                            handleChange={(e) => {
+
+                                let value = e.target.value
+                                const generatedSlug = slugify(value, {
+                                    lower: true, // Mengubah huruf menjadi kecil
+                                    strict: true, // Menghapus karakter non-alfanumerik
+                                });
+                                setEventTitle(value)
+                                setNewSlug(generatedSlug)
+                            }}
                             name="event_title"
-                            value={formData?.event_title}
+                            value={eventTitle}
                         />
                         <TextInputEl
                             placeholder="Slug"
-                            handleChange={(e) => handleChange(e)}
+                            handleChange={(e) => setNewSlug(e.target.value)}
                             readOnly={true}
 
                             name="slug"
-                            value={formData?.slug}
+                            value={newSlug}
                         />
                         <UploadFileEl
                             placeholder="Upload image"
-                            // handleChange={(e) => setFormData({ ...formData, "image": e.target.files[0] })}
-                            handleChange={(e) => handleChange(e)}
+                            handleChange={(e) => {
+                                const file = e.target.files[0]
+
+                                const reader = new FileReader();
+                                reader.onloadend = () => {
+                                    setPreviewImg(reader.result)
+                                };
+                                reader.readAsDataURL(file);
+
+                                setImage(file)
+                            }}
                             name="image"
-                        // value={formData?.image}
+
+
                         />
                         <TextareaEl placeholder="Venue"
-                            handleChange={(e) => handleChange(e)}
+                            handleChange={(e) => setVenue(e.target.value)}
                             name="venue"
-                            value={formData?.venue}
+                            value={venue}
                         />
 
                         <div className='w-full flex'>
@@ -183,31 +183,27 @@ const CreateEvent = () => {
                                 <InputDateEl
                                     placeholder="Schedule"
                                     handleChange={(date) => {
-                                        const year = date.getFullYear()
-                                        const month = String(date.getMonth() + 1).padStart(2, '0'); // Menambahkan leading zero untuk bulan
-                                        const day = String(date.getDate()).padStart(2, '0'); // Menambahkan leading zero untuk hari
-                                        const formattedDate = `${year}-${month}-${day}`;
-                                        console.log(formattedDate);
-                                        setFormData({ ...formData, "scheduleDate": formattedDate })
+                                        const formattedDate = moment(date).format('YYYY-MM-DD');
+                                        setScheduleDate(formattedDate)
                                     }}
-                                    value={formData?.scheduleDate}
+                                    value={scheduleDate}
                                 />
                             </div>
                             <div className='w-3/12'>
                                 <InputTimeEl
                                     placeholder="Time"
-                                    handleChange={(e) => handleChange(e)}
+                                    handleChange={(e) => setScheduleTime(e)}
                                     name="scheduleTime"
-                                    value={formData?.scheduleTime}
+                                    value={scheduleTime}
                                 />
                             </div>
                         </div>
                         <div>
                             <InputCKEditorEl
-                                value={formData?.description}
+                                value={description}
                                 placeholder="Description"
                                 handleChange={(event, editor) => {
-                                    setFormData({ ...formData, "description": editor.getData() })
+                                    setDescription(editor.getData())
                                 }}
                             />
                         </div>
@@ -216,7 +212,6 @@ const CreateEvent = () => {
                                 <Button  >cancel</Button>
                             </Link>
                             <Button color="blue" type='submit'>{slug ? 'Update' : 'Submit'}</Button>
-                            {/* <Button color="blue" onClick={() => handleSubmit(slug)}>{slug ? 'Update' : 'Submit'}</Button> */}
                         </div>
                     </form>
                 </div>
@@ -226,11 +221,11 @@ const CreateEvent = () => {
                 </div>
 
 
-            </div>
+            </div >
 
 
 
-        </LayoutAdmin>
+        </LayoutAdmin >
     )
 }
 

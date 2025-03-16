@@ -9,6 +9,8 @@ import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo } fro
 
 import 'ckeditor5/ckeditor5.css';
 import 'ckeditor5-premium-features/ckeditor5-premium-features.css';
+import moment from 'moment';
+import DateTimePicker from 'react-datetime-picker';
 
 
 export const TextInputEl = ({ type = 'text', name, id, placeholder, handleChange, value, readOnly = false, className, isError = "", messageInfo = "" }) => {
@@ -275,6 +277,40 @@ export const InputTimeEl = ({ placeholder, name, handleChange, value, className 
 }
 
 
+export const InputDateTimePickerEl = ({ placeholder, name, handleChange, value, className }) => {
+
+    return (
+        <>
+
+            <label
+                htmlFor="time"
+                className="block mb-1  ext-sm font-medium text-gray-900 dark:text-white"
+            >
+                {placeholder}
+            </label>
+            <div className="relative">
+                <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                    <DateTimePicker onChange={(e) => handleChange(e)}
+                        // onChange={handleDateChange}
+                        value={value}
+                        className="border !w-full mb-5" // Menghilangkan border
+
+
+                        // className={"border-0"}
+                        clearIcon={null} // Untuk menghilangkan ikon clear
+                        disableClock={true}
+                    />
+                </div>
+
+            </div>
+        </>
+
+    )
+
+
+}
+
+
 export const InputDateEl = ({ placeholder, handleChange, value, className }) => {
 
     return (<div className='mb-5 '>
@@ -284,18 +320,21 @@ export const InputDateEl = ({ placeholder, handleChange, value, className }) => 
         >
             {placeholder}
         </label>
-        <Datepicker
+        {/* <Datepicker
             placeholder="Select date"
             onChange={(e) => handleChange(e)}
             style={{ height: "48px" }}
-            {...(!isNaN(new Date(value).getTime()) ? { value: new Date(value) } : {})}
-        />
-        {/* <Datepicker
-            // dateFormat="dd/MM/yyyy"
+            value={new Date(value)}
+        // {...(!isNaN(new Date(value).getTime()) ? { value: new Date(value) } : {})}
+
+        /> */}
+        <Datepicker
+            placeholder="Select date"
+            dateFormat="dd/MM/yyyy"
             onChange={(e) => handleChange(e)}
             style={{ height: "48px" }}
             value={value}
-        /> */}
+        />
     </div>)
 }
 
@@ -311,7 +350,7 @@ export const InputCKEditorEl = ({ handleChange, value, placeholder }) => {
             <CKEditor
                 editor={ClassicEditor}
                 // style={{ height: "400px" }}
-
+                data={value || ''}
                 config={{
                     toolbar: {
                         items: ['undo', 'redo', '|', 'bold', 'italic'],

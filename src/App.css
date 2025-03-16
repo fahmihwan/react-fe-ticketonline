@@ -1,0 +1,8 @@
+.react-datetime-picker__wrapper{
+    /* border: 1px solid rgb(221, 221, 221); */
+    border: 1px solid rgb(221, 221, 221) !important;
+    border-radius: 5px;
+    padding: 0 20px;
+
+    
+}
