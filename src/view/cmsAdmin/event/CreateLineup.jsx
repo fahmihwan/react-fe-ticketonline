@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
@@ -6,24 +6,35 @@ import { TextInputEl } from '../../component/InputEl'
 
 import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
-import { createLineUp, removeLineUp } from '../../../api/lineUp'
-import { useEffecLineUp } from '../../../hook/useEffectLineUp'
+import { useDispatch, useSelector } from 'react-redux'
+import { createLineUp, getAllLineUpBySlug, removeLineUp } from '../../../redux/feature/lineUpSlice'
 
 
 
 
 const CreateLineup = () => {
     const { slug } = useParams();
-    const { responseListLineUp, fetchDataLineUp } = useEffecLineUp(slug)
+    // const { responseListLineUp, fetchDataLineUp } = useEffecLineUp(slug)
 
+    const dispatch = useDispatch();
+    const lineUp = useSelector((state) => state.lineUp.lineUpData || [])
+    const status = useSelector((state) => state.lineUp.status)
+
+
+
+    useEffect(() => {
+        dispatch(getAllLineUpBySlug({ slug: slug }))
+        console.log('wkwkwwkkwk');
+    }, [slug, dispatch])
 
 
     const [formData, setFormData] = useState({
         talentName: "Isyana Saraswati",
     });
+
     const handleSubmit = async () => {
-        await createLineUp(formData, slug)
-        await fetchDataLineUp(slug)
+        await dispatch(createLineUp({ slug: slug, payload: formData }))
+        await dispatch(getAllLineUpBySlug({ slug: slug }))
     }
 
     const handleChange = (e) => {
@@ -36,15 +47,14 @@ const CreateLineup = () => {
     const handleDelete = async (id) => {
         const isDelete = confirm("Apakah anda ingin menghapus data?");
         if (isDelete) {
-            await removeLineUp(id)
-            await fetchDataLineUp(slug)
+            await dispatch(removeLineUp({ id: id }))
+            await dispatch(getAllLineUpBySlug({ slug: slug }))
         }
     }
 
     return (
         <LayoutAdmin>
             <DetailAdminComponent />
-
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
                     <p className='text-3xl font-bold '>Create  Lineup</p>
@@ -75,12 +85,14 @@ const CreateLineup = () => {
                     </div>
                     <div className='h-full '>
                         <div className='h-[100px] '>
-                            {responseListLineUp?.length != 0 && responseListLineUp?.map((d, i) => (<TicketListCompt
-                                key={i}
-                                id={d?.id}
-                                talentName={d?.talentName}
-                                handleDelete={() => handleDelete(d?.id)}
-                            />))}
+                            {status == 'loading' ? 'wkwkw loading' : (
+                                lineUp?.length != 0 && lineUp?.map((d, i) => (<TicketListCompt
+                                    key={i}
+                                    id={d?.id}
+                                    talentName={d?.talentName}
+                                    handleDelete={() => handleDelete(d?.id)}
+                                />))
+                            )}
 
 
                         </div>
