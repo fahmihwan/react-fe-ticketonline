@@ -5,9 +5,34 @@ import { IconEditEl, IconPlusAdminAddEl, IconTrashEl } from '../../component/Ico
 import { useEffectEventPagination } from '../../../hook/useEffectEvents';
 import { formatDateTimeUtil, formatRupiahUtil } from '../../../utils/utils';
 import { PaginationEl } from '../../component/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { getEventAdminPagination } from '../../../redux/feature/eventSlice';
 
 const Ticket = () => {
-    const { responseData, paginate, setPaginate } = useEffectEventPagination(); //customeHook
+    // const { responseData, paginate, setPaginate } = useEffectEventPagination(); //customeHook
+    const dispatch = useDispatch()
+    const events = useSelector((state) => state.event.eventData || [])
+    const status = useSelector((state) => state.event.status)
+
+
+    const [paginate, setPaginate] = useState({
+        currentPage: 0,
+        size: 5,
+        totalPages: 0,
+        offset: 0,
+    })
+    useEffect(() => {
+        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size })).then((res) => {
+            let response = res.payload.data
+            let offset = response.pageable.offset
+            let totalPages = response.totalPages
+            setPaginate({ ...paginate, offset: offset, totalPages: totalPages })
+        })
+
+    }, [dispatch, events?.size, paginate?.currentPage])
+
+
     return (
         <LayoutAdmin>
             <div className='w-full'>
@@ -34,7 +59,7 @@ const Ticket = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {responseData?.content?.map((d, i) => (
+                        {events?.content?.map((d, i) => (
                             <tr key={i} className="bg-white border-b  hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <td>
                                     {paginate.offset + i + 1}

@@ -1,21 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Await, Link, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, TextInputEl } from '../../component/InputEl'
-import { createCategoryTicket, removeCategoryTicket } from '../../../api/categoryTicket'
-import { useEffecEventWithCategoryTickets } from '../../../hook/useEffectEvents'
 import { formatRupiahUtil } from '../../../utils/utils'
 import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
+import { useDispatch, useSelector } from 'react-redux'
+import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
+import { createCategoryTicket, removeCategoryTicket } from '../../../redux/feature/categoryTicketSlice'
 
 
 
 
 const CreateTicket = () => {
     const { slug } = useParams();
+    const dispatch = useDispatch()
+    const events = useSelector((state) => state.event.detailEvent)
+    const status = useSelector((state) => state.event.status)
 
-    const { responseData, fetchData } = useEffecEventWithCategoryTickets(slug); //customeHook
+
+    useEffect(() => {
+        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+    }, [dispatch])
+
+
+
+
 
     const [formData, setFormData] = useState({
         slug: slug,
@@ -25,8 +36,9 @@ const CreateTicket = () => {
         description: "<p>dsd</p>",
     });
     const handleSubmit = async () => {
-        await createCategoryTicket(formData).then((res) => console.log(res)).catch((err) => console.log(err))
-        await fetchData(slug)
+        await dispatch(createCategoryTicket({ payload: formData }))
+        await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+
     }
 
     const handleChange = (e) => {
@@ -39,8 +51,9 @@ const CreateTicket = () => {
     const handleDelete = async (id) => {
         const isDelete = confirm("Apakah anda ingin menghapus data?");
         if (isDelete) {
-            await removeCategoryTicket(id)
-            await fetchData(slug)
+            await dispatch(removeCategoryTicket({ categoryTicketId: id }))
+            await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+
         }
     }
 
@@ -98,7 +111,7 @@ const CreateTicket = () => {
                     </div>
                     <div className='h-full '>
                         <div className='h-[100px] '>
-                            {responseData?.category_tickets.length != 0 && responseData?.category_tickets?.map((d, i) => (<TicketListCompt
+                            {events?.category_tickets.length != 0 && events?.category_tickets?.map((d, i) => (<TicketListCompt
                                 key={i}
                                 id={d?.id}
                                 categoryName={d?.categoryName}
@@ -107,8 +120,6 @@ const CreateTicket = () => {
                                 description={d?.description}
                                 handleDelete={() => handleDelete(d?.id)}
                             />))}
-
-
                         </div>
                     </div>
                 </div>
