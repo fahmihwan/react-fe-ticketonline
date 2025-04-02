@@ -4,13 +4,15 @@ import eventReducer from "./feature/eventSlice";
 import transactionReducer from "./feature/transactionSlice";
 import lineUpReducer from "./feature/lineUpSlice";
 import categoryTicketReducer from "./feature/categoryTicketSlice";
+import cartReducer from "./feature/cartTicketSlice";
 
 const store = configureStore({
     reducer: {
         event: eventReducer,
         transaction: transactionReducer,
         lineUp: lineUpReducer,
-        categoryTicket: categoryTicketReducer
+        categoryTicket: categoryTicketReducer,
+        cart: cartReducer
 
         //   auth: authReducer,
         //   mountain: mountainReducer,

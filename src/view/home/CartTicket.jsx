@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconMinusEl, IconPlusEl } from "../component/IconSvg";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
-import { createCartTicket } from "../../redux/feature/transactionSlice";
+import { createCartTicket } from "../../redux/feature/cartTicketSlice";
 
 export default function CartTicket() {
 
     const { slug } = useParams();
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const event = useSelector((state) => state.event.detailEvent || {})
+
 
     const [listTicket, setListTicket] = useState([]);
     const [totalCheckout, setTotalCheckout] = useState(0)
     const [detailEvent, setDetailEvent] = useState({});
-
+    const [isDisabled, setIsDisabled] = useState(false)
 
 
     useEffect(() => {
@@ -101,8 +103,17 @@ export default function CartTicket() {
             slug: slug,
             detailTransactions: tickets
         }
+        setIsDisabled(true)
+        dispatch(createCartTicket({ payload: payload })).then((res) => {
+            if (res.payload.success) {
+                navigate(`/event/${slug}/checkout`)
 
-        dispatch(createCartTicket({ payload: payload }))
+            }
+            setIsDisabled(false)
+
+        }).catch((res) => {
+            setIsDisabled(false)
+        })
 
     }
 
@@ -191,7 +202,7 @@ export default function CartTicket() {
                             <div className="">
                                 <p>{totalCheckout} Tiket Dipesan</p>
                                 {
-                                    totalCheckout > 0 && (<table className="w-full text-sm">
+                                    totalCheckout > 0 || isDisabled == false && (<table className="w-full text-sm">
                                         <tbody>
                                             {listTicket?.map((d, i) => {
                                                 if (d?.total != 0) {

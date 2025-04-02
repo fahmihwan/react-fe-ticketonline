@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import LayoutAdmin from '../../layouts/LayoutAdmin'
-import { Await, Link, useParams } from 'react-router-dom'
+import { Await, Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, TextInputEl } from '../../component/InputEl'
 import { formatRupiahUtil } from '../../../utils/utils'
@@ -16,6 +16,7 @@ import { createCategoryTicket, removeCategoryTicket } from '../../../redux/featu
 const CreateTicket = () => {
     const { slug } = useParams();
     const dispatch = useDispatch()
+    const navigate = useNavigate();
     const events = useSelector((state) => state.event.detailEvent)
     const status = useSelector((state) => state.event.status)
 
