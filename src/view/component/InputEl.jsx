@@ -129,7 +129,7 @@ export const UploadFileEl = ({ name, id, placeholder, handleChange, value, readO
 }
 
 
-export const RadioEl = ({ name, id, placeholder, handleChange, selectedValue, optionValue, index }) => {
+export const RadioEl = ({ name, id, placeholder, handleChange, selectedValue, optionValue, index, readOnly }) => {
 
     let svg = ""
     if (id == "L") {
@@ -146,6 +146,7 @@ export const RadioEl = ({ name, id, placeholder, handleChange, selectedValue, op
                 type="radio"
                 id={id}
                 name={name}
+                disabled={readOnly}
                 checked={optionValue == selectedValue}
                 value={optionValue}
                 className="hidden peer"
@@ -162,6 +163,9 @@ export const RadioEl = ({ name, id, placeholder, handleChange, selectedValue, op
             </label>
         </>)
 }
+
+
+
 
 
 
@@ -221,6 +225,7 @@ export const SelectEl = ({ type = 'text', name, id, placeholder, selectedValue, 
             }
             <select
                 id={id}
+                disabled={readOnly}
                 name={name}
                 value={selectedValue}
                 onChange={(e) => handleChange(e)}

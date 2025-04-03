@@ -12,12 +12,25 @@ const createCartTicket = createAsyncThunk("cart/createCartTicket", async ({ payl
 })
 
 
+const findCartByUserId = createAsyncThunk("cart/findCartByUserId", async ({ userId }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/cart/${userId}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
+
+
 const cartSlice = createSlice({
     name: "cartSlice",
     initialState: {
         message: "",
         detailEvent: null,
         paymentMethod: null,
+        listCartUser: [],
         status: null,
     },
     reducers: {
@@ -41,6 +54,21 @@ const cartSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(findCartByUserId.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(findCartByUserId.fulfilled, (state, action) => {
+
+            return (state = {
+                ...state,
+                listCartUser: action.payload.data,
+                status: "success"
+            })
+        }).addCase(findCartByUserId.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
 
 
@@ -50,5 +78,6 @@ const cartSlice = createSlice({
 
 export {
     createCartTicket,
+    findCartByUserId
 };
 export default cartSlice.reducer

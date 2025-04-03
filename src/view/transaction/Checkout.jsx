@@ -5,13 +5,15 @@ import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
 
-
 import { useDispatch, useSelector } from "react-redux";
 import { getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
+import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
 
 export default function Checkout() {
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
+    const cartUser = useSelector((state) => state.cart.listCartUser)
+    // console.log(cartUser);
 
     const [formCustomer, setFormCustomer] = useState([]);
     const [detailCartTicket, setDetailCartTicket] = useState([]);
@@ -52,6 +54,7 @@ export default function Checkout() {
 
     useEffect(() => {
         dispatch(getPaymentMethodDuitku({ payload: { amount: 2000 } }))
+        dispatch(findCartByUserId({ userId: 1 }))
     }, [])
 
     useEffect(() => {
@@ -61,7 +64,9 @@ export default function Checkout() {
         let res = paymentDuitku
 
 
-        let response = []
+        let response = cartUser
+        // let response = cartUser
+
 
         let categorizedPayments = {
             "Virtual Account": [],
@@ -96,7 +101,6 @@ export default function Checkout() {
             gender: "",
             full_name: "",
             email: "",
-
             d_birth_date: "",
             m_birth_date: "",
             y_birth_date: "",
@@ -105,11 +109,13 @@ export default function Checkout() {
         }
 
 
+
         for (let i = 0; i < totalTicket; i++) {
             for (let x = 0; x < cartTicket.length; x++) {
                 if (cartTicket[x].total > 0) {
                     cartTicket[x].total--
                     makeArrForm.push({
+                        is_same_credential: false,
                         price: cartTicket[x].price,
                         category_name: cartTicket[x].category_name,
                         ...objForm
@@ -129,9 +135,23 @@ export default function Checkout() {
             makeArrForm[x].increment_id = x
         }
 
+        makeArrForm[0] = fAutoFormCredential(makeArrForm[0])
         setFormCustomer(makeArrForm);
 
     }, [paymentDuitku])
+
+
+    const fAutoFormCredential = (makeArrForm) => {
+        makeArrForm.full_name = "fahmi ichwanurrohman"
+        makeArrForm.email = "fahmiiwan86@gmail.com"
+        makeArrForm.gender = "L"
+        makeArrForm.d_birth_date = "11"
+        makeArrForm.m_birth_date = "Juli"
+        makeArrForm.y_birth_date = "1999"
+        makeArrForm.telp = "082334337393"
+        makeArrForm.address = "Magetan"
+        return makeArrForm
+    }
 
     const handleChange = (e, index) => {
         let { name, value } = e.target
@@ -139,15 +159,29 @@ export default function Checkout() {
         if (name.includes('gender')) {
             name = 'gender'
         }
-        const updateForm = [...formCustomer];
+
+        let updateForm = [...formCustomer];
         updateForm[index] = {
             ...updateForm[index], [name]: value
         }
 
-        console.log(updateForm);
+        for (let i = 0; i < updateForm.length; i++) {
+            if (updateForm[i].is_same_credential) {
+                updateForm[i].full_name = updateForm[0].full_name
+                updateForm[i].email = updateForm[0].email
+                updateForm[i].gender = updateForm[0].gender
+                updateForm[i].d_birth_date = updateForm[0].d_birth_date
+                updateForm[i].m_birth_date = updateForm[0].m_birth_date
+                updateForm[i].y_birth_date = updateForm[0].y_birth_date
+                updateForm[i].telp = updateForm[0].telp
+                updateForm[i].address = updateForm[0].address
+            }
+        }
         setFormCustomer(updateForm)
+
     }
     const handleSubmit = () => {
+        console.log(formCustomer);
         setStep(2)
     }
 
@@ -165,6 +199,7 @@ export default function Checkout() {
                         <div className="w-full md:w-7/12 m-5 md:m-0 md:mr-5">
                             {step == 1 ? (formCustomer.map((d, i) => (
                                 <FormCardCompt
+                                    isSameCredential={d.is_same_credential}
                                     key={d.increment_id}
                                     category_name={d.category_name}
                                     id={d.increment_id}
@@ -275,8 +310,9 @@ const StepperCompt = ({ step }) => {
     )
 }
 
-const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_date, m_birth_date, y_birth_date, telp, address, handleChange }) => {
-    const [switch1, setSwitch1] = useState(false);
+const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_date, m_birth_date, y_birth_date, telp, address, isSameCredential, handleChange }) => {
+    // const [switch1, setSwitch1] = useState(false);
+
     return (
         <div className="bg-white border mb-5">
             <div className="flex border-b mb-5 p-3 justify-between">
@@ -287,7 +323,18 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     {id == 0 ? (<b>Detail Pembeli</b>) : (<b>{`Pengunjung ${id}`}</b>)}
                 </div>
                 <div>
-                    {id != 0 && (<ToggleSwitch checked={switch1} label="Sama dengan detail pembeli" onChange={setSwitch1} />)}
+                    {id != 0 && (<ToggleSwitch checked={isSameCredential}
+                        label="Sama dengan detail pembeli"
+                        onChange={(value) => {
+                            handleChange({
+                                target: {
+                                    name: "is_same_credential",
+                                    value: value
+                                }
+                            })
+
+                        }}
+                    />)}
                 </div>
             </div>
             <div className="px-5">
@@ -300,11 +347,13 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     placeholder="Nama Lengkap"
                     handleChange={(e) => handleChange(e)}
                     name="full_name"
+                    readOnly={isSameCredential}
                     value={full_name}
                 />
                 <TextInputEl
                     placeholder="Email"
                     name="email"
+                    readOnly={isSameCredential}
                     value={email}
                     handleChange={(e) => handleChange(e)}
                 />
@@ -319,6 +368,7 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                         <div className="w-1/2 mr-2">
                             <RadioEl
                                 optionValue="L"
+                                readOnly={isSameCredential}
                                 selectedValue={gender}
                                 handleChange={(e) => handleChange(e)}
                                 placeholder={"Laki - laki"} name={"gender"} id={"L"} index={id} />
@@ -326,6 +376,7 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                         <div className="w-1/2">
                             <RadioEl
                                 optionValue="P"
+                                readOnly={isSameCredential}
                                 selectedValue={gender}
                                 handleChange={(e) => handleChange(e)}
                                 placeholder={"Perempuan"} name={"gender"} id={"P"} index={id} />
@@ -337,6 +388,7 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                 <div className="w-full flex mb-5">
                     <div className="w-1/2 mr-2">
                         <SelectEl
+                            readOnly={isSameCredential}
                             selectedValue={d_birth_date}
                             name="d_birth_date"
                             handleChange={(e) => handleChange(e)}
@@ -344,12 +396,14 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     </div>
                     <div className="w-1/2 mr-2">
                         <SelectEl
+                            readOnly={isSameCredential}
                             selectedValue={m_birth_date}
                             key={id + "month"} id={id + "month"} placeholder="&nbsp;" name="m_birth_date"
                             handleChange={(e) => handleChange(e)} />
                     </div>
                     <div className="w-1/2 mr-2">
                         <SelectEl
+                            readOnly={isSameCredential}
                             selectedValue={y_birth_date}
                             key={id + "year"} id={id + "year"} placeholder="&nbsp;" name="y_birth_date"
                             handleChange={(e) => handleChange(e)} />
@@ -358,9 +412,11 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                 <TextInputEl
                     name="telp"
                     value={telp}
+                    readOnly={isSameCredential}
                     handleChange={(e) => handleChange(e)}
                     placeholder="Nomor Telepon" />
                 <TextInputEl
+                    readOnly={isSameCredential}
                     name="address"
                     value={address}
                     handleChange={(e) => handleChange(e)}
