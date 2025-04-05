@@ -5,6 +5,8 @@ import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
 
+
+
 import { useDispatch, useSelector } from "react-redux";
 import { getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
@@ -13,13 +15,15 @@ export default function Checkout() {
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
-    // console.log(cartUser);
+    const [isAlert, setIsAlert] = useState("")
+
 
     const [formCustomer, setFormCustomer] = useState([]);
     const [detailCartTicket, setDetailCartTicket] = useState([]);
     const [selectedPayment, setSelectedPayment] = useState('')
     const [step, setStep] = useState(1);
     const [listPayment, setListPayment] = useState([])
+    const [firstSubmited, setFirstSubmited] = useState(false)
 
 
     // Set initial time to 10 minutes (600 detik)
@@ -105,7 +109,8 @@ export default function Checkout() {
             m_birth_date: "",
             y_birth_date: "",
             telp: "",
-            address: ""
+            isError: false,
+            address: "",
         }
 
 
@@ -181,12 +186,50 @@ export default function Checkout() {
 
     }
     const handleSubmit = () => {
-        console.log(formCustomer);
-        setStep(2)
+        if (step == 1) {
+
+            setFirstSubmited(true)
+            // const validateRequired = formCustomer.map((item) => {
+            //     // Memeriksa apakah ada properti kosong
+            //     const isError = Object.keys(item).some(key =>
+            //         item[key] === "" || item[key] === null || item[key] === undefined || (typeof item[key] === "number" && item[key] === 0)
+            //     );
+
+            //     // Menambahkan properti isError pada setiap objek
+            //     return { ...item, isError };
+            // });
+            // setFormCustomer(validateRequired)
+
+            const emptyProperties = [];
+            let cek = formCustomer.map((item, index) => {
+
+
+                for (let key in item) {
+                    if (item[key] === "" || item[key] === null || item[key] === undefined) {
+                        emptyProperties.push(key);
+                    }
+                }
+
+            });
+
+            if (emptyProperties.length > 0) {
+                setIsAlert("Mohon lengkapi data")
+            } else {
+                setIsAlert("")
+                setStep(2)
+            }
+
+
+            // setStep(2)
+        } else if (step == 2) {
+            console.log("wkww");
+        }
+
     }
 
     return (
         <LayoutCustomer>
+
             <div className="w-full bg-gray-100 border">
                 <div className="bg-yellow-300 w-full py-1 text-center">
                     <b> {formatTime(timeLeft)}</b> Waktu pengisian data
@@ -194,11 +237,46 @@ export default function Checkout() {
                 <div className="w-full my-5 flex justify-center">
                     <StepperCompt step={step} />
                 </div>
+
+
+
+
+                {/* <Toast className="">
+                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
+                        <HiExclamation className="h-5 w-5" />
+                    </div>
+                    <div className="ml-3 text-sm font-normal">Improve password difficulty.</div>
+                    <ToastToggle />
+                </Toast> */}
                 <div className="mx-5 md xl:mx-[300px]">
                     <div className="w-full flex">
                         <div className="w-full md:w-7/12 m-5 md:m-0 md:mr-5">
+
+                            {isAlert.length != 0 && (
+                                <div
+                                    className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
+                                    role="alert"
+                                >
+                                    <svg
+                                        className="shrink-0 inline w-4 h-4 me-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                                    </svg>
+                                    <span className="sr-only">Info</span>
+                                    <div>
+                                        <span className="font-medium">{isAlert}</span>
+                                    </div>
+                                </div>
+                            )
+                            }
+
                             {step == 1 ? (formCustomer.map((d, i) => (
                                 <FormCardCompt
+                                    firstSubmited={firstSubmited}
                                     isSameCredential={d.is_same_credential}
                                     key={d.increment_id}
                                     category_name={d.category_name}
@@ -259,8 +337,10 @@ export default function Checkout() {
                             />
                         </div>
                     </div>
+
                 </div>
             </div>
+
         </LayoutCustomer>
     )
 }
@@ -310,7 +390,7 @@ const StepperCompt = ({ step }) => {
     )
 }
 
-const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_date, m_birth_date, y_birth_date, telp, address, isSameCredential, handleChange }) => {
+const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_date, m_birth_date, y_birth_date, telp, address, isSameCredential, handleChange, firstSubmited }) => {
     // const [switch1, setSwitch1] = useState(false);
 
     return (
@@ -349,6 +429,7 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     name="full_name"
                     readOnly={isSameCredential}
                     value={full_name}
+                    isError={firstSubmited && full_name == ''}
                 />
                 <TextInputEl
                     placeholder="Email"
@@ -356,6 +437,7 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     readOnly={isSameCredential}
                     value={email}
                     handleChange={(e) => handleChange(e)}
+                    isError={firstSubmited && email == ''}
                 />
                 <div className="mb-5">
                     <label
@@ -371,7 +453,11 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                                 readOnly={isSameCredential}
                                 selectedValue={gender}
                                 handleChange={(e) => handleChange(e)}
-                                placeholder={"Laki - laki"} name={"gender"} id={"L"} index={id} />
+                                placeholder={"Laki - laki"} name={"gender"} id={"L"} index={id}
+                                isError={firstSubmited && gender == ''}
+                                whichMessageError={1}
+                            />
+
                         </div>
                         <div className="w-1/2">
                             <RadioEl
@@ -379,7 +465,9 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                                 readOnly={isSameCredential}
                                 selectedValue={gender}
                                 handleChange={(e) => handleChange(e)}
-                                placeholder={"Perempuan"} name={"gender"} id={"P"} index={id} />
+                                placeholder={"Perempuan"} name={"gender"} id={"P"} index={id}
+                                isError={firstSubmited && gender == ''}
+                                whichMessageError={2} />
                         </div>
                     </div>
                 </div>
@@ -392,21 +480,30 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                             selectedValue={d_birth_date}
                             name="d_birth_date"
                             handleChange={(e) => handleChange(e)}
-                            key={id + "day"} id={id + "day"} placeholder={"Tanggal lahir"} />
+                            key={id + "day"} id={id + "day"} placeholder={"Tanggal lahir"}
+                            isError={firstSubmited && d_birth_date == ''}
+                            whichMessageError={1}
+                        />
                     </div>
                     <div className="w-1/2 mr-2">
                         <SelectEl
                             readOnly={isSameCredential}
                             selectedValue={m_birth_date}
                             key={id + "month"} id={id + "month"} placeholder="&nbsp;" name="m_birth_date"
-                            handleChange={(e) => handleChange(e)} />
+                            handleChange={(e) => handleChange(e)}
+                            isError={firstSubmited && m_birth_date == ''}
+                            whichMessageError={2}
+                        />
                     </div>
                     <div className="w-1/2 mr-2">
                         <SelectEl
                             readOnly={isSameCredential}
                             selectedValue={y_birth_date}
                             key={id + "year"} id={id + "year"} placeholder="&nbsp;" name="y_birth_date"
-                            handleChange={(e) => handleChange(e)} />
+                            isError={firstSubmited && y_birth_date == ''}
+                            handleChange={(e) => handleChange(e)}
+                            whichMessageError={3}
+                        />
                     </div>
                 </div>
                 <TextInputEl
@@ -414,12 +511,14 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
                     value={telp}
                     readOnly={isSameCredential}
                     handleChange={(e) => handleChange(e)}
+                    isError={firstSubmited && telp == ''}
                     placeholder="Nomor Telepon" />
                 <TextInputEl
                     readOnly={isSameCredential}
                     name="address"
                     value={address}
                     handleChange={(e) => handleChange(e)}
+                    isError={firstSubmited && address == ''}
                     placeholder="Alamat" />
             </div>
         </div>
