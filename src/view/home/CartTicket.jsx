@@ -31,19 +31,31 @@ export default function CartTicket() {
             return
         }
         dispatch(findCartByUserId({ userId: 1 }))
-        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
-    }, [slug])
+        dispatch(findBySlugWithCategoryTickets({ slug: slug })).then((res) => {
+
+            setDetailEvent({
+                id: res.payload.data?.id,
+                event_title: res.payload.data?.event_title,
+                schedule: res.payload.data?.schedule,
+                image: res.payload.data?.image,
+                venue: res.payload.data?.venue
+            })
+
+
+        })
+    }, [slug, dispatch])
 
     useEffect(() => {
-        if (event) {
-            setDetailEvent({
-                id: event?.id,
-                event_title: event?.event_title,
-                schedule: event?.schedule,
-                image: event?.image,
-                venue: event?.venue
-            })
-        }
+        // if (event) {
+        //     console.log(event);
+        //     // setDetailEvent({
+        //     //     id: event?.id,
+        //     //     event_title: event?.event_title,
+        //     //     schedule: event?.schedule,
+        //     //     image: event?.image,
+        //     //     venue: event?.venue
+        //     // })
+        // }
 
 
         let responseTicket = event?.category_tickets
@@ -116,6 +128,8 @@ export default function CartTicket() {
             slug: slug,
             detailTransactions: tickets
         }
+
+
         setIsDisabled(true)
         dispatch(createCartTicket({ payload: payload })).then((res) => {
             if (res.payload.success) {
@@ -137,9 +151,9 @@ export default function CartTicket() {
             <div className=" mx-[20px] xl:mx-[300px] my-5">
                 <div className="w-full md:flex ">
                     <div className="w-full mb-[30px] md:mb-0 md:w-7/12 mr-5 ">
-                        <div className="border px-5 bg-white">
-                            <p className="font-extrabold text-xl p-5">Kategori Tiket</p>
-                            {listTicket.map((item, index) => (
+                        <div className="border px-5 bg-white ">
+                            <p className="font-extrabold text-xl p-5 ">Kategori Tiket</p>
+                            {listTicket.length != 0 ? (listTicket.map((item, index) => (
                                 <div key={index}>
                                     <div className="border border-gray-300 flex justify-between items-center py-5 px-5 mb-5" >
                                         <div>
@@ -178,7 +192,19 @@ export default function CartTicket() {
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            ))) : (<div className="h-[380px] flex justify-center items-center ">
+                                <div>
+                                    <div className="flex justify-center mb-5">
+                                        <img src="/assets/fe/not_found.png" alt="" />
+                                    </div>
+                                    <div className="text-center ">
+
+                                        <p>Tiket Belum tersedia</p>
+                                        <p>Daftar kategori tiket akan ditampilkan di sini setelah tersedia.</p>
+                                    </div>
+
+                                </div>
+                            </div>)}
                         </div>
 
                     </div>
@@ -270,7 +296,7 @@ export default function CartTicket() {
                             {cartUser.length > 0 && (
 
                                 <Link
-                                    to={"/event/${slug}/checkout"} className="flex justify-center px-2 text-center py-3 mt-5 border border-blue-500 bg-blue-200">
+                                    to={`/event/${slug}/checkout`} className="flex justify-center px-2 text-center py-3 mt-5 border border-blue-500 bg-blue-200">
                                     <div className="flex items-center">
 
                                         {/* <svg

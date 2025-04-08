@@ -153,7 +153,7 @@ export const RadioEl = ({ name, id, required, placeholder, handleChange, selecte
                 disabled={readOnly}
                 checked={optionValue == selectedValue}
                 value={optionValue}
-                className="hidden peer"
+                className="hidden peer bg-gray-500"
                 onChange={(e) => handleChange(e)}
             />
             <label
@@ -162,9 +162,9 @@ export const RadioEl = ({ name, id, required, placeholder, handleChange, selecte
                 // text-sm rounded-lg border h-12  block w-full p-2.5  ${readOnly && "bg-gray-200"}`}
 
                 className={`
-                    ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "bg-white border-gray-200"}
-                    inline-flex border
-                    h-12 items-center justify-between w-full p-5 text-gray-500  rounded-lg cursor-pointer ${optionValue == selectedValue && "peer-checked:border-blue-600 peer-checked:text-blue-600"} hover:text-gray-600 hover:bg-gray-100 `}
+                ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : `${readOnly ? "bg-gray-200" : "bg-white"}  border-gray-200`}
+                inline-flex border
+                h-12 items-center justify-between w-full p-5 text-gray-500  rounded-lg cursor-pointer ${optionValue == selectedValue && "peer-checked:border-blue-600 peer-checked:text-blue-600"} hover:text-gray-600 hover:bg-gray-100 `}
 
             // className={`inline-flex h-12 items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer ${optionValue == selectedValue && "peer-checked:border-blue-600 peer-checked:text-blue-600"} hover:text-gray-600 hover:bg-gray-100 `}
             >
@@ -252,7 +252,8 @@ export const SelectEl = ({ type = 'text', name, id, required, placeholder, selec
                 // className={`${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "bg-white border-gray-200"}`}
                 className={`
                     border h-12 text-sm rounded-lg
-                    ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 "} block w-full p-2.5`}
+                    ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 "} block w-full p-2.5
+                    ${readOnly && "bg-gray-200"}`}
 
             // className=" border h-12 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
             >
