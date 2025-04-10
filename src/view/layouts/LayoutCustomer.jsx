@@ -1,11 +1,11 @@
 import { Dropdown, Navbar } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { IconLogoBrandEl } from "../component/IconSvg";
 import { useState } from "react";
 import { Button, Modal } from "flowbite-react";
 import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
 
-export default function LayoutCustomer({ children }) {
+export default function LayoutCustomer() {
     const [openModalProfile, setOpenModalProfile] = useState(false);
     const [openModalPassword, setOpenModalPassword] = useState(false);
 
@@ -98,7 +98,7 @@ export default function LayoutCustomer({ children }) {
             </Navbar>
 
             <div className="w-full bg-[#FAFCFD] relative">
-                {children}
+                <Outlet />
                 <footer className="bg-white rounded-lg ">
                     <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
 

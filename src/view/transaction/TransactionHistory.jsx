@@ -43,7 +43,7 @@ export default function TransactionHistory() {
     }, [])
 
     return (
-        <LayoutCustomer>
+        <>
             <div className="lg:mx-[400px]">
                 <div className="w-full ">
                     <div className="w-full">
@@ -75,8 +75,7 @@ export default function TransactionHistory() {
 
                     </div>
                 </div>
-            </div>
-        </LayoutCustomer >
+            </div></>
     )
 }
 

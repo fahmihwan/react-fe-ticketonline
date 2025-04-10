@@ -42,7 +42,7 @@ export default function DetailTransaction() {
     }, [])
 
     return (
-        <LayoutCustomer>
+        <>
             <div className="lg:mx-[400px]">
                 <div className="w-full ">
                     <div className="w-full">
@@ -108,7 +108,6 @@ export default function DetailTransaction() {
 
                     </div>
                 </div>
-            </div>
-        </LayoutCustomer >
+            </div></>
     )
 }

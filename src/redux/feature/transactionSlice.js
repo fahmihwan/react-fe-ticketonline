@@ -10,6 +10,17 @@ const getPaymentMethodDuitku = createAsyncThunk("duitku/getPaymentMethodDuitku",
         return rejectWithValue(error.response.data)
     }
 })
+
+const checkoutTransaction = createAsyncThunk("duitku/checkout", async ({ payload }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.post(`/transaction/checkout`, payload)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
 // export const getPaymentMethodDuitku = async (payload) => {
 //     try {
 //         const response = await apiClient.post(`/transaction/paymentgateway-get-payment-method`, payload)
@@ -25,6 +36,7 @@ const transactionSlice = createSlice({
         message: "",
         detailEvent: null,
         paymentMethod: null,
+        checkout: null,
         status: null,
     },
     reducers: {
@@ -47,6 +59,20 @@ const transactionSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(checkoutTransaction.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(checkoutTransaction.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                checkout: action.payload.data,
+                status: "success"
+            })
+        }).addCase(checkoutTransaction.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
 
 
@@ -55,6 +81,7 @@ const transactionSlice = createSlice({
 
 
 export {
-    getPaymentMethodDuitku
+    getPaymentMethodDuitku,
+    checkoutTransaction
 };
 export default transactionSlice.reducer

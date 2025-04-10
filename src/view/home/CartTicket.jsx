@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconCartEl, IconMinusEl, IconPlusEl } from "../component/IconSvg";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
@@ -133,6 +132,8 @@ export default function CartTicket() {
         setIsDisabled(true)
         dispatch(createCartTicket({ payload: payload })).then((res) => {
             if (res.payload.success) {
+                localStorage.removeItem('form')
+
                 navigate(`/event/${slug}/checkout`)
 
             }
@@ -147,7 +148,7 @@ export default function CartTicket() {
 
 
     return (
-        <LayoutCustomer>
+        <>
             <div className=" mx-[20px] xl:mx-[300px] my-5">
                 <div className="w-full md:flex ">
                     <div className="w-full mb-[30px] md:mb-0 md:w-7/12 mr-5 ">
@@ -352,7 +353,6 @@ export default function CartTicket() {
 
 
 
-            </div>
-        </LayoutCustomer >
+            </div></>
     )
 }

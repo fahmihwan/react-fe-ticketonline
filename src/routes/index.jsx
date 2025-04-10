@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import CreateLineup from "../view/cmsAdmin/event/CreateLineup";
 import LayoutAdmin from "../view/layouts/LayoutAdmin";
+import LayoutCustomer from "../view/layouts/LayoutCustomer";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -22,28 +23,15 @@ const DetailTransaction = lazy(() => import("../view/transaction/DetailTransacti
 
 const routes = createBrowserRouter([
     {
-        path: "/",
-        element: <Home />
-    },
-
-    {
-        path: "/event/:slug",
-        element: <DetailEvent />
-    }, {
-        path: "/event/:slug/tickets",
-        element: <CartTicket />
-    },
-    {
-        path: "/event/:slug/checkout",
-        element: <Checkout />
-    },
-    {
-        path: "/transaction-history",
-        element: <TransactionHistory />
-    },
-    {
-        path: "/transaction-history/:id",
-        element: <DetailTransaction />
+        element: <LayoutCustomer />,
+        children: [
+            { path: "/", element: <Home /> },
+            { path: "/event/:slug", element: <DetailEvent /> },
+            { path: "/event/:slug/tickets", element: <CartTicket /> },
+            { path: "/event/:slug/checkout", element: <Checkout /> },
+            { path: "/transaction-history", element: <TransactionHistory /> },
+            { path: "/transaction-history/:id", element: <DetailTransaction /> },
+        ]
     },
     {
         // element

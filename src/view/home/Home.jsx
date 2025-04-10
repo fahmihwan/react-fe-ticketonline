@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import LayoutCustomer from "../layouts/LayoutCustomer";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
 import { useEffectEvents } from "../../hook/useEffectEvents";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,11 +13,8 @@ export default function Home() {
         dispatch(fetchEventHome({ total: 960 }))
     }, [])
 
-    // dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size }))
-
-
     return (
-        <LayoutCustomer>
+        <>
             <div className=" mx-[200px] my-5">
                 <div className="flex mb-5">
                     <div className="mr-5">
@@ -75,7 +71,7 @@ export default function Home() {
                     </section>
                 </div>
             </div>
-        </LayoutCustomer>)
+        </>)
 }
 
 const CardEventEL = ({ id, eventTitle, image, schedule, venue, startFrom, slug }) => {

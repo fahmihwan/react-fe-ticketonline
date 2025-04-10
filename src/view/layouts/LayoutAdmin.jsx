@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
 import Sidebar from "../component/Sidebar";
 import { IconLogoBrandEl } from "../component/IconSvg";
 
-export default function LayoutAdmin({ children }) {
+export default function LayoutAdmin() {
     // const [sidebarOpen, setSidebarOpen] = useState(false);
     return (
         <>
@@ -119,7 +119,8 @@ export default function LayoutAdmin({ children }) {
             <Sidebar />
             <div className="p-4 sm:ml-64">
                 <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-                    {children}
+
+                    <Outlet />
 
                 </div>
             </div>

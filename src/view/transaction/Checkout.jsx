@@ -8,13 +8,17 @@ import { useEffect, useState } from "react";
 
 
 import { useDispatch, useSelector } from "react-redux";
-import { getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
+import { checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
+import { data, useParams } from "react-router-dom";
 
 export default function Checkout() {
+    const { slug } = useParams();
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
+    // const checkout = useSelector((state) => state.transaction.checkout)
+
     const [isAlert, setIsAlert] = useState("")
 
 
@@ -34,6 +38,14 @@ export default function Checkout() {
         sessionTime = 10 * 60;
     }
     const [timeLeft, setTimeLeft] = useState(sessionTime);
+    // 
+
+
+    // 
+
+
+
+
 
 
     useEffect(() => {
@@ -115,6 +127,7 @@ export default function Checkout() {
 
 
 
+
         for (let i = 0; i < totalTicket; i++) {
             for (let x = 0; x < cartTicket.length; x++) {
                 if (cartTicket[x].total > 0) {
@@ -122,12 +135,42 @@ export default function Checkout() {
                     makeArrForm.push({
                         is_same_credential: false,
                         price: cartTicket[x].price,
+                        cart_id: cartTicket[x].id,
                         category_name: cartTicket[x].category_name,
                         ...objForm
                     })
                 }
             }
         }
+
+        let getLocalStorage = JSON.parse(localStorage.getItem('form'))
+
+
+        // console.log(makeArrForm, '11');
+        // console.log(getLocalStorage);
+
+
+        for (let x = 0; x < makeArrForm.length; x++) {
+
+
+            console.log(makeArrForm);
+            if (makeArrForm[x]?.increment_id != 0) {
+                let isSame = getLocalStorage?.find(item2 => item2?.increment_id === makeArrForm[x]?.increment_id);
+                console.log(isSame);
+            }
+
+
+            // console.log(isSame.length);
+            // if (isSame) {
+            //     console.log(isSame, 'sasam');
+            //     // makeArrForm[x] = isSame[0]
+            // }
+
+
+
+        }
+
+
 
         makeArrForm.sort((a, b) => b.price - a.price);
         makeArrForm.unshift({
@@ -171,39 +214,28 @@ export default function Checkout() {
         }
 
         for (let i = 0; i < updateForm.length; i++) {
-            if (updateForm[i].is_same_credential) {
-                updateForm[i].full_name = updateForm[0].full_name
-                updateForm[i].email = updateForm[0].email
-                updateForm[i].gender = updateForm[0].gender
-                updateForm[i].d_birth_date = updateForm[0].d_birth_date
-                updateForm[i].m_birth_date = updateForm[0].m_birth_date
-                updateForm[i].y_birth_date = updateForm[0].y_birth_date
-                updateForm[i].telp = updateForm[0].telp
-                updateForm[i].address = updateForm[0].address
+            if (i > 0) {
+                if (updateForm[i].is_same_credential) {
+                    updateForm[i].full_name = updateForm[0].full_name
+                    updateForm[i].email = updateForm[0].email
+                    updateForm[i].gender = updateForm[0].gender
+                    updateForm[i].d_birth_date = updateForm[0].d_birth_date
+                    updateForm[i].m_birth_date = updateForm[0].m_birth_date
+                    updateForm[i].y_birth_date = updateForm[0].y_birth_date
+                    updateForm[i].telp = updateForm[0].telp
+                    updateForm[i].address = updateForm[0].address
+                }
             }
         }
         setFormCustomer(updateForm)
+        localStorage.setItem('form', JSON.stringify(updateForm))
 
     }
     const handleSubmit = () => {
         if (step == 1) {
-
             setFirstSubmited(true)
-            // const validateRequired = formCustomer.map((item) => {
-            //     // Memeriksa apakah ada properti kosong
-            //     const isError = Object.keys(item).some(key =>
-            //         item[key] === "" || item[key] === null || item[key] === undefined || (typeof item[key] === "number" && item[key] === 0)
-            //     );
-
-            //     // Menambahkan properti isError pada setiap objek
-            //     return { ...item, isError };
-            // });
-            // setFormCustomer(validateRequired)
-
             const emptyProperties = [];
-            let cek = formCustomer.map((item, index) => {
-
-
+            formCustomer.map((item, index) => {
                 for (let key in item) {
                     if (item[key] === "" || item[key] === null || item[key] === undefined) {
                         emptyProperties.push(key);
@@ -215,6 +247,7 @@ export default function Checkout() {
             if (emptyProperties.length > 0) {
                 setIsAlert("Mohon lengkapi data")
             } else {
+                console.log(formCustomer);
                 setIsAlert("")
                 setStep(2)
             }
@@ -222,14 +255,29 @@ export default function Checkout() {
 
             // setStep(2)
         } else if (step == 2) {
-            console.log("wkww");
+            let payload = {
+                slug: slug,
+                paymentMethod: selectedPayment,
+                participants: formCustomer,
+                detailCartTicket: detailCartTicket,
+            }
+
+            console.log(payload);
+
+            dispatch(checkoutTransaction({ payload: payload }))
+            // dispatch(findCartByUserId({ userId: 1 }))
+
+            // console.log(deta);
+
+            // const [detailCartTicket, setDetailCartTicket] = useState([]);
+            // const [selectedPayment, setSelectedPayment] = useState('')            
+
         }
 
     }
 
     return (
-        <LayoutCustomer>
-
+        <>
             <div className="w-full bg-gray-100 border">
                 <div className="bg-yellow-300 w-full py-1 text-center">
                     <b> {formatTime(timeLeft)}</b> Waktu pengisian data
@@ -275,6 +323,7 @@ export default function Checkout() {
                             }
 
                             {step == 1 ? (formCustomer.map((d, i) => (
+
                                 <FormCardCompt
                                     firstSubmited={firstSubmited}
                                     isSameCredential={d.is_same_credential}
@@ -291,6 +340,7 @@ export default function Checkout() {
                                     address={d.address}
                                     handleChange={(e) => handleChange(e, i)}
                                 />
+
                             ))) : (
                                 <>
                                     <CardPaymentCompt
@@ -340,8 +390,11 @@ export default function Checkout() {
 
                 </div>
             </div>
+        </>
 
-        </LayoutCustomer>
+
+
+
     )
 }
 
@@ -391,7 +444,6 @@ const StepperCompt = ({ step }) => {
 }
 
 const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_date, m_birth_date, y_birth_date, telp, address, isSameCredential, handleChange, firstSubmited }) => {
-    // const [switch1, setSwitch1] = useState(false);
 
     return (
         <div className="bg-white border mb-5">
