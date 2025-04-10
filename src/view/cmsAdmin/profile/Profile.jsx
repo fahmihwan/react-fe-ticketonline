@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { RadioEl, SelectEl, TextInputEl } from '../../component/InputEl'
@@ -42,7 +41,8 @@ const Profile = () => {
 
 
     return (
-        <LayoutAdmin>
+
+        <>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-5'>
                     <p className='text-3xl font-bold'>Profile</p>
@@ -124,8 +124,10 @@ const Profile = () => {
 
 
             </div >
+        </>
 
-        </LayoutAdmin >
+
+
     )
 }
 

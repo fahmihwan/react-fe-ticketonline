@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Await, Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, TextInputEl } from '../../component/InputEl'
@@ -59,7 +58,7 @@ const CreateTicket = () => {
     }
 
     return (
-        <LayoutAdmin>
+        <>
             <DetailAdminComponent />
 
             <div className='w-full'>
@@ -126,7 +125,9 @@ const CreateTicket = () => {
                 </div>
             </div >
 
-        </LayoutAdmin >
+        </>
+
+
     )
 }
 

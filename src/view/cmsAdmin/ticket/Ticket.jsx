@@ -1,4 +1,4 @@
-import LayoutAdmin from '../../layouts/LayoutAdmin'
+
 import { Link } from 'react-router-dom'
 import { Button } from 'flowbite-react';
 import { IconEditEl, IconPlusAdminAddEl, IconTrashEl } from '../../component/IconSvg';
@@ -34,7 +34,7 @@ const Ticket = () => {
 
 
     return (
-        <LayoutAdmin>
+        <>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
                     <p className='text-3xl font-bold '>Ticket</p>
@@ -126,8 +126,10 @@ const Ticket = () => {
                     totalPages={paginate.totalPages}
                 />
             </div>
+        </>
 
-        </LayoutAdmin>
+
+
     )
 }
 

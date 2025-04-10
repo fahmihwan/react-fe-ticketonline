@@ -57,7 +57,7 @@ const Event = () => {
 
 
     return (
-        <LayoutAdmin>
+        <>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
                     <p className='text-3xl font-bold '>Event</p>
@@ -177,8 +177,11 @@ const Event = () => {
                     totalPages={paginate.totalPages}
                 />
             </div>
+        </>
 
-        </LayoutAdmin>
+
+
+
     )
 }
 

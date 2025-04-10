@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import CreateLineup from "../view/cmsAdmin/event/CreateLineup";
+import LayoutAdmin from "../view/layouts/LayoutAdmin";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -23,7 +24,9 @@ const routes = createBrowserRouter([
     {
         path: "/",
         element: <Home />
-    }, {
+    },
+
+    {
         path: "/event/:slug",
         element: <DetailEvent />
     }, {
@@ -43,41 +46,21 @@ const routes = createBrowserRouter([
         element: <DetailTransaction />
     },
     {
-        path: "/admin/dashboard",
-        element: <Dashboard />
+        // element
+        element: <LayoutAdmin />,
+        children: [
+            { path: "/admin/dashboard", element: <Dashboard /> },
+            { path: "/admin/event", element: <Event /> },
+            { path: "/admin/event/create", element: <CreateEvent /> },
+            { path: "/admin/event/:slug/lineup", element: <CreateLineup /> },
+            { path: "/admin/event/:slug/edit", element: <CreateEvent /> },
+            { path: "/admin/ticket", element: <Ticket /> },
+            { path: "/admin/ticket/:slug/create", element: <CreateTicket /> },
+            { path: "/admin/transaction", element: <Transaction /> },
+            { path: "/admin/profile", element: <Profile /> },
+        ]
     },
-    {
-        path: "/admin/event",
-        element: <Event />
-    },
-    {
-        path: "/admin/event/create",
-        element: <CreateEvent />
-    },
-    {
-        path: "/admin/event/:slug/lineup",
-        element: <CreateLineup />
-    },
-    {
-        path: "/admin/event/:slug/edit",
-        element: <CreateEvent />
-    },
-    {
-        path: "/admin/ticket",
-        element: <Ticket />
-    },
-    {
-        path: "/admin/ticket/:slug/create",
-        element: <CreateTicket />
-    },
-    {
-        path: "/admin/transaction",
-        element: <Transaction />
-    },
-    {
-        path: "/admin/profile",
-        element: <Profile />
-    },
+
 
 ])
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
@@ -111,8 +110,7 @@ const CreateEvent = () => {
 
 
     return (
-        <LayoutAdmin>
-
+        <>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-5'>
                     <p className='text-3xl font-bold '>{slug ? "Edit Event" : "Create Event"}</p>
@@ -226,13 +224,8 @@ const CreateEvent = () => {
                     <img src={previewImg} className='w-full h-auto max-w-xl rounded-lg' alt="" />
 
                 </div>
-
-
             </div >
-
-
-
-        </LayoutAdmin >
+        </>
     )
 }
 

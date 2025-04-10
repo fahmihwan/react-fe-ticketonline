@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import LayoutAdmin from '../../layouts/LayoutAdmin'
 
 import { Link } from 'react-router-dom'
 
@@ -62,7 +61,7 @@ const Transaction = () => {
     }, [])
 
     return (
-        <LayoutAdmin>
+        <>
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5'>
                     <p className='text-3xl font-bold '>Transaction</p>
@@ -192,8 +191,10 @@ const Transaction = () => {
                     </ul>
                 </nav>
             </div>
+        </>
 
-        </LayoutAdmin>
+
+
     )
 }
 

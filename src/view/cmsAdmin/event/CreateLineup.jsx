@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import LayoutAdmin from '../../layouts/LayoutAdmin'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { TextInputEl } from '../../component/InputEl'
@@ -53,7 +52,7 @@ const CreateLineup = () => {
     }
 
     return (
-        <LayoutAdmin>
+        <>
             <DetailAdminComponent />
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
@@ -99,8 +98,10 @@ const CreateLineup = () => {
                     </div>
                 </div>
             </div >
+        </>
 
-        </LayoutAdmin >
+
+
     )
 }
 
