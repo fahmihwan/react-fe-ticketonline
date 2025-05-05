@@ -2,44 +2,25 @@ import { useEffect, useState } from "react";
 import { SelectEl, TextInputSearchEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, IconPaymentWaitingEl } from "../component/IconSvg";
+import { useDispatch, useSelector } from "react-redux";
+import { getDetailHistoryTransaction } from "../../redux/feature/historiesSlice";
+import { Link, useParams } from "react-router-dom";
+import { formatRupiahUtil, getPaymentMethodName } from "../../utils/utils";
 
 
 export default function DetailTransaction() {
     const [paymentStatus, setPaymentStatus] = useState("")
     const [data, setData] = useState([])
 
+    const detailTransactionrRedux = useSelector((state) => state.history.detailTransaction)
+    const dispatch = useDispatch()
+    const { transactionCode } = useParams();
+
     useEffect(() => {
-        let response = [
-            {
-                id: 1,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds s",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-            {
-                id: 2,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-            {
-                id: 3,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-        ]
-        setData(response)
-    }, [])
+        dispatch(getDetailHistoryTransaction({ transactionCode: transactionCode }));
+    }, [dispatch])
+
+    // console.log(detailTransactionrRedux.transaction_code);
 
     return (
         <>
@@ -49,65 +30,156 @@ export default function DetailTransaction() {
                         <b className="text-2xl inline-block mb-5">Detail Transaksi</b>
                     </div>
                     <div className="w-full pt-5 flex">
-                        <div className="border w-4/12 mr-5">
-                            <img src="/assets/dummy/event-1.png" alt="" />
-                            <div className="p-2">
-                                <p>Beads Workshop with Round Rope</p>
-                                <p>21 Desember 2024</p>
-                                <p>Reter Coffe</p>
-                            </div>
-                            <div className="border px-5 py-2">
-                                <p className="text-center">Lihat Detail Acara</p>
+                        <div className=" w-4/12 mr-5">
+                            <div className="border ">
+                                <img src={detailTransactionrRedux?.event?.image} alt="" />
+                                <div className="p-2">
+                                    <p>{detailTransactionrRedux?.event?.event_title}</p>
+                                    <p>{detailTransactionrRedux?.event?.schedule}</p>
+                                    <p>{detailTransactionrRedux?.event?.venue}</p>
+                                </div>
+                                <div className="border-t px-5 py-2 text-center">
+                                    <b><Link className="text-blue-800" to={`/event/${detailTransactionrRedux?.event?.slug}`}>Lihat Detail Acara</Link></b>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="border w-8/12">
-                            <div className="p-2 ">
-                                <b>Detail Pesanan</b>
+                        <div className=" w-8/12">
+                            <div className="mb-5  ">
+                                <div className="p-2 border ">
+                                    <b>Detail Pesanan</b>
+                                </div>
+                                <table className="table-auto w-full border-collapse  border-gray-300">
+                                    <tbody>
+                                        <tr>
+                                            <td className=" p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Nomor Faktur</p>
+                                                <p>{detailTransactionrRedux?.transaction_code}</p>
+                                            </td>
+                                            <td className="p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Status</p>
+                                                <p>{detailTransactionrRedux?.transaction_status}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className=" p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Tanggal Transaksi</p>
+                                                <p>{detailTransactionrRedux?.transction_date}</p>
+                                            </td>
+                                            <td className="p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Jumlah</p>
+                                                <p>{detailTransactionrRedux?.total_ticket}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Metode Pembayaran</p>
+                                                <p>{getPaymentMethodName(detailTransactionrRedux?.payment_method)}</p>
+                                            </td>
+                                            <td className="p-2 border-b-2 border-l border-r">
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="p-2 border-b-2 border-l border-r">
+                                                <p className="text-gray-500">Total Pembayaran</p>
+                                                <p>{formatRupiahUtil(detailTransactionrRedux?.total_price)}</p>
+                                            </td>
+                                            <td className="p-2 border-b-2 border-l border-r">
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
                             </div>
-                            <table className="table-auto w-full border-collapse border border-gray-300">
-                                <tbody>
-                                    <tr>
-                                        <td className=" p-2 border">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                        <td className="p-2 border-b">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className=" p-2 border">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                        <td className="p-2 border-b">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className="p-2 border-b">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                    </tr>
 
-                                    <tr>
-                                        <td className="p-2 border-b">
-                                            <p>Nomor Faktur</p>
-                                            <p>yp-1218245131005-73f30a</p>
-                                        </td>
-                                    </tr>
+                            <div className="mb-5 border-l border-t border-r">
+                                <div className="p-2 ">
+                                    <b>Detail Pembeli</b>
+                                </div>
+                                <table className="table-auto w-full border-collapse border border-gray-300">
+                                    <tbody>
+                                        <tr>
+                                            <td className=" p-2 border">
+                                                <p className="text-gray-500">Email</p>
+                                                <p>{detailTransactionrRedux?.user?.email}</p>
+                                                <p className="text-gray-500">E-Tiket akan dikirim ke email ini</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className=" p-2 border">
+                                                <p className="text-gray-500">Nama Lengkap</p>
+                                                <p>{detailTransactionrRedux?.user?.fullName}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                </tbody>
-                            </table>
+                            <div className="">
+                                <div className="border p-5">
+                                    <b>Detail Pengunjung</b>
+                                </div>
+                                <div className="border p-5 bg-gray-50">
+                                    {detailTransactionrRedux?.participansList.length && detailTransactionrRedux?.participansList?.map((d, i) => (
+                                        <div className="mb-5 border-l border-t border-r bg-white" key={i}>
+                                            <div className="p-2 ">
+                                                <b>Pengunjung {i + 1}</b>
+                                            </div>
+                                            <table className="table-auto w-full border-collapse border border-gray-300">
+                                                <tbody>
+                                                    <tr>
+                                                        <td className=" p-2 border">
+                                                            <p className="text-gray-500">Kategori Tiket</p>
+                                                            <p>{d?.category_name}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className=" p-2 border">
+                                                            <p className="text-gray-500">Nama</p>
+                                                            <p>{d?.full_name}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className=" p-2 border">
+                                                            <p className="text-gray-500">Email</p>
+                                                            <p>{d?.email}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className=" p-2 border">
+                                                            <p className="text-gray-500">Jenis Kelamin</p>
+                                                            <p>{d?.gender}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td className=" p-2 border">
+                                                            <p className="text-gray-500">Tanggal Lahir</p>
+                                                            <p>{d?.birth_date}</p>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    ))}
+                                </div>
+
+                            </div>
+
 
                         </div>
+
+
+
+
+
+
+
 
                     </div>
                 </div>
-            </div></>
+            </div ></>
     )
 }

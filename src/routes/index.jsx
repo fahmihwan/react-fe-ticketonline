@@ -30,7 +30,7 @@ const routes = createBrowserRouter([
             { path: "/event/:slug/tickets", element: <CartTicket /> },
             { path: "/event/:slug/checkout", element: <Checkout /> },
             { path: "/transaction-history", element: <TransactionHistory /> },
-            { path: "/transaction-history/:id", element: <DetailTransaction /> },
+            { path: "/transaction-history/:transactionCode", element: <DetailTransaction /> },
         ]
     },
     {

@@ -19,10 +19,7 @@ createRoot(document.getElementById('root')).render(
       </div>
 
     }>
-
       <RouterProvider router={routes} />
-
-
     </Suspense>
   </Provider >
   // </StrictMode>

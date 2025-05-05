@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
 import { data, useParams } from "react-router-dom";
+import moment from "moment";
 
 export default function Checkout() {
     const { slug } = useParams();
@@ -38,15 +39,6 @@ export default function Checkout() {
         sessionTime = 10 * 60;
     }
     const [timeLeft, setTimeLeft] = useState(sessionTime);
-    // 
-
-
-    // 
-
-
-
-
-
 
     useEffect(() => {
         if (timeLeft === 0) return; // Jika waktu habis, tidak perlu melakukan setInterval lagi
@@ -69,21 +61,18 @@ export default function Checkout() {
 
 
     useEffect(() => {
-        dispatch(getPaymentMethodDuitku({ payload: { amount: 2000 } }))
-        dispatch(findCartByUserId({ userId: 1 }))
+        dispatch(findCartByUserId({ userId: 1 })).then((result) => {
+            const response = result.payload.data
+            const totalPrice = response.reduce((sum, item) => sum + item.price * item.total, 0);
+            dispatch(getPaymentMethodDuitku({ payload: { amount: totalPrice } }))
+        }).catch((err) => {
+            alert(err)
+        });
+
     }, [])
 
     useEffect(() => {
-        if (!paymentDuitku) {
-            return
-        }
         let res = paymentDuitku
-
-
-        let response = cartUser
-        // let response = cartUser
-
-
         let categorizedPayments = {
             "Virtual Account": [],
             "E-Wallet & QRIS": [],
@@ -103,11 +92,18 @@ export default function Checkout() {
         });
 
         setListPayment(categorizedPayments)
+    }, [paymentDuitku])
+
+
+    useEffect(() => {
+
+        let response = cartUser
 
         setDetailCartTicket(response)
 
         let cartTicket = JSON.parse(JSON.stringify(response));
         let totalTicket = cartTicket.reduce((a, c) => a + c.total, 0)
+
         let makeArrForm = []
 
         totalTicket += 1
@@ -126,16 +122,16 @@ export default function Checkout() {
         }
 
 
-
-
         for (let i = 0; i < totalTicket; i++) {
             for (let x = 0; x < cartTicket.length; x++) {
+
                 if (cartTicket[x].total > 0) {
                     cartTicket[x].total--
                     makeArrForm.push({
                         is_same_credential: false,
                         price: cartTicket[x].price,
                         cart_id: cartTicket[x].id,
+                        category_ticket_id: cartTicket[x].category_ticket_id,
                         category_name: cartTicket[x].category_name,
                         ...objForm
                     })
@@ -143,50 +139,37 @@ export default function Checkout() {
             }
         }
 
-        let getLocalStorage = JSON.parse(localStorage.getItem('form'))
 
 
-        // console.log(makeArrForm, '11');
-        // console.log(getLocalStorage);
-
-
-        for (let x = 0; x < makeArrForm.length; x++) {
-
-
-            console.log(makeArrForm);
-            if (makeArrForm[x]?.increment_id != 0) {
-                let isSame = getLocalStorage?.find(item2 => item2?.increment_id === makeArrForm[x]?.increment_id);
-                console.log(isSame);
-            }
-
-
-            // console.log(isSame.length);
-            // if (isSame) {
-            //     console.log(isSame, 'sasam');
-            //     // makeArrForm[x] = isSame[0]
-            // }
-
-
-
-        }
-
-
-
-        makeArrForm.sort((a, b) => b.price - a.price);
-        makeArrForm.unshift({
+        makeArrForm?.sort((a, b) => b.price - a.price);
+        makeArrForm?.unshift({
             price: 0,
             category_name: "detail_pembeli",
             ...objForm
         })
 
-        for (let x = 0; x < makeArrForm.length; x++) {
+        for (let x = 0; x < makeArrForm?.length; x++) {
             makeArrForm[x].increment_id = x
         }
+
+        let getLocalStorage = JSON.parse(localStorage.getItem('form'))
+
+        for (let x = 0; x < makeArrForm?.length; x++) {
+            let isSame = getLocalStorage?.find(item2 => item2.increment_id === makeArrForm[x].increment_id && item2.cart_id == makeArrForm[x].cart_id);
+            if (isSame) {
+                makeArrForm[x] = isSame
+            }
+        }
+
+
+
 
         makeArrForm[0] = fAutoFormCredential(makeArrForm[0])
         setFormCustomer(makeArrForm);
 
-    }, [paymentDuitku])
+    }, [cartUser])
+
+
 
 
     const fAutoFormCredential = (makeArrForm) => {
@@ -214,24 +197,28 @@ export default function Checkout() {
         }
 
         for (let i = 0; i < updateForm.length; i++) {
-            if (i > 0) {
-                if (updateForm[i].is_same_credential) {
-                    updateForm[i].full_name = updateForm[0].full_name
-                    updateForm[i].email = updateForm[0].email
-                    updateForm[i].gender = updateForm[0].gender
-                    updateForm[i].d_birth_date = updateForm[0].d_birth_date
-                    updateForm[i].m_birth_date = updateForm[0].m_birth_date
-                    updateForm[i].y_birth_date = updateForm[0].y_birth_date
-                    updateForm[i].telp = updateForm[0].telp
-                    updateForm[i].address = updateForm[0].address
-                }
+            if (updateForm[i].is_same_credential) {
+                updateForm[i].full_name = updateForm[0].full_name
+                updateForm[i].email = updateForm[0].email
+                updateForm[i].gender = updateForm[0].gender
+                updateForm[i].d_birth_date = updateForm[0].d_birth_date
+                updateForm[i].m_birth_date = updateForm[0].m_birth_date
+                updateForm[i].y_birth_date = updateForm[0].y_birth_date
+                updateForm[i].telp = updateForm[0].telp
+                updateForm[i].address = updateForm[0].address
             }
         }
         setFormCustomer(updateForm)
-        localStorage.setItem('form', JSON.stringify(updateForm))
+        localStorage.setItem('form', JSON.stringify(updateForm.slice(1)))
 
     }
     const handleSubmit = () => {
+
+
+
+        // const isoString = dateTime.format('YYYY-MM-DDTHH:mm');
+
+
         if (step == 1) {
             setFirstSubmited(true)
             const emptyProperties = [];
@@ -255,19 +242,29 @@ export default function Checkout() {
 
             // setStep(2)
         } else if (step == 2) {
+
+
+            let duplicateForm = [...formCustomer];
+
+            for (let i = 0; i < duplicateForm.length; i++) {
+                const dateString = `${duplicateForm[i].d_birth_date}-${duplicateForm[i].m_birth_date}-${duplicateForm[i].y_birth_date}`;
+                const momentDate = moment(dateString, "DD-MMMM-YYYY", 'id');
+                const formattedDate = momentDate.format("YYYY-MM-DD");
+                duplicateForm[i].birth_date = formattedDate;
+            }
+
+
             let payload = {
                 slug: slug,
                 paymentMethod: selectedPayment,
-                participants: formCustomer,
+                userId: 1,
+                participants: duplicateForm,
                 detailCartTicket: detailCartTicket,
             }
 
-            console.log(payload);
 
             dispatch(checkoutTransaction({ payload: payload }))
             // dispatch(findCartByUserId({ userId: 1 }))
-
-            // console.log(deta);
 
             // const [detailCartTicket, setDetailCartTicket] = useState([]);
             // const [selectedPayment, setSelectedPayment] = useState('')            

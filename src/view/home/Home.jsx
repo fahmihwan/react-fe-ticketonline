@@ -8,6 +8,7 @@ import { fetchEventHome } from "../../redux/feature/eventSlice";
 export default function Home() {
     const eventHome = useSelector((state) => state.event.eventData || [])
 
+
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(fetchEventHome({ total: 960 }))

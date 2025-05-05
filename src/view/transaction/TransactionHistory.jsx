@@ -3,43 +3,68 @@ import { SelectEl, TextInputSearchEl } from "../component/InputEl";
 import LayoutCustomer from "../layouts/LayoutCustomer";
 import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, IconPaymentWaitingEl } from "../component/IconSvg";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getListTransaction } from "../../redux/feature/historiesSlice";
 
 
 export default function TransactionHistory() {
     const [paymentStatus, setPaymentStatus] = useState("")
     const [data, setData] = useState([])
 
+    const historyRedux = useSelector((state) => state.history.history)
+    const dispatch = useDispatch()
+
+
     useEffect(() => {
-        let response = [
-            {
-                id: 1,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds s",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-            {
-                id: 2,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-            {
-                id: 3,
-                invoice: "invoice-9e775c8aa52021505db8",
-                event: "The Krawds",
-                img: "event-1.png",
-                transaction_status: "Payment Success",
-                transaction_date: "02 Oktober 2022, 05:42 WIB",
-                total: "Rp. 78.350"
-            },
-        ]
-        setData(response)
+        dispatch(getListTransaction({ userId: 1 })).then((res) => {
+            let data = res?.payload?.data
+
+
+            const mappedRes = data.map(d => ({
+                invoice: d.transaction_code,
+                event: d.event_title,
+                img: d.image,
+                transaction_status: d.transaction_status,
+                transaction_date: d.tgl_transaksi,
+                total: d.total_price
+            }));
+
+            setData(mappedRes)
+        })
+    }, [])
+
+
+    useEffect(() => {
+        // let response = [
+        // {
+        //     id: 1,
+        //     invoice: "invoice-9e775c8aa52021505db8",
+        //     event: "The Krawds s",
+        //     img: "event-1.png",
+        //     transaction_status: "Payment Success",
+        //     transaction_date: "02 Oktober 2022, 05:42 WIB",
+        //     total: "Rp. 78.350"
+        // },
+        //     {
+        //         id: 2,
+        //         invoice: "invoice-9e775c8aa52021505db8",
+        //         event: "The Krawds",
+        //         img: "event-1.png",
+        //         transaction_status: "Payment Success",
+        //         transaction_date: "02 Oktober 2022, 05:42 WIB",
+        //         total: "Rp. 78.350"
+        //     },
+        //     {
+        //         id: 3,
+        //         invoice: "invoice-9e775c8aa52021505db8",
+        //         event: "The Krawds",
+        //         img: "event-1.png",
+        //         transaction_status: "Payment Success",
+        //         transaction_date: "02 Oktober 2022, 05:42 WIB",
+        //         total: "Rp. 78.350"
+        //     },
+        // ]
+        // setData(response)
     }, [])
 
     return (
@@ -87,17 +112,13 @@ const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transact
             </div>
             <div className="w-full flex p-3">
                 <div className="w-3/12 mr-2" style={{ width: "200px" }}>
-                    <img src={`/assets/dummy/${img}`} alt="" />
+                    <img src={`${img}`} alt="" />
                 </div>
                 <div className="w-9/12 flex">
                     <div className="w-4/12 flex flex-col justify-between  h-[100%] ">
                         <div>
                             <b>{event}</b>
                             <div className="flex items-center">
-                                {/* <IconPaymentSuccessEl /> */}
-                                {/* <IconPaymentCanceledEl /> */}
-                                {/* <IconPaymentExpiredEl /> */}
-                                {/* <IconPaymentWaitingEl /> */}
                                 <span className="ml-1">{transaction_status}</span></div>
                         </div>
                         <div>
@@ -113,7 +134,7 @@ const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transact
                         </div>
                     </div>
                     <div className="w-4/12 flex justify-end items-end">
-                        <Link to="/transaction-history/1"
+                        <Link to={`/transaction-history/${invoice}`}
                             type="button"
                             className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
                         >

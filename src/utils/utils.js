@@ -43,18 +43,6 @@ export const formatDateTimeUtil = (inputDate) => {
 
 
 export const explodeFormatDateTimeToInputElementUtil = (inputDateTime) => {
-    // const date = new Date(inputDateTime);  // Mengonversi string input menjadi objek Date
-    // const year = date.getFullYear();   // Mendapatkan tahun
-    // const month = String(date.getMonth() + 1).padStart(2, '0');  // Mendapatkan bulan (diubah ke format 2 digit)
-    // const day = String(date.getDate()).padStart(2, '0');         // Mendapatkan tanggal (diubah ke format 2 digit)
-    // const hours = String(date.getHours()).padStart(2, '0');      // Mendapatkan jam (diubah ke format 2 digit)
-    // const minutes = String(date.getMinutes()).padStart(2, '0');  // Mendapatkan menit (diubah ke format 2 digit)
-
-    // const dateFormat = `${year}-${month}-${day}`
-    // const timeFormat = `${hours}:${minutes}`
-
-    // return { dateFormat, timeFormat }
-
     // Menggunakan moment untuk parsing inputDateTime
     const date = moment(inputDateTime);
 
@@ -63,4 +51,35 @@ export const explodeFormatDateTimeToInputElementUtil = (inputDateTime) => {
     const timeFormat = date.format('HH:mm');      // Format waktu: HH:mm
 
     return { dateFormat, timeFormat };
+}
+
+export const getPaymentMethodName = (param) => {
+    const paymentFee = [
+        { paymentMethod: "FT", paymentName: "RETAIL" },
+        { paymentMethod: "VC", paymentName: "CREDIT CARD" },
+        { paymentMethod: "BT", paymentName: "PERMATA VA" },
+        { paymentMethod: "B1", paymentName: "CIMB NIAGA VA" },
+        { paymentMethod: "A1", paymentName: "ATM BERSAMA VA" },
+        { paymentMethod: "I1", paymentName: "BNI VA" },
+        { paymentMethod: "OV", paymentName: "OVO" },
+        { paymentMethod: "M2", paymentName: "MANDIRI VA H2H" },
+        { paymentMethod: "SP", paymentName: "SHOPEEPAY QRIS" },
+        { paymentMethod: "LA", paymentName: "LINKAJA APP PCT" },
+        { paymentMethod: "SA", paymentName: "SHOPEEPAY APP" },
+        { paymentMethod: "LQ", paymentName: "LINKAJA QRIS" },
+        { paymentMethod: "DA", paymentName: "DANA" },
+        { paymentMethod: "BC", paymentName: "BCA VA" },
+        { paymentMethod: "IR", paymentName: "INDOMARET" },
+        { paymentMethod: "SL", paymentName: "SHOPEEPAY LINK" },
+        { paymentMethod: "BR", paymentName: "BRI VA" },
+        { paymentMethod: "OL", paymentName: "OVO LINK" },
+        { paymentMethod: "BV", paymentName: "BSI VA" },
+        { paymentMethod: "IQ", paymentName: "BNI QRIS" }
+    ];
+
+    function getPaymentNameByMethod(method) {
+        const result = paymentFee.find(item => item.paymentMethod === method);
+        return result ? result.paymentName : null;
+    }
+    return getPaymentNameByMethod(param)
 }

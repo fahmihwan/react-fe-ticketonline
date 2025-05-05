@@ -5,6 +5,7 @@ import transactionReducer from "./feature/transactionSlice";
 import lineUpReducer from "./feature/lineUpSlice";
 import categoryTicketReducer from "./feature/categoryTicketSlice";
 import cartReducer from "./feature/cartTicketSlice";
+import historySlice from "./feature/historiesSlice";
 
 const store = configureStore({
     reducer: {
@@ -12,7 +13,8 @@ const store = configureStore({
         transaction: transactionReducer,
         lineUp: lineUpReducer,
         categoryTicket: categoryTicketReducer,
-        cart: cartReducer
+        cart: cartReducer,
+        history: historySlice
 
         //   auth: authReducer,
         //   mountain: mountainReducer,
