@@ -10,8 +10,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
-import { data, useParams } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+
 
 export default function Checkout() {
     const { slug } = useParams();
@@ -19,7 +20,7 @@ export default function Checkout() {
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
     // const checkout = useSelector((state) => state.transaction.checkout)
-
+    const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")
 
 
@@ -263,12 +264,13 @@ export default function Checkout() {
             }
 
 
-            dispatch(checkoutTransaction({ payload: payload }))
-            // dispatch(findCartByUserId({ userId: 1 }))
-
-            // const [detailCartTicket, setDetailCartTicket] = useState([]);
-            // const [selectedPayment, setSelectedPayment] = useState('')            
-
+            dispatch(checkoutTransaction({ payload: payload })).then((res) => {
+                if (res?.payload?.success) {
+                    window.open(res.payload.data.paymentUrl, '_blank');
+                } else {
+                    alert('gagal')
+                }
+            })
         }
 
     }

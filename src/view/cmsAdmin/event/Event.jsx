@@ -110,20 +110,24 @@ const Event = () => {
                                         </th>
                                         <td
                                             scope="row"
-                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white w-[200px] "
                                         >
-                                            <p>{d?.event_title}</p>
+                                            <p className=''>{d?.event_title}</p>
                                             <p className='text-gray-500'>slug : {d?.slug}</p>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div>
-                                                <img src={d?.image} alt="" width={150} />
-                                            </div>
+                                        <td className="px-6 py-4 w-[400px]">
+                                            <img src={d?.image} alt="" />
                                         </td>
                                         <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
                                         <td className="px-6 py-4">{d?.venue}</td>
-                                        <td className="px-6 py-4">
-                                            <div dangerouslySetInnerHTML={{ __html: d?.description }} /></td>
+                                        <td className="px-6 py-4 ">
+                                            <div className='w-[200px] truncate '>
+                                                {/* {d?.description} */}
+                                                <div
+                                                    className='truncate w-[200px] text-[10px]'
+                                                    dangerouslySetInnerHTML={{ __html: d?.description }} />
+                                            </div>
+                                        </td>
                                         <td className='px-6 py-4'>
 
                                             <ul className='list-disc'>

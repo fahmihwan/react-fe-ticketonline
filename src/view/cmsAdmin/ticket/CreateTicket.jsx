@@ -20,6 +20,7 @@ const CreateTicket = () => {
     const status = useSelector((state) => state.event.status)
 
 
+
     useEffect(() => {
         dispatch(findBySlugWithCategoryTickets({ slug: slug }))
     }, [dispatch])
@@ -59,7 +60,8 @@ const CreateTicket = () => {
 
     return (
         <>
-            <DetailAdminComponent />
+            <DetailAdminComponent
+                image={events?.image} title={events?.event_title} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
 
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
