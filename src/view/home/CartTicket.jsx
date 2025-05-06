@@ -214,7 +214,7 @@ export default function CartTicket() {
                             <p className="font-extrabold mb-5">Detail Pesanan</p>
                             <div className="flex w-full">
                                 <div className="w-1/2 mr-2">
-                                    <img src="/assets/dummy/event-1.png" alt="" />
+                                    <img src={event?.image} alt="" />
                                 </div>
                                 <div className="w-1/2">
                                     <table>
@@ -232,7 +232,7 @@ export default function CartTicket() {
                                                 <td>{formatDateUtil(detailEvent?.schedule)}</td>
                                             </tr>
                                             <tr>
-                                                <td>{detailEvent?.venue}</td>
+                                                <td className="w-[200px] max-w-[200px] truncate whitespace-nowrap overflow-hidden">{detailEvent?.venue}</td>
                                             </tr>
                                         </tbody>
                                     </table>

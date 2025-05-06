@@ -12,6 +12,8 @@ import { checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
 import { data, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
+import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
+import { formatDateUtil } from "../../utils/utils";
 
 
 export default function Checkout() {
@@ -19,7 +21,8 @@ export default function Checkout() {
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
-    // const checkout = useSelector((state) => state.transaction.checkout)
+    const eventRedux = useSelector((state) => state.event.detailEvent)
+
     const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")
 
@@ -62,6 +65,8 @@ export default function Checkout() {
 
 
     useEffect(() => {
+        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+
         dispatch(findCartByUserId({ userId: 1 })).then((result) => {
             const response = result.payload.data
             const totalPrice = response.reduce((sum, item) => sum + item.price * item.total, 0);
@@ -286,15 +291,6 @@ export default function Checkout() {
                 </div>
 
 
-
-
-                {/* <Toast className="">
-                    <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">
-                        <HiExclamation className="h-5 w-5" />
-                    </div>
-                    <div className="ml-3 text-sm font-normal">Improve password difficulty.</div>
-                    <ToastToggle />
-                </Toast> */}
                 <div className="mx-5 md xl:mx-[300px]">
                     <div className="w-full flex">
                         <div className="w-full md:w-7/12 m-5 md:m-0 md:mr-5">
@@ -383,6 +379,10 @@ export default function Checkout() {
                                 handleSubmit={handleSubmit}
                                 detailCartTicket={detailCartTicket}
                                 selectedPayment={selectedPayment}
+                                title={eventRedux?.event_title}
+                                venue={eventRedux?.venue}
+                                schedule={eventRedux?.schedule}
+                                image={eventRedux?.image}
                             />
                         </div>
                     </div>
@@ -577,14 +577,15 @@ const FormCardCompt = ({ id, category_name, full_name, email, gender, d_birth_da
 }
 
 
-const DetailOrderCompt = ({ step, detailCartTicket, handleSubmit, selectedPayment }) => {
-    // console.log(selectedPayment);
+const DetailOrderCompt = ({ step, detailCartTicket, handleSubmit, selectedPayment, title, venue, schedule, image }) => {
+
+
     return (
         <div className="border bg-white p-5 mb-3 ">
             <p className="font-extrabold mb-5">Detail Pesanan</p>
             <div className="flex w-full">
                 <div className="w-1/2 mr-2">
-                    <img src="/assets/dummy/event-1.png" alt="" />
+                    <img src={image} alt="" />
                 </div>
                 <div className="w-1/2">
                     <table>
@@ -593,16 +594,16 @@ const DetailOrderCompt = ({ step, detailCartTicket, handleSubmit, selectedPaymen
                                 <td>
                                     <div className="w-44 ">
                                         <p className="font-bold truncate">
-                                            mentalitafest-1-you-know-who-youre
+                                            {title}
                                         </p>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
-                                <td>01 Februari 2025</td>
+                                <td>{formatDateUtil(schedule)}</td>
                             </tr>
-                            <tr>
-                                <td>Yogyakarta</td>
+                            <tr className="">
+                                <td className="w-[200px] max-w-[200px] truncate whitespace-nowrap overflow-hidden">{venue}</td>
                             </tr>
                         </tbody>
 
