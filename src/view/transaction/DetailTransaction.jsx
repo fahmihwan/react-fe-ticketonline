@@ -5,7 +5,7 @@ import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, Icon
 import { useDispatch, useSelector } from "react-redux";
 import { getDetailHistoryTransaction } from "../../redux/feature/historiesSlice";
 import { Link, useParams } from "react-router-dom";
-import { formatRupiahUtil, getPaymentMethodName } from "../../utils/utils";
+import { formatDateTimeUtil, formatRupiahUtil, getPaymentMethodName, statusTransactionUtil } from "../../utils/utils";
 
 
 export default function DetailTransaction() {
@@ -34,8 +34,8 @@ export default function DetailTransaction() {
                             <div className="border ">
                                 <img src={detailTransactionrRedux?.event?.image} alt="" />
                                 <div className="p-2">
-                                    <p>{detailTransactionrRedux?.event?.event_title}</p>
-                                    <p>{detailTransactionrRedux?.event?.schedule}</p>
+                                    <p className="font-semibold">{detailTransactionrRedux?.event?.event_title}</p>
+                                    <p>{formatDateTimeUtil(detailTransactionrRedux?.event?.schedule)}</p>
                                     <p>{detailTransactionrRedux?.event?.venue}</p>
                                 </div>
                                 <div className="border-t px-5 py-2 text-center">
@@ -58,13 +58,13 @@ export default function DetailTransaction() {
                                             </td>
                                             <td className="p-2 border-b-2 border-l border-r">
                                                 <p className="text-gray-500">Status</p>
-                                                <p>{detailTransactionrRedux?.transaction_status}</p>
+                                                <p className={`${statusTransactionUtil(detailTransactionrRedux?.transaction_status)} font-medium`}>{detailTransactionrRedux?.transaction_status}</p>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td className=" p-2 border-b-2 border-l border-r">
                                                 <p className="text-gray-500">Tanggal Transaksi</p>
-                                                <p>{detailTransactionrRedux?.transction_date}</p>
+                                                <p>{formatDateTimeUtil(detailTransactionrRedux?.transction_date)}</p>
                                             </td>
                                             <td className="p-2 border-b-2 border-l border-r">
                                                 <p className="text-gray-500">Jumlah</p>

@@ -5,6 +5,7 @@ import { IconPaymentCanceledEl, IconPaymentExpiredEl, IconPaymentSuccessEl, Icon
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getListTransaction } from "../../redux/feature/historiesSlice";
+import { formatDateTimeUtil, formatRupiahUtil, statusTransactionUtil } from "../../utils/utils";
 
 
 export default function TransactionHistory() {
@@ -104,6 +105,7 @@ export default function TransactionHistory() {
     )
 }
 
+
 const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transaction_status, total }) => {
     return (
         <div className="w-full border mb-10 ">
@@ -119,18 +121,18 @@ const CardTransactionEl = ({ id, invoice, event, img, transaction_date, transact
                         <div>
                             <b>{event}</b>
                             <div className="flex items-center">
-                                <span className="ml-1">{transaction_status}</span></div>
+                                <span className={`ml-1 font-medium ${statusTransactionUtil(transaction_status)}`}>{transaction_status}</span></div>
                         </div>
                         <div>
                             <p className="text-gray-500">Tanggal Transaksi</p>
-                            <p>{transaction_date}</p>
+                            <p>{formatDateTimeUtil(transaction_date)}</p>
                         </div>
                     </div>
 
                     <div className="flex flex-col-reverse w-4/12">
                         <div>
                             <p className="text-gray-500">Total :</p>
-                            <p>{total}</p>
+                            <p>{formatRupiahUtil(total)}</p>
                         </div>
                     </div>
                     <div className="w-4/12 flex justify-end items-end">
