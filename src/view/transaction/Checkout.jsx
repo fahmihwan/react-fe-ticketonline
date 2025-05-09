@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 
 import { useDispatch, useSelector } from "react-redux";
-import { checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
+import { checkIfCurrentTransactionEventForUserExists, checkoutTransaction, getPaymentMethodDuitku } from "../../redux/feature/transactionSlice";
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
 import { data, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
@@ -22,6 +22,7 @@ export default function Checkout() {
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
     const eventRedux = useSelector((state) => state.event.detailEvent)
+    const transactionExistsRedux = useSelector((state) => state.transaction.transactionExist)
 
     const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")
@@ -63,18 +64,27 @@ export default function Checkout() {
         return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
     };
 
+    const fetchData = async () => {
+        await dispatch(checkIfCurrentTransactionEventForUserExists({ userId: 1, slug: slug })).then((res) => {
+            const data = res?.payload?.data
 
-    useEffect(() => {
-        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+            if (data.length > 0) {
+                navigate(`/transaction-history/${data[0]?.transaction_code}`);
+            }
+        })
 
-        dispatch(findCartByUserId({ userId: 1 })).then((result) => {
+        await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        await dispatch(findCartByUserId({ userId: 1, slug: slug })).then(async (result) => {
             const response = result.payload.data
             const totalPrice = response.reduce((sum, item) => sum + item.price * item.total, 0);
-            dispatch(getPaymentMethodDuitku({ payload: { amount: totalPrice } }))
+            await dispatch(getPaymentMethodDuitku({ payload: { amount: totalPrice } }))
         }).catch((err) => {
             alert(err)
         });
+    }
 
+    useEffect(() => {
+        fetchData()
     }, [])
 
     useEffect(() => {
@@ -272,6 +282,7 @@ export default function Checkout() {
             dispatch(checkoutTransaction({ payload: payload })).then((res) => {
                 if (res?.payload?.success) {
                     window.open(res.payload.data.paymentUrl, '_blank');
+                    navigate(`/transaction-history/${res.payload?.data?.transaction_code}`)
                 } else {
                     alert('gagal')
                 }

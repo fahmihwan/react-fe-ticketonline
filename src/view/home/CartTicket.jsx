@@ -7,6 +7,7 @@ import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
 import { createCartTicket, findCartByUserId } from "../../redux/feature/cartTicketSlice";
 
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
+import { checkIfCurrentTransactionEventForUserExists } from "../../redux/feature/transactionSlice";
 
 export default function CartTicket() {
 
@@ -15,9 +16,11 @@ export default function CartTicket() {
     const navigate = useNavigate()
     const event = useSelector((state) => state.event.detailEvent || {})
     const cartUser = useSelector((state) => state.cart.listCartUser)
+    const transactionExistsRedux = useSelector((state) => state.transaction.transactionExist)
 
 
     const [openModal, setOpenModal] = useState(false);
+    const [openModalTransaction, setOpenModalTransaction] = useState(false);
     const [listTicket, setListTicket] = useState([]);
     const [totalCheckout, setTotalCheckout] = useState(0)
     const [detailEvent, setDetailEvent] = useState({});
@@ -29,7 +32,8 @@ export default function CartTicket() {
         if (!slug) {
             return
         }
-        dispatch(findCartByUserId({ userId: 1 }))
+        dispatch(checkIfCurrentTransactionEventForUserExists({ userId: 1, slug: slug }))
+        dispatch(findCartByUserId({ userId: 1, slug: slug }))
         dispatch(findBySlugWithCategoryTickets({ slug: slug })).then((res) => {
 
             setDetailEvent({
@@ -44,19 +48,8 @@ export default function CartTicket() {
         })
     }, [slug, dispatch])
 
+
     useEffect(() => {
-        // if (event) {
-        //     console.log(event);
-        //     // setDetailEvent({
-        //     //     id: event?.id,
-        //     //     event_title: event?.event_title,
-        //     //     schedule: event?.schedule,
-        //     //     image: event?.image,
-        //     //     venue: event?.venue
-        //     // })
-        // }
-
-
         let responseTicket = event?.category_tickets
 
         if (responseTicket?.length > 0) {
@@ -108,10 +101,15 @@ export default function CartTicket() {
     }
 
     const handleSubmit = () => {
-        if (cartUser.length > 0) {
-            setOpenModal(true)
+        // console.log();
+        if (transactionExistsRedux.length > 0) {
+            setOpenModalTransaction(true)
         } else {
-            handleConfirmSubmit()
+            if (cartUser.length > 0) {
+                setOpenModal(true)
+            } else {
+                handleConfirmSubmit()
+            }
         }
     }
 
@@ -128,17 +126,14 @@ export default function CartTicket() {
             detailTransactions: tickets
         }
 
-
         setIsDisabled(true)
         dispatch(createCartTicket({ payload: payload })).then((res) => {
             if (res.payload.success) {
                 localStorage.removeItem('form')
-
                 navigate(`/event/${slug}/checkout`)
 
             }
             setIsDisabled(false)
-
         }).catch((res) => {
             setIsDisabled(false)
         })
@@ -319,6 +314,32 @@ export default function CartTicket() {
                     <ModalFooter className="flex flex-col p-2 border-0">
                         <Button className="w-full mb-2" color="blue" onClick={() => handleConfirmSubmit()} >Lanjut</Button>
                         <Button className="w-full" color="gray" onClick={() => setOpenModal(false)}>
+                            Tutup
+                        </Button>
+                    </ModalFooter>
+                </Modal>
+
+                <Modal dismissible size="md" show={openModalTransaction} className="">
+                    <div className="text-center pt-4 font-bold rounded-xl">
+                        Selesaikan Transaksi Sebelumnya
+                    </div>
+
+                    <ModalBody className=" py-2 px-5">
+                        <div className="space-y-0">
+                            <p className="text-center font-normal leading-relaxed text-gray-500 dark:text-gray-400">
+                                Selesaikan Transaksi Sebelumnya  Mohon selesaikan atau
+                                batalkan transaksi sebelumnya agar
+                                Anda bisa membuat transaksi baru.
+                            </p>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter className="flex flex-col p-2 border-0">
+                        <Button className="w-full mb-2" color="blue" onClick={() => {
+                            return navigate(`/transaction-history/${transactionExistsRedux[0]?.transaction_code}`)
+                        }} >Lihat Transaksi Sebelumnya</Button>
+
+
+                        <Button className="w-full" color="gray" onClick={() => setOpenModalTransaction(false)}>
                             Tutup
                         </Button>
                     </ModalFooter>

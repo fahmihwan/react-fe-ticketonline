@@ -91,8 +91,10 @@ export const statusTransactionUtil = (text) => {
     let css = ''
     if (text == 'CANCELLED') {
         css += 'text-red-500 '
-    } else if (text == 'PENDING') {
+    } else if (text == 'EXPIRED') {
         css += 'text-red-500 '
+    } else if (text == 'PENDING') {
+        css += 'text-yellow-500 '
     } else if (text == 'SUCCESS') {
         css += 'text-green-500 '
     }

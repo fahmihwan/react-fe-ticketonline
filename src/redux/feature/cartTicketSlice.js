@@ -12,9 +12,9 @@ const createCartTicket = createAsyncThunk("cart/createCartTicket", async ({ payl
 })
 
 
-const findCartByUserId = createAsyncThunk("cart/findCartByUserId", async ({ userId }, { rejectWithValue }) => {
+const findCartByUserId = createAsyncThunk("cart/findCartByUserId", async ({ userId, slug }, { rejectWithValue }) => {
     try {
-        const response = await apiClient.get(`/cart/${userId}`)
+        const response = await apiClient.get(`/cart/${userId}/${slug}`)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)

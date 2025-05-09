@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDetailHistoryTransaction } from "../../redux/feature/historiesSlice";
 import { Link, useParams } from "react-router-dom";
 import { formatDateTimeUtil, formatRupiahUtil, getPaymentMethodName, statusTransactionUtil } from "../../utils/utils";
+import { cancelledTransaction } from "../../redux/feature/transactionSlice";
 
 
 export default function DetailTransaction() {
@@ -26,8 +27,34 @@ export default function DetailTransaction() {
         <>
             <div className="lg:mx-[400px]">
                 <div className="w-full ">
-                    <div className="w-full">
+                    <div className="w-full flex justify-between mt-5">
                         <b className="text-2xl inline-block mb-5">Detail Transaksi</b>
+                        {detailTransactionrRedux?.transaction_status == 'PENDING' && (
+                            <div>
+                                <button
+                                    type="button"
+                                    className="text-red-700 bg-red-300  focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600  focus:outline-none dark:focus:ring-red-800"
+                                    onClick={async () => {
+                                        await dispatch(cancelledTransaction({ transactionCode: transactionCode }))
+                                        await dispatch(getDetailHistoryTransaction({ transactionCode: transactionCode }));
+                                    }}
+                                >
+                                    Batal Transaksi
+                                </button>
+                                <button
+                                    type="button"
+                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    onClick={() => {
+                                        window.open(detailTransactionrRedux?.payment_url, '_blank');
+                                    }}
+                                >
+                                    Bayar Sekarang
+                                </button>
+                            </div>
+                        )}
+
+
+
                     </div>
                     <div className="w-full pt-5 flex">
                         <div className=" w-4/12 mr-5">
@@ -77,7 +104,8 @@ export default function DetailTransaction() {
                                                 <p>{getPaymentMethodName(detailTransactionrRedux?.payment_method)}</p>
                                             </td>
                                             <td className="p-2 border-b-2 border-l border-r">
-
+                                                <p className="text-gray-500">Virtual account</p>
+                                                <p>{detailTransactionrRedux?.virtual_account}</p>
                                             </td>
                                         </tr>
 

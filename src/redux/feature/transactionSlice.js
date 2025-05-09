@@ -21,14 +21,26 @@ const checkoutTransaction = createAsyncThunk("duitku/checkout", async ({ payload
 })
 
 
-// export const getPaymentMethodDuitku = async (payload) => {
-//     try {
-//         const response = await apiClient.post(`/transaction/paymentgateway-get-payment-method`, payload)
-//         return response.data;
-//     } catch (error) {
-//         return error
-//     }
-// }
+const checkIfCurrentTransactionEventForUserExists = createAsyncThunk("transaction/checkIfCurrentTransactionEventForUserExists", async ({ userId, slug }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/transaction/check-transaction-exists/${userId}/${slug}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
+const cancelledTransaction = createAsyncThunk("transaction/cancelledTransaction", async ({ transactionCode }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.put(`/transaction/${transactionCode}/cancel`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
 
 const transactionSlice = createSlice({
     name: "transactionSlice",
@@ -36,6 +48,8 @@ const transactionSlice = createSlice({
         message: "",
         detailEvent: null,
         paymentMethod: null,
+        transactionExist: null,
+        cancelledTransaction: null,
         checkout: null,
         status: null,
     },
@@ -73,7 +87,37 @@ const transactionSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(cancelledTransaction.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(cancelledTransaction.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                cancelledTransaction: action.payload.data,
+                status: "success"
+            })
+        }).addCase(cancelledTransaction.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(checkIfCurrentTransactionEventForUserExists.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(checkIfCurrentTransactionEventForUserExists.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                transactionExist: action.payload.data,
+                status: "success"
+            })
+        }).addCase(checkIfCurrentTransactionEventForUserExists.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
+
+
 
 
     }
@@ -82,6 +126,8 @@ const transactionSlice = createSlice({
 
 export {
     getPaymentMethodDuitku,
-    checkoutTransaction
+    checkoutTransaction,
+    cancelledTransaction,
+    checkIfCurrentTransactionEventForUserExists
 };
 export default transactionSlice.reducer
