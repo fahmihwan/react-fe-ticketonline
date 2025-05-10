@@ -22,7 +22,6 @@ export default function Checkout() {
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
     const eventRedux = useSelector((state) => state.event.detailEvent)
-    const transactionExistsRedux = useSelector((state) => state.transaction.transactionExist)
 
     const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")

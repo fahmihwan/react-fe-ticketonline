@@ -1,64 +1,71 @@
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Link } from 'react-router-dom'
+import { allOfTransactionFromUsersAdmin } from '../../../redux/feature/historiesSlice';
+import { PaginationNativeEl } from '../../component/Pagination';
+import { fGeneratePaginationNumberUtil, getPaymentMethodName, formatDateTimeUtil, formatRupiahUtil } from '../../../utils/utils';
 
 const Transaction = () => {
     const [data, setData] = useState([])
 
+    const dispatch = useDispatch();
+    // const listTransactionRedux = useSelector((state) => state.history.listTransactionAdmin || [])
+
+
+    const [items, setItems] = useState([]);
+    const [paginateSearch, setPaginateSearch] = useState('');
+    const [paginatePage, setPaginatePage] = useState(0)
+    const [paginateLimit, setpaginateLimit] = useState(10)
+    const [paginateTotalItem, setPaginateTotalItem] = useState(0)
+    const [paginateTotalPage, setPaginateTotalPage] = useState(0)
+
+
+    // listTransactionAdmin
+
+
+    // useEffect(() => {
+    //     dispatch(allOfTransactionFromUsersAdmin({ params: `?page=${0}&size=${5}` })).then((result) => {
+    //         const res = result.payload.data
+    //         setItems(res?.data)
+    //         if (res.page > res.totalPages) {
+    //             setPaginatePage(1)
+    //         } else {
+    //             setPaginatePage(res?.page)
+    //         }
+
+    //         setpaginateLimit(res?.page)
+    //         setPaginateTotalItem(res?.totalElements)
+    //         setPaginateTotalPage(res?.totalPages)
+
+
+    //     }).catch((err) => {
+
+
+    //     });
+    // }, [dispatch])
+
+    const fetchWithParams = (params) => {
+        dispatch(allOfTransactionFromUsersAdmin({ params: `?page=${paginatePage}&size=${paginateLimit}` })).then((result) => {
+            const res = result.payload.data
+            setItems(res?.data)
+            if (res?.page > res?.totalPages) {
+                setPaginatePage(0)
+            } else {
+                setPaginatePage(res?.page)
+            }
+
+            setpaginateLimit(res?.size)
+            setPaginateTotalItem(res?.totalElements)
+            setPaginateTotalPage(res?.totalPages)
+        })
+    }
 
     useEffect(() => {
-        let response = [
-            {
-                id: 1,
-                event_title: "dsdsds",
-                img: "dsdsds",
-                schedule: "18 november 2024",
-                description: "loremipsum",
-                categoryTickets: [
-                    {
-                        id: 1,
-                        category_name: "earlybid",
-                        price: 50000,
-                        stock: 0
-                    }
+        fetchWithParams()
+    }, [paginatePage, paginateLimit])
 
-                ]
-            },
-            {
-                id: 1,
-                event_title: "dsdsds",
-                img: "dsdsds",
-                schedule: "18 november 2024",
-                description: "loremipsum",
-                categoryTickets: [
-                    {
-                        id: 1,
-                        category_name: "earlybid",
-                        price: 50000,
-                        stock: 0
-                    }
 
-                ]
-            },
-            {
-                id: 1,
-                event_title: "dsdsds",
-                img: "dsdsds",
-                schedule: "18 november 2024",
-                description: "loremipsum",
-                categoryTickets: [
-                    {
-                        id: 1,
-                        category_name: "earlybid",
-                        price: 50000,
-                        stock: 0
-                    }
-
-                ]
-            },
-        ]
-        setData(response)
-    }, [])
 
     return (
         <>
@@ -74,25 +81,34 @@ const Transaction = () => {
                         <tr>
                             <th>No</th>
                             <th scope="col" className="px-6 py-3">
-                                Title
+                                Transaction Code
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Image
+                                Transaksi date
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Schedule
+                                Transaction Status
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Payment Method
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Event Title
                             </th>
 
                             <th scope="col" className="px-6 py-3">
-                                List Ticket
+                                Price
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Action
+                                Qty
                             </th>
+                            {/* <th scope="col" className="px-6 py-3">
+                                Action
+                            </th> */}
                         </tr>
                     </thead>
                     <tbody>
-                        {data.length != 0 && data.map((d, i) => (
+                        {items?.length != 0 && items?.map((d, i) => (
                             <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th>
                                     {i + 1}
@@ -101,95 +117,34 @@ const Transaction = () => {
                                     scope="row"
                                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                 >
-                                    Apple MacBook Pro 17
+                                    {d?.transaction_code}
                                 </th>
-                                <td className="px-6 py-4">Silver</td>
-                                <td className="px-6 py-4">Laptop</td>
+                                <td className="px-6 py-4">{formatDateTimeUtil(d?.created_at)}</td>
+                                <td className="px-6 py-4">{d?.transaction_status}</td>
+                                <td className="px-6 py-4">{getPaymentMethodName(d?.payment_method)}</td>
+                                <td className="px-6 py-4">{d?.event_title}</td>
 
-                                <td className="px-6 py-4">$2999</td>
-                                <td className="px-6 py-4">
+                                <td className="px-6 py-4">{formatRupiahUtil(d?.total_price)}</td>
+                                <td className="px-6 py-4">{d?.total_qty}</td>
+                                {/* <td className="px-6 py-4">
                                     <Link
                                         to="/admin/ticket/1/create"
                                         className="mr-5 font-medium text-blue-600  hover:underline"
                                     >
                                         add ticket
                                     </Link>
-
-                                </td>
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                <nav
-                    className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4"
-                    aria-label="Table navigation"
-                >
-                    <span className="text-sm font-normal text-gray-500 dark:text-gray-400 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-                        Showing{" "}
-                        <span className="font-semibold text-gray-900 dark:text-white">1-10</span>{" "}
-                        of{" "}
-                        <span className="font-semibold text-gray-900 dark:text-white">1000</span>
-                    </span>
-                    <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                Previous
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                1
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                2
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                aria-current="page"
-                                className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-                            >
-                                3
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                4
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                5
-                            </a>
-                        </li>
-                        <li>
-                            <a
-                                href="#"
-                                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                            >
-                                Next
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <PaginationNativeEl
+                    generatePageNumbers={fGeneratePaginationNumberUtil(paginatePage, paginateTotalPage, paginateLimit)}
+                    paginatePage={paginatePage}
+                    setPaginatePage={setPaginatePage}
+                    paginateTotalPage={paginateTotalPage}
+                    paginateTotalItem={paginateTotalItem} />
+
             </div>
         </>
 

@@ -35,38 +35,6 @@ export default function TransactionHistory() {
     }, [])
 
 
-    useEffect(() => {
-        // let response = [
-        // {
-        //     id: 1,
-        //     invoice: "invoice-9e775c8aa52021505db8",
-        //     event: "The Krawds s",
-        //     img: "event-1.png",
-        //     transaction_status: "Payment Success",
-        //     transaction_date: "02 Oktober 2022, 05:42 WIB",
-        //     total: "Rp. 78.350"
-        // },
-        //     {
-        //         id: 2,
-        //         invoice: "invoice-9e775c8aa52021505db8",
-        //         event: "The Krawds",
-        //         img: "event-1.png",
-        //         transaction_status: "Payment Success",
-        //         transaction_date: "02 Oktober 2022, 05:42 WIB",
-        //         total: "Rp. 78.350"
-        //     },
-        //     {
-        //         id: 3,
-        //         invoice: "invoice-9e775c8aa52021505db8",
-        //         event: "The Krawds",
-        //         img: "event-1.png",
-        //         transaction_status: "Payment Success",
-        //         transaction_date: "02 Oktober 2022, 05:42 WIB",
-        //         total: "Rp. 78.350"
-        //     },
-        // ]
-        // setData(response)
-    }, [])
 
     return (
         <>

@@ -4,7 +4,7 @@ import apiClient from "../../api/api";
 
 const getListTransaction = createAsyncThunk("histories/listtransaction", async ({ userId }, { rejectWithValue }) => {
     try {
-        const response = await apiClient.get(`/transaction/histories/${userId}`)
+        const response = await apiClient.get(`/transaction-histories/histories/${userId}`)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)
@@ -13,13 +13,21 @@ const getListTransaction = createAsyncThunk("histories/listtransaction", async (
 
 const getDetailHistoryTransaction = createAsyncThunk("histories/detail-transaction", async ({ transactionCode }, { rejectWithValue }) => {
     try {
-        const response = await apiClient.get(`/transaction/histories-detail/${transactionCode}`,)
+        const response = await apiClient.get(`/transaction-histories/histories-detail/${transactionCode}/detail-user`,)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)
     }
 })
 
+const allOfTransactionFromUsersAdmin = createAsyncThunk("transaction-histories/admin", async ({ params }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/transaction-histories/admin${params}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
 
 
 const historiesSlice = createSlice({
@@ -28,6 +36,7 @@ const historiesSlice = createSlice({
         message: "",
         detailTransaction: null,
         historyTransaction: null,
+        listTransactionAdmin: null,
         status: null,
     },
     reducers: {
@@ -63,16 +72,29 @@ const historiesSlice = createSlice({
                 ...state,
                 status: "failed",
                 error: action.error.message,
+            })
+        }).addCase(allOfTransactionFromUsersAdmin.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(allOfTransactionFromUsersAdmin.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                listTransactionAdmin: action.payload.data,
+                status: "success"
+            })
+        }).addCase(allOfTransactionFromUsersAdmin.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
             });
         })
-
-
     }
 })
 
 
 export {
     getListTransaction,
-    getDetailHistoryTransaction
+    getDetailHistoryTransaction,
+    allOfTransactionFromUsersAdmin
 };
 export default historiesSlice.reducer

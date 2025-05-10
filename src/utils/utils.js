@@ -100,3 +100,22 @@ export const statusTransactionUtil = (text) => {
     }
     return css
 }
+
+export const fGeneratePaginationNumberUtil = (paginatePage, paginateTotalPage, paginateLimit) => {
+    const pageNumbers = [];
+    const maxPagesToShow = paginateLimit;
+    let startPage = Math.max(1, paginatePage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(paginateTotalPage, startPage + maxPagesToShow - 1);
+    if (endPage - startPage + 1 < maxPagesToShow) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+    }
+    return pageNumbers
+}
+
+
+export const fCalculatePaginateIterationUtil = (paginatePage, maxPagesToShow) => {
+    return (paginatePage - 1) * maxPagesToShow + 1;
+}
