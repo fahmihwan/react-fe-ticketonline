@@ -2,20 +2,124 @@ import { Dropdown, Navbar } from "flowbite-react";
 import { Link, Outlet } from "react-router-dom";
 import { IconLogoBrandEl } from "../component/IconSvg";
 import { useState } from "react";
-import { Button, Modal } from "flowbite-react";
+
+
+import { Button, Checkbox, Label, Modal, ModalBody, ModalHeader, TextInput } from "flowbite-react";
 import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
+import { TabItem, Tabs } from "flowbite-react";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/feature/userSlice";
 
 export default function LayoutCustomer() {
+    const isAuth = localStorage.getItem('auth')
+    const dispatch = useDispatch()
     const [openModalProfile, setOpenModalProfile] = useState(false);
     const [openModalPassword, setOpenModalPassword] = useState(false);
+    const [openModalLoginAndRegis, setOpenModalLoginAndRegis] = useState({
+        isActive: false,
+        menuActive: ""
+    });
 
-    const handleChange = (params) => {
+
+    const [formRegisOrProfile, setFormRegisOrProfile] = useState({
+        gender: "",
+        full_name: "",
+        email: "",
+        d_birth_date: "",
+        m_birth_date: "",
+        y_birth_date: "",
+        telp: "",
+        address: "",
+        password: "",
+    })
+    const [formLogin, setFormLogin] = useState({
+        email: "fahmihwan@example.com",
+        password: "qweqwe123"
+    })
+
+    const handleOpenModalLoginAndRegis = (isActive, menuActive) => {
+
+
 
     }
+
+    const handleClear = (params) => {
+        setFormRegisOrProfile({
+            gender: "",
+            full_name: "",
+            email: "",
+            d_birth_date: "",
+            m_birth_date: "",
+            y_birth_date: "",
+            telp: "",
+            address: "",
+            password: "",
+        })
+        setFormLogin({
+            email: "",
+            password: ""
+        })
+
+    }
+    const handleChange = (e) => {
+        let { name, value } = e.target;
+        if (name.includes('gender')) {
+            name = 'gender'
+        }
+        setFormRegisOrProfile((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+
+
+    const handleChangeLogin = (e) => {
+        const { name, value } = e.target;
+        setFormLogin((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+
+
+    const handleRegis = () => {
+        console.log(formRegisOrProfile);
+    }
+
+    const handleLogin = () => {
+        dispatch(login({
+            payload: {
+                email: formLogin.email,
+                password: formLogin.password
+            }
+        })).then((res) => {
+            if (res.payload.success) {
+                const data = res.payload.data
+                localStorage.setItem('auth', JSON.stringify(data))
+                window.location.reload()
+
+            }
+
+        }).catch((err) => {
+
+        });
+    }
+
+    const handleChangeProfile = () => {
+        console.log(formRegisOrProfile);
+    }
+
+    const handleLogout = () => {
+        localStorage.clear()
+
+        window.location.reload()
+    }
+
+
     return (
         <>
-            <Navbar fluid className="shadow-lg flex justify-center ">
-                <div className=" w-full flex items-center">
+            <Navbar fluid className="shadow-lg flex justify-center items-center ">
+                <div className=" w-full flex items-center  ">
                     <Link to={"/"}>
                         <IconLogoBrandEl />
                     </Link>
@@ -66,7 +170,7 @@ export default function LayoutCustomer() {
                     <Link to="/transaction-history" className="mr-5">Transaksi</Link>
                     <Link className="mr-5">Ticket</Link>
 
-                    <div className="flex md:order-5">
+                    <div className="flex ">
                         <Dropdown
                             arrowIcon={false}
                             inline
@@ -75,7 +179,6 @@ export default function LayoutCustomer() {
                                 "porfile"}
                         >
                             <Dropdown.Header >
-                                {/* username & email */}
                                 Hello, <br /> <b>Fahmi</b>
                             </Dropdown.Header>
                             <Dropdown.Item onClick={() => setOpenModalProfile(true)}>
@@ -87,13 +190,40 @@ export default function LayoutCustomer() {
 
                             <Dropdown.Divider />
                             <button >
-                                <Dropdown.Item>
+                                <Dropdown.Item onClick={() => handleLogout()}>
                                     Logout
                                 </Dropdown.Item>
                             </button>
                         </Dropdown>
                         <Navbar.Toggle />
                     </div>
+
+                    {!isAuth && (
+                        <div className="ml-5">
+                            <button
+                                onClick={() => setOpenModalLoginAndRegis({
+                                    isActive: true,
+                                    menuActive: "login"
+                                })}
+                                type="button"
+                                className="text-blue-700 bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2  focus:outline-none "
+                            >
+                                Masuk
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setOpenModalLoginAndRegis({
+                                    isActive: true,
+                                    menuActive: "register"
+                                })}
+                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2   focus:outline-none "
+                            >
+                                Daftar
+                            </button>
+
+                        </div>
+                    )}
+
                 </div>
             </Navbar>
 
@@ -115,10 +245,12 @@ export default function LayoutCustomer() {
             </div>
 
 
-            {/* Profile */}
-            <Modal show={openModalProfile} onClose={() => setOpenModalProfile(false)}>
+            {/* MENU PROFILE */}
+            <Modal show={openModalProfile} onClose={() => {
+                setOpenModalProfile(false)
+                handleClear()
+            }}>
                 <Modal.Header >
-
                     <b className="">Profil</b>
                     <p className="text-[12px]">Mengubah profil tidak akan mengubah data pada tiket yang telah dibeli</p>
                 </Modal.Header>
@@ -127,7 +259,7 @@ export default function LayoutCustomer() {
                         placeholder="Nama Lengkap"
                         handleChange={(e) => handleChange(e)}
                         name="full_name"
-                    // value={full_name}
+                        value={formRegisOrProfile.full_name}
                     />
                     <TextInputEl
                         placeholder="Email"
@@ -135,26 +267,26 @@ export default function LayoutCustomer() {
                         name="email"
                         readOnly={true}
                         messageInfo="Email tidak dapat diubah"
-                        value={"fahmiiwan86@gmail.com"}
+                        value={formRegisOrProfile.email}
                     />
 
                     <div className="w-full flex mb-5">
                         <div className="w-1/2 mr-2">
                             <SelectEl
-                                selectedValue=""
+                                selectedValue={formRegisOrProfile.d_birth_date}
                                 name="d_birth_date"
                                 handleChange={(e) => handleChange(e)}
                                 key={"day"} id={"day"} placeholder={"Tanggal lahir"} />
                         </div>
                         <div className="w-1/2 mr-2">
                             <SelectEl
-                                selectedValue=""
+                                selectedValue={formRegisOrProfile.m_birth_date}
                                 key={"month"} id={"month"} placeholder="&nbsp;" name="m_birth_date"
                                 handleChange={(e) => handleChange(e)} />
                         </div>
                         <div className="w-1/2 mr-2">
                             <SelectEl
-                                selectedValue=""
+                                selectedValue={formRegisOrProfile.y_birth_date}
                                 key={"year"} id={"year"} placeholder="&nbsp;" name="y_birth_date"
                                 handleChange={(e) => handleChange(e)} />
                         </div>
@@ -170,14 +302,14 @@ export default function LayoutCustomer() {
                             <div className="w-1/2 mr-2">
                                 <RadioEl
                                     optionValue="L"
-                                    selectedValue={"L"}
+                                    selectedValue={formRegisOrProfile.gender}
                                     handleChange={(e) => handleChange(e)}
                                     placeholder={"Laki - laki"} name={"gender"} id={"L"} />
                             </div>
                             <div className="w-1/2">
                                 <RadioEl
                                     optionValue="P"
-                                    selectedValue={"P"}
+                                    selectedValue={formRegisOrProfile.gender}
                                     handleChange={(e) => handleChange(e)}
                                     placeholder={"Perempuan"} name={"gender"} id={"P"} />
                             </div>
@@ -185,17 +317,19 @@ export default function LayoutCustomer() {
                     </div>
                     <TextInputEl
                         name="telp"
-                        value=""
+                        value={formRegisOrProfile.telp}
                         handleChange={(e) => handleChange(e)}
                         placeholder="Nomor Telepon" />
                     <TextInputEl
                         name="address"
-                        value=""
+                        value={formRegisOrProfile.address}
                         handleChange={(e) => handleChange(e)}
                         placeholder="Alamat" />
                 </Modal.Body>
                 <Modal.Footer>
-                    <button type="button" className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
+                    <button type="button"
+                        onClick={() => handleChangeProfile()}
+                        className="text-white mt-5 w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
                         Ubah Profile
                     </button>
                 </Modal.Footer>
@@ -238,6 +372,151 @@ export default function LayoutCustomer() {
                         <p className="text-center text-gray-500">Dengan mengubah kata sandi, semua sesi di perangkat lain akan keluar</p>
                     </div>
                 </Modal.Footer>
+            </Modal>
+
+
+
+            {/* MODAL REGIS AND LOGIN*/}
+            <Modal show={openModalLoginAndRegis.isActive} size="md" onClose={() => setOpenModalLoginAndRegis({
+                isActive: false,
+                menuActive: ""
+            })} popup>
+                <ModalHeader />
+                <ModalBody>
+                    <div className="space-y-6">
+                        <div>
+                            <h3 className="text-xl text-center font-medium text-gray-900 dark:text-white">
+                                Selamat Datang di Tiket Online
+                            </h3>
+                            <p className="text-center">Silahkan masuk atau daftar untuk melanjutkan</p>
+                        </div>
+
+                        <div className="w-full">
+                            <Tabs aria-label="Full width tabs" variant="fullWidth">
+                                <TabItem active={openModalLoginAndRegis.menuActive == 'login'} title="Masuk">
+                                    <div className="py-5">
+                                        <div className="mb-5">
+                                            <div className="mb-2 block">
+                                                <Label htmlFor="email">Email</Label>
+                                            </div>
+                                            <TextInput
+                                                id="email"
+                                                placeholder="name@company.com"
+                                                name="email"
+                                                value={formLogin.email}
+                                                onChange={(e) => handleChangeLogin(e)}
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <div className="mb-2 block">
+                                                <Label htmlFor="password">Kata Sandi</Label>
+                                            </div>
+                                            <TextInput id="password" type="password"
+                                                name="password"
+                                                value={formLogin.password}
+                                                onChange={(e) => handleChangeLogin(e)}
+                                                required />
+                                        </div>
+                                        <div className="flex justify-between py-2 mt-5">
+                                            <a href="#" className="text-sm text-blue-700 hover:underline dark:text-blue-500">
+                                                Lupa Password?
+                                            </a>
+                                        </div>
+                                        <div className="w-full ">
+                                            <Button color="blue" onClick={() => handleLogin()} fullSized>Masuk</Button>
+                                        </div>
+                                    </div>
+
+                                </TabItem>
+                                <TabItem active={openModalLoginAndRegis.menuActive == 'register'} title="Daftar">
+                                    <TextInputEl
+                                        placeholder="Nama Lengkap"
+                                        handleChange={(e) => handleChange(e)}
+                                        name="full_name"
+                                        value={formRegisOrProfile.full_name}
+                                    />
+                                    <TextInputEl
+                                        placeholder="Email"
+                                        handleChange={(e) => handleChange(e)}
+                                        name="email"
+
+                                        value={formRegisOrProfile.email}
+                                    />
+
+                                    <div className="w-full flex mb-5">
+                                        <div className="w-1/2 mr-2">
+                                            <SelectEl
+                                                selectedValue={formRegisOrProfile.d_birth_date}
+                                                name="d_birth_date"
+                                                handleChange={(e) => handleChange(e)}
+                                                key={"day"} id={"day"} placeholder={"Tanggal lahir"} />
+                                        </div>
+                                        <div className="w-1/2 mr-2">
+                                            <SelectEl
+                                                selectedValue={formRegisOrProfile.m_birth_date}
+                                                key={"month"} id={"month"} placeholder="&nbsp;" name="m_birth_date"
+                                                handleChange={(e) => handleChange(e)} />
+                                        </div>
+                                        <div className="w-1/2 mr-2">
+                                            <SelectEl
+                                                selectedValue={formRegisOrProfile.y_birth_date}
+                                                key={"year"} id={"year"} placeholder="&nbsp;" name="y_birth_date"
+                                                handleChange={(e) => handleChange(e)} />
+                                        </div>
+                                    </div>
+                                    <div className="mb-5">
+                                        <label
+                                            htmlFor="error"
+                                            className="block mb-2 text-sm font-medium "
+                                        >
+                                            Jenis Kelamin
+                                        </label>
+                                        <div className="flex w-full ">
+                                            <div className="w-1/2 mr-2">
+                                                <RadioEl
+                                                    optionValue="L"
+                                                    selectedValue={formRegisOrProfile.gender}
+                                                    handleChange={(e) => handleChange(e)}
+                                                    placeholder={"Laki - laki"} name={"gender"} id={"L"} />
+                                            </div>
+                                            <div className="w-1/2">
+                                                <RadioEl
+                                                    optionValue="P"
+                                                    selectedValue={formRegisOrProfile.gender}
+                                                    handleChange={(e) => handleChange(e)}
+                                                    placeholder={"Perempuan"} name={"gender"} id={"P"} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <TextInputEl
+                                        name="telp"
+                                        value={formRegisOrProfile.telp}
+                                        handleChange={(e) => handleChange(e)}
+                                        placeholder="Nomor Telepon" />
+                                    <TextInputEl
+                                        name="address"
+                                        value={formRegisOrProfile.address}
+                                        handleChange={(e) => handleChange(e)}
+                                        placeholder="Alamat" />
+                                    <TextInputEl
+                                        name="password"
+                                        value={formRegisOrProfile.password}
+                                        handleChange={(e) => handleChange(e)}
+                                        placeholder="Password" />
+
+                                    <div className="w-full mb-5">
+                                        <Button color="blue" onClick={() => handleRegis()} fullSized>Daftar</Button>
+                                    </div>
+                                    <p>Dengan menggunakan website ini, membeli tiket, atau membuat akun, Anda setuju dengan Syarat Layanan & Kebijakan Privasi</p>
+                                </TabItem>
+                            </Tabs>
+
+                        </div>
+
+
+                    </div>
+                </ModalBody>
             </Modal>
 
         </>

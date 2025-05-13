@@ -6,6 +6,7 @@ import lineUpReducer from "./feature/lineUpSlice";
 import categoryTicketReducer from "./feature/categoryTicketSlice";
 import cartReducer from "./feature/cartTicketSlice";
 import historySlice from "./feature/historiesSlice";
+import userSlice from "./feature/userSlice";
 
 const store = configureStore({
     reducer: {
@@ -14,8 +15,8 @@ const store = configureStore({
         lineUp: lineUpReducer,
         categoryTicket: categoryTicketReducer,
         cart: cartReducer,
-        history: historySlice
-
+        history: historySlice,
+        user: userSlice
         //   auth: authReducer,
         //   mountain: mountainReducer,
         //   tourGuide: TourGuideReducer,

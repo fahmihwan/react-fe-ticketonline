@@ -77,7 +77,7 @@ const Ticket = () => {
                                 <td className="px-6 py-4">
                                     <ul className=' space-y-1 text-gray-500 w-full'>
                                         {d?.category_tickets?.map((x, i) => {
-                                            return (<li key={i} className='block w-full p-2 bg-white border border-gray-200 rounded-lg shadow mb-5'>
+                                            return (<li key={i} className='block w-full p-2 bg-white border border-gray-200  mb-5'>
                                                 <div className='flex justify-between'>
                                                     <div>
                                                         <b>{x.categoryName}</b><br />

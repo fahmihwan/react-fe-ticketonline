@@ -15,9 +15,13 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     async (config) => {
 
-        const token = Cookies.get('token')
+        // const token = Cookies.get('token')
+        let token = localStorage.getItem('auth')
+        let parse = JSON.parse(token)
+        token = parse?.token
+        console.log(token);
         if (token) {
-            config.headers['Authorization'] = `Bearer ${JSON.parse(token)}`;  // Tambahkan token ke header jika ada
+            config.headers['Authorization'] = `Bearer ${token}`;  // Tambahkan token ke header jika ada
         }
         return config;
     },
