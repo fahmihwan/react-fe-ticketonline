@@ -19,7 +19,7 @@ apiClient.interceptors.request.use(
         let token = localStorage.getItem('auth')
         let parse = JSON.parse(token)
         token = parse?.token
-        console.log(token);
+
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;  // Tambahkan token ke header jika ada
         }

@@ -14,10 +14,12 @@ import { data, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
 import { formatDateUtil } from "../../utils/utils";
+import { findUserById } from "../../redux/feature/userSlice";
 
 
 export default function Checkout() {
     const { slug } = useParams();
+
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
@@ -64,7 +66,8 @@ export default function Checkout() {
     };
 
     const fetchData = async () => {
-        await dispatch(checkIfCurrentTransactionEventForUserExists({ userId: 1, slug: slug })).then((res) => {
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        await dispatch(checkIfCurrentTransactionEventForUserExists({ userId: auth?.userId, slug: slug })).then((res) => {
             const data = res?.payload?.data
 
             if (data.length > 0) {
@@ -73,7 +76,8 @@ export default function Checkout() {
         })
 
         await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
-        await dispatch(findCartByUserId({ userId: 1, slug: slug })).then(async (result) => {
+
+        await dispatch(findCartByUserId({ userId: auth?.userId, slug: slug })).then(async (result) => {
             const response = result.payload.data
             const totalPrice = response.reduce((sum, item) => sum + item.price * item.total, 0);
             await dispatch(getPaymentMethodDuitku({ payload: { amount: totalPrice } }))
@@ -176,27 +180,39 @@ export default function Checkout() {
             }
         }
 
-
-
-
-        makeArrForm[0] = fAutoFormCredential(makeArrForm[0])
-        setFormCustomer(makeArrForm);
+        buildForm(makeArrForm)
 
     }, [cartUser])
 
 
 
+    const buildForm = async (makeArrForm) => {
 
-    const fAutoFormCredential = (makeArrForm) => {
-        makeArrForm.full_name = "fahmi ichwanurrohman"
-        makeArrForm.email = "fahmiiwan86@gmail.com"
-        makeArrForm.gender = "L"
-        makeArrForm.d_birth_date = "11"
-        makeArrForm.m_birth_date = "Juli"
-        makeArrForm.y_birth_date = "1999"
-        makeArrForm.telp = "082334337393"
-        makeArrForm.address = "Magetan"
+        makeArrForm[0] = await fAutoFormCredential(makeArrForm[0])
+        await setFormCustomer(makeArrForm);
+    }
+
+
+    const fAutoFormCredential = async (makeArrForm) => {
+        const auth = JSON.parse(localStorage.getItem('auth'))
+
+
+        dispatch(findUserById({ userId: auth?.userId })).then((res) => {
+            let data = res.payload.data  // console.log(res.payload.data);
+            let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY");
+            fFormatDate = fFormatDate.split('-')
+            makeArrForm.full_name = data?.fullName
+            makeArrForm.email = data?.email
+            makeArrForm.gender = data?.gender
+            makeArrForm.d_birth_date = fFormatDate[0]
+            makeArrForm.m_birth_date = fFormatDate[1]
+            makeArrForm.y_birth_date = fFormatDate[2]
+            makeArrForm.telp = data?.phoneNumber
+            makeArrForm.address = data?.address
+        })
+
         return makeArrForm
+
     }
 
     const handleChange = (e, index) => {
@@ -228,11 +244,6 @@ export default function Checkout() {
 
     }
     const handleSubmit = () => {
-
-
-
-        // const isoString = dateTime.format('YYYY-MM-DDTHH:mm');
-
 
         if (step == 1) {
             setFirstSubmited(true)
@@ -267,12 +278,12 @@ export default function Checkout() {
                 const formattedDate = momentDate.format("YYYY-MM-DD");
                 duplicateForm[i].birth_date = formattedDate;
             }
-
+            const auth = JSON.parse(localStorage.getItem('auth'))
 
             let payload = {
                 slug: slug,
                 paymentMethod: selectedPayment,
-                userId: 1,
+                userId: auth?.userId,
                 participants: duplicateForm,
                 detailCartTicket: detailCartTicket,
             }

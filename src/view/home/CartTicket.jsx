@@ -32,8 +32,13 @@ export default function CartTicket() {
         if (!slug) {
             return
         }
-        dispatch(checkIfCurrentTransactionEventForUserExists({ userId: 1, slug: slug }))
-        dispatch(findCartByUserId({ userId: 1, slug: slug }))
+
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        if (auth) {
+            dispatch(checkIfCurrentTransactionEventForUserExists({ userId: auth?.userId, slug: slug }))
+            dispatch(findCartByUserId({ userId: auth?.userId, slug: slug }))
+        }
+
         dispatch(findBySlugWithCategoryTickets({ slug: slug })).then((res) => {
 
             setDetailEvent({
@@ -101,7 +106,6 @@ export default function CartTicket() {
     }
 
     const handleSubmit = () => {
-        // console.log();
         if (transactionExistsRedux.length > 0) {
             setOpenModalTransaction(true)
         } else {

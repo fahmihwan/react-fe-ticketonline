@@ -17,21 +17,25 @@ export default function TransactionHistory() {
 
 
     useEffect(() => {
-        dispatch(getListTransaction({ userId: 1 })).then((res) => {
-            let data = res?.payload?.data
+        const auth = JSON.parse(localStorage.getItem('auth'))
+        if (auth) {
+            dispatch(getListTransaction({ userId: auth?.userId })).then((res) => {
+                let data = res?.payload?.data
 
 
-            const mappedRes = data.map(d => ({
-                invoice: d.transaction_code,
-                event: d.event_title,
-                img: d.image,
-                transaction_status: d.transaction_status,
-                transaction_date: d.tgl_transaksi,
-                total: d.total_price
-            }));
+                const mappedRes = data.map(d => ({
+                    invoice: d.transaction_code,
+                    event: d.event_title,
+                    img: d.image,
+                    transaction_status: d.transaction_status,
+                    transaction_date: d.tgl_transaksi,
+                    total: d.total_price
+                }));
 
-            setData(mappedRes)
-        })
+                setData(mappedRes)
+            })
+        }
+
     }, [])
 
 

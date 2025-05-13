@@ -8,7 +8,8 @@ import { Button, Checkbox, Label, Modal, ModalBody, ModalHeader, TextInput } fro
 import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
 import { TabItem, Tabs } from "flowbite-react";
 import { useDispatch } from "react-redux";
-import { login } from "../../redux/feature/userSlice";
+import { login, registerUser } from "../../redux/feature/userSlice";
+import moment from "moment";
 
 export default function LayoutCustomer() {
     const isAuth = localStorage.getItem('auth')
@@ -22,31 +23,26 @@ export default function LayoutCustomer() {
 
 
     const [formRegisOrProfile, setFormRegisOrProfile] = useState({
-        gender: "",
-        full_name: "",
-        email: "",
-        d_birth_date: "",
-        m_birth_date: "",
-        y_birth_date: "",
-        telp: "",
-        address: "",
-        password: "",
+        gender: "L",
+        fullName: "admin",
+        email: "admin@gmail.com",
+        d_birth_date: "11",
+        m_birth_date: "Juli",
+        y_birth_date: "1999",
+        telp: "0823233",
+        address: "qe",
+        password: "qweqwe123",
     })
     const [formLogin, setFormLogin] = useState({
         email: "fahmihwan@example.com",
         password: "qweqwe123"
     })
 
-    const handleOpenModalLoginAndRegis = (isActive, menuActive) => {
-
-
-
-    }
 
     const handleClear = (params) => {
         setFormRegisOrProfile({
             gender: "",
-            full_name: "",
+            fullName: "",
             email: "",
             d_birth_date: "",
             m_birth_date: "",
@@ -84,6 +80,23 @@ export default function LayoutCustomer() {
 
     const handleRegis = () => {
         console.log(formRegisOrProfile);
+        let payload = { ...formRegisOrProfile }
+        const dateString = `${formRegisOrProfile.d_birth_date}-${formRegisOrProfile.m_birth_date}-${formRegisOrProfile.y_birth_date}`;
+        const momentDate = moment(dateString, "DD-MMMM-YYYY", 'id');
+        const formattedDate = momentDate.format("YYYY-MM-DD");
+
+        delete payload.d_birth_date
+        delete payload.m_birth_date
+        delete payload.y_birth_date
+        payload.birtDate = formattedDate;
+
+
+        dispatch(registerUser({ payload: payload })).then((result) => {
+            console.log(result);
+            window.location.reload()
+        }).catch((err) => {
+
+        });
     }
 
     const handleLogin = () => {
@@ -100,9 +113,7 @@ export default function LayoutCustomer() {
 
             }
 
-        }).catch((err) => {
-
-        });
+        })
     }
 
     const handleChangeProfile = () => {
@@ -167,46 +178,49 @@ export default function LayoutCustomer() {
                         </form>
                     </div>
 
-                    <Link to="/transaction-history" className="mr-5">Transaksi</Link>
-                    <Link className="mr-5">Ticket</Link>
+                    {isAuth && (
+                        <>
+                            <Link to="/transaction-history" className="mr-5">Transaksi</Link>
+                            <Link className="mr-5">Ticket</Link>
 
-                    <div className="flex ">
-                        <Dropdown
-                            arrowIcon={false}
-                            inline
-                            className="w-[300px]"
-                            label={
-                                "porfile"}
-                        >
-                            <Dropdown.Header >
-                                Hello, <br /> <b>Fahmi</b>
-                            </Dropdown.Header>
-                            <Dropdown.Item onClick={() => setOpenModalProfile(true)}>
-                                Ubah Profile
-                            </Dropdown.Item>
-                            <Dropdown.Item onClick={() => setOpenModalPassword(true)}>
-                                Ubah Kata Sandi
-                            </Dropdown.Item>
+                            <div className="flex ">
+                                <Dropdown
+                                    arrowIcon={false}
+                                    inline
+                                    className="w-[300px]"
+                                    label={
+                                        "porfile"}
+                                >
+                                    <Dropdown.Header >
+                                        Hello, <br /> <b>Fahmi</b>
+                                    </Dropdown.Header>
+                                    <Dropdown.Item onClick={() => setOpenModalProfile(true)}>
+                                        Ubah Profile
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setOpenModalPassword(true)}>
+                                        Ubah Kata Sandi
+                                    </Dropdown.Item>
 
-                            <Dropdown.Divider />
-                            <button >
-                                <Dropdown.Item onClick={() => handleLogout()}>
-                                    Logout
-                                </Dropdown.Item>
-                            </button>
-                        </Dropdown>
-                        <Navbar.Toggle />
-                    </div>
-
+                                    <Dropdown.Divider />
+                                    <button >
+                                        <Dropdown.Item onClick={() => handleLogout()}>
+                                            Logout
+                                        </Dropdown.Item>
+                                    </button>
+                                </Dropdown>
+                                <Navbar.Toggle />
+                            </div>
+                        </>
+                    )}
                     {!isAuth && (
-                        <div className="ml-5">
+                        <div className=" flex">
                             <button
                                 onClick={() => setOpenModalLoginAndRegis({
                                     isActive: true,
                                     menuActive: "login"
                                 })}
                                 type="button"
-                                className="text-blue-700 bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2  focus:outline-none "
+                                className="text-blue-700 mr-5 bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2  focus:outline-none "
                             >
                                 Masuk
                             </button>
@@ -258,8 +272,8 @@ export default function LayoutCustomer() {
                     <TextInputEl
                         placeholder="Nama Lengkap"
                         handleChange={(e) => handleChange(e)}
-                        name="full_name"
-                        value={formRegisOrProfile.full_name}
+                        name="fullName"
+                        value={formRegisOrProfile.fullName}
                     />
                     <TextInputEl
                         placeholder="Email"
@@ -347,21 +361,21 @@ export default function LayoutCustomer() {
                     <TextInputEl
                         placeholder="Kata Sandi Saat ini"
                         handleChange={(e) => handleChange(e)}
-                        name="full_name"
-                    // value={full_name}
+                        name="fullName"
+                    // value={fullName}
                     />
                     <TextInputEl
                         placeholder="Kata Sandi Baru"
                         handleChange={(e) => handleChange(e)}
-                        name="full_name"
+                        name="fullName"
                         messageInfo="Minimal 8 karakter"
-                    // value={full_name}
+                    // value={fullName}
                     />
                     <TextInputEl
                         placeholder="Konfirmasi Kata Sandi"
                         handleChange={(e) => handleChange(e)}
-                        name="full_name"
-                    // value={full_name}
+                        name="fullName"
+                    // value={fullName}
                     />
                 </Modal.Body>
                 <Modal.Footer>
@@ -433,8 +447,8 @@ export default function LayoutCustomer() {
                                     <TextInputEl
                                         placeholder="Nama Lengkap"
                                         handleChange={(e) => handleChange(e)}
-                                        name="full_name"
-                                        value={formRegisOrProfile.full_name}
+                                        name="fullName"
+                                        value={formRegisOrProfile.fullName}
                                     />
                                     <TextInputEl
                                         placeholder="Email"
@@ -501,6 +515,7 @@ export default function LayoutCustomer() {
                                         placeholder="Alamat" />
                                     <TextInputEl
                                         name="password"
+                                        type="password"
                                         value={formRegisOrProfile.password}
                                         handleChange={(e) => handleChange(e)}
                                         placeholder="Password" />
@@ -508,7 +523,7 @@ export default function LayoutCustomer() {
                                     <div className="w-full mb-5">
                                         <Button color="blue" onClick={() => handleRegis()} fullSized>Daftar</Button>
                                     </div>
-                                    <p>Dengan menggunakan website ini, membeli tiket, atau membuat akun, Anda setuju dengan Syarat Layanan & Kebijakan Privasi</p>
+                                    <p className="text-sm">Dengan menggunakan website ini, membeli tiket, atau membuat akun, Anda setuju dengan Syarat Layanan & Kebijakan Privasi</p>
                                 </TabItem>
                             </Tabs>
 
