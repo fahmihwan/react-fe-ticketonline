@@ -7,6 +7,7 @@ import categoryTicketReducer from "./feature/categoryTicketSlice";
 import cartReducer from "./feature/cartTicketSlice";
 import historySlice from "./feature/historiesSlice";
 import userSlice from "./feature/userSlice";
+import dashboardSlice from "./feature/dashboardSlice"
 
 const store = configureStore({
     reducer: {
@@ -16,15 +17,8 @@ const store = configureStore({
         categoryTicket: categoryTicketReducer,
         cart: cartReducer,
         history: historySlice,
-        user: userSlice
-        //   auth: authReducer,
-        //   mountain: mountainReducer,
-        //   tourGuide: TourGuideReducer,
-        //   hikingPoint: HikingPointReducer,
-        //   transaction: transactionReducer,
-        //   widraw: widrawReducer,
-        //   route: routeReducer,
-        //   dashboard: dashboardReducer,
+        user: userSlice,
+        dashboard: dashboardSlice
     },
 });
 
