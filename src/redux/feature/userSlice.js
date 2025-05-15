@@ -12,9 +12,18 @@ const login = createAsyncThunk("aut/login", async ({ payload }, { rejectWithValu
     }
 })
 
-const registerUser = createAsyncThunk("auth/register", async ({ payload }, { rejectWithValue }) => {
+const registerUser = createAsyncThunk("auth/register-user", async ({ payload }, { rejectWithValue }) => {
     try {
         const response = await apiClient.post(`/auth/register-user`, payload)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+const registerAdmin = createAsyncThunk("auth/register-admin", async ({ payload }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.post(`/auth/register-admin`, payload)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)
@@ -46,7 +55,7 @@ const userSlice = createSlice({
         message: "",
         loginData: null,
         regiterData: null,
-        detailUser: null,
+        detailUser: {},
         status: null,
     },
     reducers: {
@@ -78,6 +87,20 @@ const userSlice = createSlice({
                 status: "success"
             })
         }).addCase(registerUser.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(registerAdmin.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(registerAdmin.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                regiterData: action.payload.data,
+                status: "success"
+            })
+        }).addCase(registerAdmin.rejected, (state, action) => {
             return (state = {
                 ...state,
                 status: "failed",
@@ -120,6 +143,7 @@ export {
     login,
     registerUser,
     changepassword,
-    findUserById
+    findUserById,
+    registerAdmin
 };
 export default userSlice.reducer

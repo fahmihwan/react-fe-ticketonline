@@ -3,6 +3,7 @@ import { lazy } from "react";
 import CreateLineup from "../view/cmsAdmin/event/CreateLineup";
 import LayoutAdmin from "../view/layouts/LayoutAdmin";
 import LayoutCustomer from "../view/layouts/LayoutCustomer";
+import LoginAdmin from "../view/cmsAdmin/LoginAdmin";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -32,6 +33,10 @@ const routes = createBrowserRouter([
             { path: "/transaction-history", element: <TransactionHistory /> },
             { path: "/transaction-history/:transactionCode", element: <DetailTransaction /> },
         ]
+    },
+    {
+        path: "/admin/login",
+        element: <LoginAdmin />,
     },
     {
         // element

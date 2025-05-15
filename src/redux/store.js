@@ -8,6 +8,7 @@ import cartReducer from "./feature/cartTicketSlice";
 import historySlice from "./feature/historiesSlice";
 import userSlice from "./feature/userSlice";
 import dashboardSlice from "./feature/dashboardSlice"
+import uiSlice from "./feature/uiSlice"
 
 const store = configureStore({
     reducer: {
@@ -18,7 +19,8 @@ const store = configureStore({
         cart: cartReducer,
         history: historySlice,
         user: userSlice,
-        dashboard: dashboardSlice
+        dashboard: dashboardSlice,
+        ui: uiSlice
     },
 });
 

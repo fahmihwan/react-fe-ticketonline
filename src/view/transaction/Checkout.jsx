@@ -23,8 +23,10 @@ export default function Checkout() {
     const dispatch = useDispatch()
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
-    const eventRedux = useSelector((state) => state.event.detailEvent)
 
+    const eventRedux = useSelector((state) => state.event.detailEvent)
+    const userDetailRedux = useSelector((state) => state.user?.detailUser)
+    // console.log(userDetailRedux);
     const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")
 
@@ -35,6 +37,7 @@ export default function Checkout() {
     const [step, setStep] = useState(1);
     const [listPayment, setListPayment] = useState([])
     const [firstSubmited, setFirstSubmited] = useState(false)
+
 
 
     // Set initial time to 10 minutes (600 detik)
@@ -67,18 +70,22 @@ export default function Checkout() {
 
     const fetchData = async () => {
         const auth = JSON.parse(localStorage.getItem('auth'))
+        // 1. cek jika transaksi sudah ada 
         await dispatch(checkIfCurrentTransactionEventForUserExists({ userId: auth?.userId, slug: slug })).then((res) => {
             const data = res?.payload?.data
-
             if (data.length > 0) {
                 navigate(`/transaction-history/${data[0]?.transaction_code}`);
             }
         })
 
+
+        // await dispatch(findUserById({ userId: auth?.userId }));
+
         await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
 
         await dispatch(findCartByUserId({ userId: auth?.userId, slug: slug })).then(async (result) => {
             const response = result.payload.data
+            console.log(response);
             const totalPrice = response.reduce((sum, item) => sum + item.price * item.total, 0);
             await dispatch(getPaymentMethodDuitku({ payload: { amount: totalPrice } }))
         }).catch((err) => {
@@ -90,33 +97,11 @@ export default function Checkout() {
         fetchData()
     }, [])
 
-    useEffect(() => {
-        let res = paymentDuitku
-        let categorizedPayments = {
-            "Virtual Account": [],
-            "E-Wallet & QRIS": [],
-            "Kartu Debit/Kredit": [],
-            "Retail Outlets": [],
-        };
-        res?.paymentFee.forEach(payment => {
-            if (payment.paymentMethod.startsWith("VA") || payment.paymentMethod === "B1" || payment.paymentMethod === "BT" || payment.paymentMethod === "A1" || payment.paymentMethod === "I1" || payment.paymentMethod === "M2" || payment.paymentMethod === "AG" || payment.paymentMethod === "BC" || payment.paymentMethod === "BR" || payment.paymentMethod === "NC" || payment.paymentMethod === "BV") {
-                categorizedPayments["Virtual Account"].push({ ...payment, "categoryPayment": "Virtual Account" });
-            } else if (payment.paymentMethod === "OV" || payment.paymentMethod === "SP" || payment.paymentMethod === "DA" || payment.paymentMethod === "SA" || payment.paymentMethod === "LQ" || payment.paymentMethod === "NQ" || payment.paymentMethod === "OL" || payment.paymentMethod === "IQ" || payment.paymentMethod === "QD" || payment.paymentMethod === "GQ") {
-                categorizedPayments["E-Wallet & QRIS"].push({ ...payment, "categoryPayment": "E-Wallet & QRIS" });
-            } else if (payment.paymentMethod === "VC") {
-                categorizedPayments["Kartu Debit/Kredit"].push({ ...payment, "categoryPayment": "Kartu Debit/Kredit" });
-            } else if (payment.paymentMethod === "FT" || payment.paymentMethod === "IR") {
-                categorizedPayments["Retail Outlets"].push({ ...payment, "categoryPayment": "Retail Outlets" });
-            }
-        });
-
-        setListPayment(categorizedPayments)
-    }, [paymentDuitku])
-
 
     useEffect(() => {
 
         let response = cartUser
+
 
         setDetailCartTicket(response)
 
@@ -184,20 +169,45 @@ export default function Checkout() {
 
     }, [cartUser])
 
-
-
     const buildForm = async (makeArrForm) => {
-
         makeArrForm[0] = await fAutoFormCredential(makeArrForm[0])
+        console.log(makeArrForm);
         await setFormCustomer(makeArrForm);
     }
 
 
     const fAutoFormCredential = async (makeArrForm) => {
+
+
+        // let data = {
+        //     createdAt: "2025-05-13T05:20:28.185493",
+        //     fullName: "fahmi",
+        //     email: "fahmihwan@example.com",
+        //     password: "$2a$10$c09vzms0rPaIMG8wQHxO2upB66HkvkvrUF7UXnZnonYm9oVJtDiv2",
+        //     gender: "L",
+        //     role: "ADMIN",
+        //     birthDate: "1990-05-11T00:00:00",
+        //     phoneNumber: "082334337393",
+        //     address: "Madiun"
+        // }
+        // const res = await dispatch(findUserById({ userId: auth?.userId }));
+
+        // if (res.payload) {
+        //     const data = res.payload.data;
+        //     console.log(data);
+        //     let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY").split('-');
+
+        //     makeArrForm.full_name = data?.fullName;
+        //     makeArrForm.email = data?.email;
+        //     makeArrForm.gender = data?.gender;
+        //     makeArrForm.d_birth_date = fFormatDate[0];
+        //     makeArrForm.m_birth_date = fFormatDate[1];
+        //     makeArrForm.y_birth_date = fFormatDate[2];
+        //     makeArrForm.telp = data?.phoneNumber;
+        //     makeArrForm.address = data?.address;
+        // }
         const auth = JSON.parse(localStorage.getItem('auth'))
-
-
-        dispatch(findUserById({ userId: auth?.userId })).then((res) => {
+        await dispatch(findUserById({ userId: auth?.userId })).then(async (res) => {
             let data = res.payload.data  // console.log(res.payload.data);
             let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY");
             fFormatDate = fFormatDate.split('-')
@@ -210,6 +220,20 @@ export default function Checkout() {
             makeArrForm.telp = data?.phoneNumber
             makeArrForm.address = data?.address
         })
+
+
+        // let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY");
+        // fFormatDate = fFormatDate.split('-')
+        // makeArrForm.full_name = data?.fullName
+        // makeArrForm.email = data?.email
+        // makeArrForm.gender = data?.gender
+        // makeArrForm.d_birth_date = fFormatDate[0]
+        // makeArrForm.m_birth_date = fFormatDate[1]
+        // makeArrForm.y_birth_date = fFormatDate[2]
+        // makeArrForm.telp = data?.phoneNumber
+        // makeArrForm.address = data?.address
+        // })
+
 
         return makeArrForm
 
@@ -300,6 +324,32 @@ export default function Checkout() {
         }
 
     }
+
+
+
+    useEffect(() => {
+        let res = paymentDuitku
+        let categorizedPayments = {
+            "Virtual Account": [],
+            "E-Wallet & QRIS": [],
+            "Kartu Debit/Kredit": [],
+            "Retail Outlets": [],
+        };
+        res?.paymentFee.forEach(payment => {
+            if (payment.paymentMethod.startsWith("VA") || payment.paymentMethod === "B1" || payment.paymentMethod === "BT" || payment.paymentMethod === "A1" || payment.paymentMethod === "I1" || payment.paymentMethod === "M2" || payment.paymentMethod === "AG" || payment.paymentMethod === "BC" || payment.paymentMethod === "BR" || payment.paymentMethod === "NC" || payment.paymentMethod === "BV") {
+                categorizedPayments["Virtual Account"].push({ ...payment, "categoryPayment": "Virtual Account" });
+            } else if (payment.paymentMethod === "OV" || payment.paymentMethod === "SP" || payment.paymentMethod === "DA" || payment.paymentMethod === "SA" || payment.paymentMethod === "LQ" || payment.paymentMethod === "NQ" || payment.paymentMethod === "OL" || payment.paymentMethod === "IQ" || payment.paymentMethod === "QD" || payment.paymentMethod === "GQ") {
+                categorizedPayments["E-Wallet & QRIS"].push({ ...payment, "categoryPayment": "E-Wallet & QRIS" });
+            } else if (payment.paymentMethod === "VC") {
+                categorizedPayments["Kartu Debit/Kredit"].push({ ...payment, "categoryPayment": "Kartu Debit/Kredit" });
+            } else if (payment.paymentMethod === "FT" || payment.paymentMethod === "IR") {
+                categorizedPayments["Retail Outlets"].push({ ...payment, "categoryPayment": "Retail Outlets" });
+            }
+        });
+
+        setListPayment(categorizedPayments)
+    }, [paymentDuitku])
+
 
     return (
         <>

@@ -1,25 +1,27 @@
 import { Dropdown, Navbar } from "flowbite-react";
 import { Link, Outlet } from "react-router-dom";
 import { IconLogoBrandEl } from "../component/IconSvg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 import { Button, Checkbox, Label, Modal, ModalBody, ModalHeader, TextInput } from "flowbite-react";
 import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
 import { TabItem, Tabs } from "flowbite-react";
-import { useDispatch } from "react-redux";
-import { login, registerUser } from "../../redux/feature/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { findUserById, login, registerUser } from "../../redux/feature/userSlice";
 import moment from "moment";
+import { setOpenLoginOrRegisUser } from "../../redux/feature/uiSlice";
 
 export default function LayoutCustomer() {
     const isAuth = localStorage.getItem('auth')
+
     const dispatch = useDispatch()
+    const loginModalUserRedux = useSelector((state) => state.ui.modalLoginOrRegis)
+
     const [openModalProfile, setOpenModalProfile] = useState(false);
     const [openModalPassword, setOpenModalPassword] = useState(false);
-    const [openModalLoginAndRegis, setOpenModalLoginAndRegis] = useState({
-        isActive: false,
-        menuActive: ""
-    });
+
+
 
 
     const [formRegisOrProfile, setFormRegisOrProfile] = useState({
@@ -88,7 +90,7 @@ export default function LayoutCustomer() {
         delete payload.d_birth_date
         delete payload.m_birth_date
         delete payload.y_birth_date
-        payload.birtDate = formattedDate;
+        payload.birthDate = formattedDate;
 
 
         dispatch(registerUser({ payload: payload })).then((result) => {
@@ -108,6 +110,7 @@ export default function LayoutCustomer() {
         })).then((res) => {
             if (res.payload.success) {
                 const data = res.payload.data
+                console.log(data);
                 localStorage.setItem('auth', JSON.stringify(data))
                 window.location.reload()
 
@@ -215,10 +218,9 @@ export default function LayoutCustomer() {
                     {!isAuth && (
                         <div className=" flex">
                             <button
-                                onClick={() => setOpenModalLoginAndRegis({
-                                    isActive: true,
-                                    menuActive: "login"
-                                })}
+                                onClick={() => {
+                                    dispatch(setOpenLoginOrRegisUser({ isMenuActive: true, nameMenuActive: "login" }))
+                                }}
                                 type="button"
                                 className="text-blue-700 mr-5 bg-blue-100 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2  focus:outline-none "
                             >
@@ -226,10 +228,7 @@ export default function LayoutCustomer() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setOpenModalLoginAndRegis({
-                                    isActive: true,
-                                    menuActive: "register"
-                                })}
+                                onClick={() => dispatch(setOpenLoginOrRegisUser({ isMenuActive: true, nameMenuActive: "register" }))}
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2   focus:outline-none "
                             >
                                 Daftar
@@ -239,7 +238,7 @@ export default function LayoutCustomer() {
                     )}
 
                 </div>
-            </Navbar>
+            </Navbar >
 
             <div className="w-full bg-[#FAFCFD] relative">
                 <Outlet />
@@ -391,10 +390,7 @@ export default function LayoutCustomer() {
 
 
             {/* MODAL REGIS AND LOGIN*/}
-            <Modal show={openModalLoginAndRegis.isActive} size="md" onClose={() => setOpenModalLoginAndRegis({
-                isActive: false,
-                menuActive: ""
-            })} popup>
+            <Modal show={loginModalUserRedux.isMenuActive} size="md" onClose={() => dispatch(setOpenLoginOrRegisUser({ isMenuActive: false, nameMenuActive: "" }))} popup>
                 <ModalHeader />
                 <ModalBody>
                     <div className="space-y-6">
@@ -407,7 +403,7 @@ export default function LayoutCustomer() {
 
                         <div className="w-full">
                             <Tabs aria-label="Full width tabs" variant="fullWidth">
-                                <TabItem active={openModalLoginAndRegis.menuActive == 'login'} title="Masuk">
+                                <TabItem active={loginModalUserRedux.nameMenuActive == 'login'} title="Masuk">
                                     <div className="py-5">
                                         <div className="mb-5">
                                             <div className="mb-2 block">
@@ -443,7 +439,7 @@ export default function LayoutCustomer() {
                                     </div>
 
                                 </TabItem>
-                                <TabItem active={openModalLoginAndRegis.menuActive == 'register'} title="Daftar">
+                                <TabItem active={loginModalUserRedux.nameMenuActive == 'register'} title="Daftar">
                                     <TextInputEl
                                         placeholder="Nama Lengkap"
                                         handleChange={(e) => handleChange(e)}

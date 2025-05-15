@@ -13,9 +13,9 @@ import moment from 'moment';
 import DateTimePicker from 'react-datetime-picker';
 
 
-export const TextInputEl = ({ type = 'text', name, id, required, placeholder, handleChange, value, readOnly = false, className, isError, messageInfo = "" }) => {
+export const TextInputEl = ({ type = 'text', positionDiv, name, id, required, placeholder, handleChange, value, readOnly = false, className, isError, messageInfo = "" }) => {
     return (
-        <div className="mb-5">
+        <div className={`mb-5 ${positionDiv} `}>
             <label
                 htmlFor="error"
                 className="block mb-2 text-sm font-medium "
@@ -30,7 +30,7 @@ export const TextInputEl = ({ type = 'text', name, id, required, placeholder, ha
                 value={value}
                 readOnly={readOnly}
                 name={name}
-                className={` ${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "border-gray-300"}
+                className={`${isError ? "bg-red-50 border-red-500 text-red-900 placeholder-red-700  focus:ring-red-500  focus:border-red-500" : "border-gray-300"}
                text-sm rounded-lg border h-12  block w-full p-2.5  ${readOnly && "bg-gray-200"}`}
                 placeholder={placeholder}
             />

@@ -8,6 +8,7 @@ import { createCartTicket, findCartByUserId } from "../../redux/feature/cartTick
 
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
 import { checkIfCurrentTransactionEventForUserExists } from "../../redux/feature/transactionSlice";
+import { setOpenLoginOrRegisUser } from "../../redux/feature/uiSlice";
 
 export default function CartTicket() {
 
@@ -106,6 +107,12 @@ export default function CartTicket() {
     }
 
     const handleSubmit = () => {
+        const auth = localStorage.getItem('auth')
+        if (auth == null) {
+            dispatch(setOpenLoginOrRegisUser({ isMenuActive: true, nameMenuActive: "login" }))
+            return
+        }
+
         if (transactionExistsRedux.length > 0) {
             setOpenModalTransaction(true)
         } else {
@@ -124,8 +131,9 @@ export default function CartTicket() {
                 total: d.total
             }
         })
-
+        let userId = localStorage.getItem('auth')
         let payload = {
+            userId: JSON.parse(userId).userId,
             slug: slug,
             detailTransactions: tickets
         }
@@ -254,14 +262,6 @@ export default function CartTicket() {
                                                 }
 
                                             })}
-                                            {/* <tr className="text-gray-500">
-                                                <td>Presale</td>
-                                                <td className="text-end">2 X Rp 25.000</td>
-                                            </tr>
-                                            <tr className="text-gray-500">
-                                                <td>EARLY BIRD</td>
-                                                <td className="text-end">2 X Rp 25.000</td>
-                                            </tr> */}
                                         </tbody>
                                     </table>)
                                 }
@@ -282,7 +282,7 @@ export default function CartTicket() {
                             </button>) : (<button
                                 disabled={true}
                                 type="button" className="block text-center text-white mt-5 w-full bg-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb">
-                                Checkout</button>)}
+                                Checkout TT</button>)}
 
                             {cartUser.length > 0 && (
 
