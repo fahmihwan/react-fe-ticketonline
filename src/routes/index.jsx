@@ -4,6 +4,7 @@ import CreateLineup from "../view/cmsAdmin/event/CreateLineup";
 import LayoutAdmin from "../view/layouts/LayoutAdmin";
 import LayoutCustomer from "../view/layouts/LayoutCustomer";
 import LoginAdmin from "../view/cmsAdmin/LoginAdmin";
+import { ProtectedRouteAdmin, ProtectedRouteUser } from "./ProtectedRoute";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -29,9 +30,9 @@ const routes = createBrowserRouter([
             { path: "/", element: <Home /> },
             { path: "/event/:slug", element: <DetailEvent /> },
             { path: "/event/:slug/tickets", element: <CartTicket /> },
-            { path: "/event/:slug/checkout", element: <Checkout /> },
-            { path: "/transaction-history", element: <TransactionHistory /> },
-            { path: "/transaction-history/:transactionCode", element: <DetailTransaction /> },
+            { path: "/event/:slug/checkout", element: <ProtectedRouteUser element={<Checkout />} /> },
+            { path: "/transaction-history", element: <ProtectedRouteUser element={<TransactionHistory />} /> },
+            { path: "/transaction-history/:transactionCode", element: <ProtectedRouteUser element={<DetailTransaction />} /> },
         ]
     },
     {
@@ -40,7 +41,7 @@ const routes = createBrowserRouter([
     },
     {
         // element
-        element: <LayoutAdmin />,
+        element: <ProtectedRouteAdmin element={<LayoutAdmin />} />,
         children: [
             { path: "/admin/dashboard", element: <Dashboard /> },
             { path: "/admin/event", element: <Event /> },

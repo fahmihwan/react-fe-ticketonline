@@ -179,33 +179,6 @@ export default function Checkout() {
     const fAutoFormCredential = async (makeArrForm) => {
 
 
-        // let data = {
-        //     createdAt: "2025-05-13T05:20:28.185493",
-        //     fullName: "fahmi",
-        //     email: "fahmihwan@example.com",
-        //     password: "$2a$10$c09vzms0rPaIMG8wQHxO2upB66HkvkvrUF7UXnZnonYm9oVJtDiv2",
-        //     gender: "L",
-        //     role: "ADMIN",
-        //     birthDate: "1990-05-11T00:00:00",
-        //     phoneNumber: "082334337393",
-        //     address: "Madiun"
-        // }
-        // const res = await dispatch(findUserById({ userId: auth?.userId }));
-
-        // if (res.payload) {
-        //     const data = res.payload.data;
-        //     console.log(data);
-        //     let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY").split('-');
-
-        //     makeArrForm.full_name = data?.fullName;
-        //     makeArrForm.email = data?.email;
-        //     makeArrForm.gender = data?.gender;
-        //     makeArrForm.d_birth_date = fFormatDate[0];
-        //     makeArrForm.m_birth_date = fFormatDate[1];
-        //     makeArrForm.y_birth_date = fFormatDate[2];
-        //     makeArrForm.telp = data?.phoneNumber;
-        //     makeArrForm.address = data?.address;
-        // }
         const auth = JSON.parse(localStorage.getItem('auth'))
         await dispatch(findUserById({ userId: auth?.userId })).then(async (res) => {
             let data = res.payload.data  // console.log(res.payload.data);
@@ -220,21 +193,6 @@ export default function Checkout() {
             makeArrForm.telp = data?.phoneNumber
             makeArrForm.address = data?.address
         })
-
-
-        // let fFormatDate = moment(data?.birthDate).format("DD-MMMM-YYYY");
-        // fFormatDate = fFormatDate.split('-')
-        // makeArrForm.full_name = data?.fullName
-        // makeArrForm.email = data?.email
-        // makeArrForm.gender = data?.gender
-        // makeArrForm.d_birth_date = fFormatDate[0]
-        // makeArrForm.m_birth_date = fFormatDate[1]
-        // makeArrForm.y_birth_date = fFormatDate[2]
-        // makeArrForm.telp = data?.phoneNumber
-        // makeArrForm.address = data?.address
-        // })
-
-
         return makeArrForm
 
     }

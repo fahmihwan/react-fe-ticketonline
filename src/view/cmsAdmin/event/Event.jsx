@@ -121,7 +121,7 @@ const Event = () => {
                                         <td className="px-6 py-4">{formatDateTimeUtil(d?.schedule)}</td>
                                         <td className="px-6 py-4">{d?.venue}</td>
                                         <td className="px-6 py-4 ">
-                                            <div className='w-[200px] truncate '>
+                                            <div className='w-[200px] truncate h-[100px]'>
                                                 {/* {d?.description} */}
                                                 <div
                                                     className='truncate w-[200px] text-[10px]'

@@ -7,6 +7,7 @@ import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { createLineUp, getAllLineUpBySlug, removeLineUp } from '../../../redux/feature/lineUpSlice'
+import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
 
 
 
@@ -17,12 +18,14 @@ const CreateLineup = () => {
 
     const dispatch = useDispatch();
     const lineUp = useSelector((state) => state.lineUp.lineUpData || [])
+    const events = useSelector((state) => state.event.detailEvent)
     const status = useSelector((state) => state.lineUp.status)
 
 
 
     useEffect(() => {
         dispatch(getAllLineUpBySlug({ slug: slug }))
+        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
         console.log('wkwkwwkkwk');
     }, [slug, dispatch])
 
@@ -53,7 +56,9 @@ const CreateLineup = () => {
 
     return (
         <>
-            <DetailAdminComponent />
+            {/* <DetailAdminComponent /> */}
+            <DetailAdminComponent
+                image={events?.image} title={events?.event_title} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
                     <p className='text-3xl font-bold '>Create  Lineup</p>

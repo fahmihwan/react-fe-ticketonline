@@ -1,8 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { IconDashboard, IconEvenetEl, IconLogoutEl, IconProfileEl, IconTicketEl, IconTransactionEl } from "./IconSvg";
+import { useSidebar } from "../../context/SidebarContext";
+import menu from "../../data/menu";
 
 export default function Sidebar() {
     // Menyimpan item menu yang aktif
+    const { isDrawerOpen, toggleDrawer, dropDown, toggleDropdown } = useSidebar();
+
     const location = useLocation();
 
 
@@ -21,7 +25,8 @@ export default function Sidebar() {
             aria-label="Sidebar"
         >
             <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-                <ul className="space-y-2 font-medium">
+                <MenuEl menu={menu} dropDown={dropDown} toggleDropdown={toggleDropdown} />
+                {/* <ul className="space-y-2 font-medium">
                     <li>
                         <Link to="/admin/dashboard"
                             className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/dashboard') && 'bg-gray-200'}`}
@@ -68,23 +73,6 @@ export default function Sidebar() {
                             <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
                         </Link>
                     </li>
-                    {/* <li>
-                        <a
-                            href="#"
-                            className="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100  group"
-                        >
-                            <svg
-                                className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 18 20"
-                            >
-                                <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
-                            </svg>
-                            <span className="flex-1 ms-3 whitespace-nowrap">Products</span>
-                        </a>
-                    </li> */}
                     <li>
                         <Link to="/admin/user"
                             className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/user') && 'bg-gray-200'}`}
@@ -94,8 +82,93 @@ export default function Sidebar() {
                         </Link>
                     </li>
 
-                </ul>
+                </ul> */}
             </div>
         </aside>
     )
 }
+
+
+
+export const MenuEl = ({ menu, dropDown, toggleDropdown }) => {
+    return (
+        <ul className="space-y-2 font-medium">
+            {menu.map((d, i) => (
+                <div key={i}>
+                    {d?.submenu == null ? (
+                        <li >
+                            <Link
+                                to={d?.link}
+                                className={`flex items-center py-3 px-3 text-gray-900 rounded-lg group ${location.pathname == d.link && 'bg-gray-200'}`}
+                                // className={`flex flex-row gap-3 items-center border border-black dark:border-white p-2 
+                                // rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group
+                                // ${location.pathname === d.link ? "bg-gray-200 hover:text-gray-900 dark:bg-gray-hover" : "text-gray-900"} `}
+                                onClick={() => toggleDropdown(null)}
+                            >
+
+                                {d?.icon}
+                                <span className="text-sm ms-2">{d?.title}</span>
+                            </Link>
+                        </li>
+                    ) : (
+                        <li
+                            style={{ marginBottom: "20px" }}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                toggleDropdown(d?.title)
+                            }}
+                        >
+                            <button
+                                type="button"
+                                className={`flex border border-black dark:border-white items-center w-full p-2 text-sm text-gray-900 
+                                transition duration-75 rounded-lg group dark:text-white`}
+                            >
+                                <span className="w-5 h-5 flex items-center justify-center">
+                                    {d?.icon}
+                                </span>
+                                <span className="flex-1 ml-3 text-left rtl:text-right whitespace-nowrap">
+                                    {d?.title}
+                                </span>
+                                <svg
+                                    className={`w-3 h-3 transition-transform duration-300 ${d?.title === dropDown ? "rotate-0" : "-rotate-90"
+                                        }`}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="m1 1 4 4 4-4"
+                                    />
+                                </svg>
+                            </button>
+
+                            <ul className={`${d?.title === dropDown ? 'max-h-[1000px]' : 'max-h-0'} overflow-hidden py-0 space-y-2 transform transition-all duration-300 ease-in-out`}>
+                                {d?.submenu?.map((x, index) => (
+                                    <li key={index} className={`${index === 0 ? "mt-2" : ""}`}>
+                                        <Link
+                                            to={x.link}
+                                            className={`flex flex-row gap-3 items-center p-2 transition duration-75 rounded-lg ml-8 
+                                            group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700
+                                            ${location.pathname.includes(x.link) ? "bg-gray-200 hover:text-gray-900 dark:bg-gray-hover" : "text-gray-900"}`}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+
+                                            <span className="w-5 h-5 flex items-center justify-center">
+                                                {x?.icon}
+                                            </span>
+                                            {x?.title}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </li>
+                    )}
+                </div>
+            ))}
+        </ul>
+    );
+};
