@@ -42,7 +42,7 @@ export default function TransactionHistory() {
 
     return (
         <>
-            <div className="lg:mx-[400px]">
+            <div className="mx-[40px]  xl:mx-[400px]">
                 <div className="w-full ">
                     <div className="w-full">
                         <b className="text-2xl inline-block mb-5">Transaksi</b>

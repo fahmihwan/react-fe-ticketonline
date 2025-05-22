@@ -36,7 +36,7 @@ export default function LayoutCustomer() {
         password: "qweqwe123",
     })
     const [formLogin, setFormLogin] = useState({
-        email: "fahmihwan@example.com",
+        email: "fahmiiwan86@gmail.com",
         password: "qweqwe123"
     })
 
@@ -240,7 +240,7 @@ export default function LayoutCustomer() {
                 </div>
             </Navbar >
 
-            <div className="w-full bg-[#FAFCFD] relative">
+            <div className="w-full  bg-[#FAFCFD] relative">
                 <Outlet />
                 <footer className="bg-white rounded-lg ">
                     <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">

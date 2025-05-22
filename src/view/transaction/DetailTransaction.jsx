@@ -25,7 +25,7 @@ export default function DetailTransaction() {
 
     return (
         <>
-            <div className="lg:mx-[400px]">
+            <div className="mx-[40px]  xl:mx-[400px] ">
                 <div className="w-full ">
                     <div className="w-full flex justify-between mt-5">
                         <b className="text-2xl inline-block mb-5">Detail Transaksi</b>
