@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import moment from 'moment';
+import 'moment/locale/id';
 export const formatRupiahUtil = (number) => {
     let format = new Intl.NumberFormat('id-ID', {
         currency: 'IDR',
@@ -8,6 +9,11 @@ export const formatRupiahUtil = (number) => {
     return `Rp ${format}`
 
 };
+
+export const formatBirthDateToFeInputUtil = (birthDate) => {
+    moment.locale('id');
+    return moment(birthDate).format("DD-MMMM-YYYY").split('-');
+}
 
 export const formatDateUtil = (inputDate) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };

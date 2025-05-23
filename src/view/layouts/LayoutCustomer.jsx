@@ -11,17 +11,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { findUserById, login, registerUser } from "../../redux/feature/userSlice";
 import moment from "moment";
 import { setOpenLoginOrRegisUser } from "../../redux/feature/uiSlice";
+import { formatBirthDateToFeInputUtil } from "../../utils/utils";
 
 export default function LayoutCustomer() {
-    const isAuth = localStorage.getItem('auth')
+    const isAuth = JSON.parse(localStorage.getItem('auth'))
 
     const dispatch = useDispatch()
     const loginModalUserRedux = useSelector((state) => state.ui.modalLoginOrRegis)
 
     const [openModalProfile, setOpenModalProfile] = useState(false);
     const [openModalPassword, setOpenModalPassword] = useState(false);
-
-
 
 
     const [formRegisOrProfile, setFormRegisOrProfile] = useState({
@@ -119,6 +118,31 @@ export default function LayoutCustomer() {
         })
     }
 
+    useEffect(() => {
+
+        if (openModalProfile) {
+            dispatch((findUserById({ userId: isAuth?.userId }))).then((res) => {
+                const data = res.payload.data
+
+                let birthdate = formatBirthDateToFeInputUtil(data?.birthDate)
+
+                console.log(birthdate);
+                setFormRegisOrProfile({
+                    gender: data?.gender,
+                    fullName: data?.fullName,
+                    email: data?.email,
+                    d_birth_date: birthdate[0],
+                    m_birth_date: birthdate[1],
+                    y_birth_date: birthdate[2],
+                    telp: data?.phoneNumber,
+                    address: data?.address
+                })
+            })
+        }
+
+
+    }, [openModalProfile])
+
     const handleChangeProfile = () => {
         console.log(formRegisOrProfile);
     }
@@ -195,7 +219,7 @@ export default function LayoutCustomer() {
                                         "porfile"}
                                 >
                                     <Dropdown.Header >
-                                        Hello, <br /> <b>Fahmi</b>
+                                        Hello, <br /> <b>{isAuth?.fullName}</b>
                                     </Dropdown.Header>
                                     <Dropdown.Item onClick={() => setOpenModalProfile(true)}>
                                         Ubah Profile
@@ -205,7 +229,7 @@ export default function LayoutCustomer() {
                                     </Dropdown.Item>
 
                                     <Dropdown.Divider />
-                                    <button >
+                                    <button className="w-full">
                                         <Dropdown.Item onClick={() => handleLogout()}>
                                             Logout
                                         </Dropdown.Item>

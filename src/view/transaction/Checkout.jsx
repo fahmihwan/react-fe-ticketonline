@@ -171,7 +171,7 @@ export default function Checkout() {
 
     const buildForm = async (makeArrForm) => {
         makeArrForm[0] = await fAutoFormCredential(makeArrForm[0])
-        console.log(makeArrForm);
+
         await setFormCustomer(makeArrForm);
     }
 
@@ -225,7 +225,7 @@ export default function Checkout() {
         localStorage.setItem('form', JSON.stringify(updateForm.slice(1)))
 
     }
-    const handleSubmit = () => {
+    const handleSubmit =  () => {
 
         if (step == 1) {
             setFirstSubmited(true)
@@ -271,14 +271,47 @@ export default function Checkout() {
             }
 
 
-            dispatch(checkoutTransaction({ payload: payload })).then((res) => {
-                if (res?.payload?.success) {
-                    window.open(res.payload.data.paymentUrl, '_blank');
-                    navigate(`/transaction-history/${res.payload?.data?.transaction_code}`)
-                } else {
-                    alert('gagal')
-                }
-            })
+            // dispatch(checkoutTransaction({ payload: payload })).then(async(res) => {
+            //     // if (res?.payload?.success) {
+            //         // console.log("res",res?.payload?.paymentUrl);
+            //         await  window.open(res?.payload?.paymentUrl, '_blank');
+            //        await navigate(`/transaction-history/${res?.payload?.transaction_code}`)
+
+            //         // window.open(res.payload.data.paymentUrl, '_blank');
+            //         // navigate(`/transaction-history/${res.payload?.data?.transaction_code}`)
+            //     // } else {
+            //     //     alert('gagal')
+            //     //     console.log('err',res);
+            //     // }
+            // }).catch((err)=>{
+            //     console.log(err);
+            // })
+                dispatch(checkoutTransaction({ payload: payload })).then(async(res) => {
+                    
+                    
+                    setTimeout(() => {
+                        
+
+                        let paymentUrl = res.payload.paymentUrl
+                        let transactionCode = res.payload.transaction_code
+                        console.log(paymentUrl);
+                        console.log(transactionCode);
+                        if(paymentUrl){
+                            window.open(paymentUrl, '_blank');
+                        }
+                        if(transactionCode){
+                             navigate(`/transaction-history/${transactionCode}`)
+                        }
+                        
+                      
+                    }, 1000);
+                    
+                    
+
+                }).catch((err)=>{
+                
+                    alert("err" +err)
+                })
         }
 
     }

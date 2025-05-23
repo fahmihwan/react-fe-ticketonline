@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 import { allOfTransactionFromUsersAdmin } from '../../../redux/feature/historiesSlice';
 import { PaginationNativeEl } from '../../component/Pagination';
-import { fGeneratePaginationNumberUtil, getPaymentMethodName, formatDateTimeUtil, formatRupiahUtil } from '../../../utils/utils';
+import { fGeneratePaginationNumberUtil, getPaymentMethodName, formatDateTimeUtil, formatRupiahUtil, statusTransactionUtil } from '../../../utils/utils';
 
 const Transaction = () => {
     const [data, setData] = useState([])
@@ -21,29 +21,7 @@ const Transaction = () => {
     const [paginateTotalPage, setPaginateTotalPage] = useState(0)
 
 
-    // listTransactionAdmin
 
-
-    // useEffect(() => {
-    //     dispatch(allOfTransactionFromUsersAdmin({ params: `?page=${0}&size=${5}` })).then((result) => {
-    //         const res = result.payload.data
-    //         setItems(res?.data)
-    //         if (res.page > res.totalPages) {
-    //             setPaginatePage(1)
-    //         } else {
-    //             setPaginatePage(res?.page)
-    //         }
-
-    //         setpaginateLimit(res?.page)
-    //         setPaginateTotalItem(res?.totalElements)
-    //         setPaginateTotalPage(res?.totalPages)
-
-
-    //     }).catch((err) => {
-
-
-    //     });
-    // }, [dispatch])
 
     const fetchWithParams = (params) => {
         dispatch(allOfTransactionFromUsersAdmin({ params: `?page=${paginatePage}&size=${paginateLimit}` })).then((result) => {
@@ -120,10 +98,10 @@ const Transaction = () => {
                                     {d?.transaction_code}
                                 </th>
                                 <td className="px-6 py-4">{formatDateTimeUtil(d?.created_at)}</td>
-                                <td className="px-6 py-4">{d?.transaction_status}</td>
+                                <td className={`px-6 py-4 ${statusTransactionUtil(d?.transaction_status)}`}>{d?.transaction_status}</td>
                                 <td className="px-6 py-4">{getPaymentMethodName(d?.payment_method)}</td>
                                 <td className="px-6 py-4">{d?.event_title}</td>
-
+                                {/* statusTransactionUtil */}
                                 <td className="px-6 py-4">{formatRupiahUtil(d?.total_price)}</td>
                                 <td className="px-6 py-4">{d?.total_qty}</td>
                                 {/* <td className="px-6 py-4">
