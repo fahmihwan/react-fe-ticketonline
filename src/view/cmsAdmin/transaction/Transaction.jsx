@@ -89,7 +89,7 @@ const Transaction = () => {
                         {items?.length != 0 && items?.map((d, i) => (
                             <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                 <th>
-                                    {i + 1}
+                                    {paginatePage * paginateLimit + i + 1}
                                 </th>
                                 <th
                                     scope="row"
