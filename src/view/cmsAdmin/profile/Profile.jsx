@@ -1,18 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { RadioEl, SelectEl, TextInputEl } from '../../component/InputEl'
+import { useDispatch } from 'react-redux'
+import { findUserById, updateUser } from '../../../redux/feature/userSlice'
+import { formatBirthDateToBeInputUtil, formatBirthDateToFeInputUtil } from '../../../utils/utils'
 
 
 
 
 const Profile = () => {
-
-
+    const isAuth = JSON.parse(localStorage.getItem('auth'))
+    const dispatch = useDispatch();
     const [formData, setFormData] = useState({
-        increment_id: 0,
         gender: '',
-        full_name: '',
+        fullName: '',
         email: '',
         password: "",
         d_birth_date: '',
@@ -23,8 +25,45 @@ const Profile = () => {
     });
 
 
+    useEffect(() => {
+        dispatch(findUserById({ userId: isAuth.userId })).then((res) => {
+            const data = res.payload.data
+
+
+            let birthdate = formatBirthDateToFeInputUtil(data?.birthDate)
+
+            setFormData({
+                gender: data?.gender,
+                fullName: data?.fullName,
+                email: data?.email,
+                d_birth_date: parseInt(birthdate[0]),
+                m_birth_date: birthdate[1],
+                y_birth_date: birthdate[2],
+                phone_number: data?.phoneNumber,
+                address: data?.address
+            })
+        }).catch((err) => {
+
+        });
+    }, [])
+
+
     const handleSubmit = () => {
+        let payload = {
+            fullName: formData?.fullName,
+            email: formData?.email,
+            gender: formData?.gender,
+            birthDate: formatBirthDateToBeInputUtil(formData?.d_birth_date, formData?.m_birth_date, formData?.y_birth_date),
+            phoneNumber: formData?.phone_number,
+            address: formData?.address
+        }
+
         console.log(formData);
+        dispatch(updateUser({ userId: isAuth.userId, payload: payload })).then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
 
@@ -52,14 +91,14 @@ const Profile = () => {
                 <div
                     className="block w-full lg:w-1/2 mr-5  p-6 bg-white border border-gray-200 rounded-lg shadow"
                 >
-                    <TextInputEl placeholder="Full name" handleChange={(e) => handleChange(e)} name="full_name" value={formData.full_name} />
+                    <TextInputEl placeholder="Full name" handleChange={(e) => handleChange(e)} name="fullName" value={formData.fullName} />
                     <div className='w-full flex'>
-                        <div className='w-1/2 mr-5'>
-                            <TextInputEl placeholder="Email" handleChange={(e) => handleChange(e)} name="email" value={formData.email} />
+                        <div className='w-full mr-5'>
+                            <TextInputEl
+                                readOnly={true}
+                                placeholder="Email" handleChange={(e) => handleChange(e)} name="email" value={formData.email} />
                         </div>
-                        <div className='w-1/2'>
-                            <TextInputEl type='password' placeholder="Password" handleChange={(e) => handleChange(e)} name="password" value={formData.password} />
-                        </div>
+
                     </div>
 
                     {/* <InputDateEl placeholder={"Birth date"} /> */}

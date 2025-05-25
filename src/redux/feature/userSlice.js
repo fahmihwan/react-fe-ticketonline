@@ -49,6 +49,16 @@ const findUserById = createAsyncThunk("user/findByUserId", async ({ userId }, { 
     }
 })
 
+
+const updateUser = createAsyncThunk("user/updateUser", async ({ userId, payload }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.put(`/user/${userId}`, payload)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const userSlice = createSlice({
     name: "userSlice",
     initialState: {
@@ -134,6 +144,20 @@ const userSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(updateUser.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(updateUser.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                userDetail: action.payload.data,
+                status: "success"
+            })
+        }).addCase(updateUser.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
     }
 })
@@ -144,6 +168,7 @@ export {
     registerUser,
     changepassword,
     findUserById,
-    registerAdmin
+    registerAdmin,
+    updateUser
 };
 export default userSlice.reducer

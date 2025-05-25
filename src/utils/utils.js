@@ -9,10 +9,42 @@ export const formatRupiahUtil = (number) => {
     return `Rp ${format}`
 
 };
+export const formatBirthDateToBeInputUtil = (d_birth_date, m_birth_date, y_birth_date) => {
+    let dateString = `${d_birth_date}-${m_birth_date}-${y_birth_date}`
+    const momentDate = moment(dateString, "DD-MMMM-YYYY");
+    const formattedDate = momentDate.format("YYYY-MM-DD");
+    return formattedDate
+}
 
 export const formatBirthDateToFeInputUtil = (birthDate) => {
     moment.locale('id');
-    return moment(birthDate).format("DD-MMMM-YYYY").split('-');
+    let date = moment(birthDate).format("DD-MMMM-YYYY").split('-');
+
+
+    // const monthTranslations = {
+    //     January: "January",
+    //     February: "Februari",
+    //     March: "Maret",
+    //     April: "April",
+    //     May: "Mei",
+    //     June: "Juni",
+    //     July: "Juli",
+    //     August: "Agustus",
+    //     September: "September",
+    //     October: "Oktober",
+    //     November: "November",
+    //     December: "Desember"
+    // };
+
+    // function translateMonth(englishMonth) {
+    //     return monthTranslations[englishMonth] || "Bulan tidak dikenal";
+    // }
+
+
+    // date[1] = translateMonth(date[1])
+
+    return date
+    // console.log(date);
 }
 
 export const formatDateUtil = (inputDate) => {

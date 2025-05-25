@@ -8,10 +8,10 @@ import { Button, Checkbox, Label, Modal, ModalBody, ModalHeader, TextInput } fro
 import { RadioEl, SelectEl, TextInputEl } from "../component/InputEl";
 import { TabItem, Tabs } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { findUserById, login, registerUser } from "../../redux/feature/userSlice";
+import { findUserById, login, registerUser, updateUser } from "../../redux/feature/userSlice";
 import moment from "moment";
 import { setOpenLoginOrRegisUser } from "../../redux/feature/uiSlice";
-import { formatBirthDateToFeInputUtil } from "../../utils/utils";
+import { formatBirthDateToBeInputUtil, formatBirthDateToFeInputUtil } from "../../utils/utils";
 
 export default function LayoutCustomer() {
     const isAuth = JSON.parse(localStorage.getItem('auth'))
@@ -24,15 +24,14 @@ export default function LayoutCustomer() {
 
 
     const [formRegisOrProfile, setFormRegisOrProfile] = useState({
-        gender: "L",
-        fullName: "admin",
-        email: "admin@gmail.com",
-        d_birth_date: "11",
-        m_birth_date: "Juli",
-        y_birth_date: "1999",
-        telp: "0823233",
-        address: "qe",
-        password: "qweqwe123",
+        gender: "",
+        fullName: "",
+        email: "",
+        d_birth_date: "",
+        m_birth_date: "",
+        y_birth_date: "",
+        telp: "",
+        address: "",
     })
     const [formLogin, setFormLogin] = useState({
         email: "fahmiiwan86@gmail.com",
@@ -118,25 +117,33 @@ export default function LayoutCustomer() {
         })
     }
 
+
+
     useEffect(() => {
 
         if (openModalProfile) {
             dispatch((findUserById({ userId: isAuth?.userId }))).then((res) => {
                 const data = res.payload.data
 
-                let birthdate = formatBirthDateToFeInputUtil(data?.birthDate)
+                dispatch(findUserById({ userId: isAuth.userId })).then((res) => {
+                    const data = res.payload.data
 
-                console.log(birthdate);
-                setFormRegisOrProfile({
-                    gender: data?.gender,
-                    fullName: data?.fullName,
-                    email: data?.email,
-                    d_birth_date: birthdate[0],
-                    m_birth_date: birthdate[1],
-                    y_birth_date: birthdate[2],
-                    telp: data?.phoneNumber,
-                    address: data?.address
+
+
+                    let birthdate = formatBirthDateToFeInputUtil(data?.birthDate)
+                    console.log(birthdate);
+                    setFormRegisOrProfile({
+                        gender: data?.gender,
+                        fullName: data?.fullName,
+                        email: data?.email,
+                        d_birth_date: parseInt(birthdate[0]),
+                        m_birth_date: birthdate[1],
+                        y_birth_date: birthdate[2],
+                        telp: data?.phoneNumber,
+                        address: data?.address
+                    })
                 })
+
             })
         }
 
@@ -144,8 +151,23 @@ export default function LayoutCustomer() {
     }, [openModalProfile])
 
     const handleChangeProfile = () => {
-        console.log(formRegisOrProfile);
+        let payload = {
+            fullName: formRegisOrProfile?.fullName,
+            email: formRegisOrProfile?.email,
+            gender: formRegisOrProfile?.gender,
+            birthDate: formatBirthDateToBeInputUtil(formRegisOrProfile?.d_birth_date, formRegisOrProfile?.m_birth_date, formRegisOrProfile?.y_birth_date),
+            phoneNumber: formRegisOrProfile?.telp,
+            address: formRegisOrProfile?.address
+        }
+
+        dispatch(updateUser({ userId: isAuth.userId, payload: payload })).then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        })
+        setOpenModalProfile(false)
     }
+    console.log(formRegisOrProfile);
 
     const handleLogout = () => {
         localStorage.clear()
