@@ -1,6 +1,6 @@
 import { IconDashboard, IconEvenetEl, IconProfileEl, IconTicketEl, IconTransactionEl } from "../view/component/IconSvg"
 
-const menu = [
+const menuAdmin = [
     {
         title: 'Dashboard',
         link: '/admin/dashboard',
@@ -27,11 +27,18 @@ const menu = [
         submenu: null,
     },
     {
+        title: 'Checker',
+        link: "/admin/checker",
+        icon: <IconTransactionEl />,
+        submenu: null,
+    },
+    {
         title: 'Profile',
         link: "/admin/profile",
         icon: <IconProfileEl />,
         submenu: null,
-    },
+    }
+
     // {
     //     title: 'Survey',
     //     link: null,
@@ -56,4 +63,29 @@ const menu = [
     // },
 ]
 
-export default menu
+
+const menuChecker = [
+    {
+        title: 'Dashboard',
+        link: '/admin/dashboard',
+        icon: <IconDashboard />,
+        submenu: null,
+
+    },
+    {
+        title: 'Scan Ticket',
+        link: "/checker/scanticket",
+        icon: <IconEvenetEl />,
+        submenu: null,
+    },
+    {
+        title: 'Log Checker',
+        link: "/checker/logchecker",
+        icon: <IconEvenetEl />,
+        submenu: null,
+    },
+]
+
+
+
+export { menuAdmin, menuChecker } 

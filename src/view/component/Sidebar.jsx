@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { IconDashboard, IconEvenetEl, IconLogoutEl, IconProfileEl, IconTicketEl, IconTransactionEl } from "./IconSvg";
 import { useSidebar } from "../../context/SidebarContext";
-import menu from "../../data/menu";
+import { menuAdmin, menuChecker } from "../../data/menu";
+
 
 export default function Sidebar() {
     // Menyimpan item menu yang aktif
@@ -16,6 +17,9 @@ export default function Sidebar() {
     };
 
 
+    const auth = JSON.parse(localStorage.getItem('auth'));
+
+
 
 
     return (
@@ -25,64 +29,7 @@ export default function Sidebar() {
             aria-label="Sidebar"
         >
             <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-                <MenuEl menu={menu} dropDown={dropDown} toggleDropdown={toggleDropdown} />
-                {/* <ul className="space-y-2 font-medium">
-                    <li>
-                        <Link to="/admin/dashboard"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/dashboard') && 'bg-gray-200'}`}
-
-                        >
-                            <IconDashboard />
-                            <span className="ms-3">Dashboard</span>
-                        </Link>
-
-                    </li>
-                    <li>
-
-                        <Link to="/admin/event"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/event') && 'bg-gray-200'}`}
-                        >
-                            <IconEvenetEl />
-                            <span className="flex-1 ms-3 whitespace-nowrap">Event</span>
-
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/ticket"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/ticket') && 'bg-gray-200'}`}
-                        >
-                            <IconTicketEl />
-                            <span className="flex-1 ms-3 whitespace-nowrap">Ticket</span>
-
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/transaction"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/transaction') && 'bg-gray-200'}`}
-                        >
-                            <IconTransactionEl />
-                            <span className="flex-1 ms-3 whitespace-nowrap">Transaction</span>
-
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/profile"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/profile') && 'bg-gray-200'}`}
-                        >
-                            <IconProfileEl />
-                            <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/user"
-                            className={`flex items-center p-2 text-gray-900 rounded-lg group ${isActive('/admin/user') && 'bg-gray-200'}`}
-                        >
-                            <IconLogoutEl />
-                            <span className="flex-1 ms-3 whitespace-nowrap">Log out</span>
-                        </Link>
-                    </li>
-
-                </ul> */}
+                <MenuEl menu={auth.role == 'ADMIN' ? menuAdmin : menuChecker} dropDown={dropDown} toggleDropdown={toggleDropdown} />
             </div>
         </aside>
     )

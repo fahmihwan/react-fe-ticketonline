@@ -5,6 +5,10 @@ import LayoutAdmin from "../view/layouts/LayoutAdmin";
 import LayoutCustomer from "../view/layouts/LayoutCustomer";
 import LoginAdmin from "../view/cmsAdmin/LoginAdmin";
 import { ProtectedRouteAdmin, ProtectedRouteUser } from "./ProtectedRoute";
+import EventChecker from "../view/cmsAdmin/checker/EventChecker";
+import CreateChecker from "../view/cmsAdmin/checker/CreateChecker";
+import ScanTicket from "../view/checker/scanTicket/ScanTicket";
+import ListLogChecker from "../view/checker/logVerifikasi/ListLogChecker";
 
 
 const Home = lazy(() => import("../view/home/Home"));
@@ -51,9 +55,20 @@ const routes = createBrowserRouter([
             { path: "/admin/ticket", element: <Ticket /> },
             { path: "/admin/ticket/:slug/create", element: <CreateTicket /> },
             { path: "/admin/transaction", element: <Transaction /> },
+            { path: "/admin/checker", element: <EventChecker /> },
+            { path: "/admin/checker/:slug/create", element: <CreateChecker /> },
             { path: "/admin/profile", element: <Profile /> },
         ]
     },
+    {
+        element: <LayoutAdmin />,
+        children: [
+            { path: "/checker/scanticket", element: <ScanTicket /> },
+            { path: "/checker/logchecker", element: <ListLogChecker /> },
+        ]
+
+
+    }
 
 
 ])
