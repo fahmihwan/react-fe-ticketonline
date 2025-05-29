@@ -7,7 +7,7 @@ import { formatDateTimeUtil, formatRupiahUtil } from '../../../utils/utils';
 import { PaginationEl } from '../../component/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { getEventAdminPagination } from '../../../redux/feature/eventSlice';
+import { getEventAdminPagination, getEventForTicketListPagination } from '../../../redux/feature/eventSlice';
 
 const Ticket = () => {
     // const { responseData, paginate, setPaginate } = useEffectEventPagination(); //customeHook
@@ -23,7 +23,7 @@ const Ticket = () => {
         offset: 0,
     })
     useEffect(() => {
-        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size })).then((res) => {
+        dispatch(getEventForTicketListPagination({ page: paginate?.currentPage, size: paginate?.size })).then((res) => {
             let response = res.payload.data
             let offset = response.pageable.offset
             let totalPages = response.totalPages
@@ -32,7 +32,7 @@ const Ticket = () => {
 
     }, [dispatch, events?.size, paginate?.currentPage])
 
-
+    console.log(events.content);
     return (
         <>
             <div className='w-full'>
@@ -76,7 +76,7 @@ const Ticket = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <ul className=' space-y-1 text-gray-500 w-full'>
-                                        {d?.category_tickets?.map((x, i) => {
+                                        {d?.categoryTickets?.map((x, i) => {
                                             return (<li key={i} className='block w-full p-2 bg-white border border-gray-200  mb-5'>
                                                 <div className='flex justify-between'>
                                                     <div>

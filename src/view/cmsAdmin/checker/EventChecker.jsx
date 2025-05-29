@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import {
     getEventAdminPagination,
+    getEventForCheckerList,
     removeEvent
 } from "../../../redux/feature/eventSlice";
 import { useEffect, useState } from 'react'
+import { getListChecker } from '../../../redux/feature/userSlice'
 
 const EventChecker = () => {
     const dispatch = useDispatch();
@@ -33,7 +35,7 @@ const EventChecker = () => {
     }, [events])
 
     useEffect(() => {
-        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size }))
+        dispatch(getEventForCheckerList({ page: paginate?.currentPage, size: paginate?.size }))
     }, [paginate?.currentPage, dispatch, events?.size])
 
 
@@ -92,9 +94,9 @@ const EventChecker = () => {
                             <th scope="col" className="px-6 py-3">
                                 Description
                             </th>
-                            {/* <th scope="col" className="px-6 py-3 w-44">
-                                Line Up
-                            </th> */}
+                            <th scope="col" className="px-6 py-3 w-44">
+                                Total Cheker
+                            </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
                             </th>
@@ -128,6 +130,7 @@ const EventChecker = () => {
                                                     dangerouslySetInnerHTML={{ __html: d?.description }} />
                                             </div>
                                         </td>
+                                        <td className="px-6 py-4">{d?.totalChecker}</td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
                                                 <Link to={`/admin/checker/${d?.slug}/create`} className='mr-5'>

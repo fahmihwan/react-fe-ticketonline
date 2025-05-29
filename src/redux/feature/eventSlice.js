@@ -48,6 +48,62 @@ const getEventAdminPagination = createAsyncThunk("home/fetchEventAdmin", async (
 
 
 
+const getEventForTicketListPagination = createAsyncThunk("home/getEventForTicketListPagination", async ({ page, size }, { rejectWithValue }) => {
+    let params = `?`;
+
+    // Tambahkan parameter page jika ada
+    if (page !== undefined) {
+        params += `page=${page}&`;
+    }
+
+    // Tambahkan parameter size jika ada
+    if (size !== undefined) {
+        params += `size=${size}`;
+    }
+
+    // Hapus tanda '&' yang mungkin ada di akhir
+    if (params.endsWith('&')) {
+        params = params.slice(0, -1);
+    }
+
+    try {
+        const response = await apiClient.get(`/cetegory-ticket/admin/pagination${params}`)
+        return response?.data
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
+
+
+const getEventForCheckerList = createAsyncThunk("home/getEventForCheckerList", async ({ page, size }, { rejectWithValue }) => {
+    let params = `?`;
+
+    // Tambahkan parameter page jika ada
+    if (page !== undefined) {
+        params += `page=${page}&`;
+    }
+
+    // Tambahkan parameter size jika ada
+    if (size !== undefined) {
+        params += `size=${size}`;
+    }
+
+    // Hapus tanda '&' yang mungkin ada di akhir
+    if (params.endsWith('&')) {
+        params = params.slice(0, -1);
+    }
+
+    try {
+        const response = await apiClient.get(`/checker/pagination${params}`)
+        return response?.data
+    } catch (error) {
+        return rejectWithValue(error?.response?.data)
+    }
+})
+
+
+
 const findBySlugWithCategoryTickets = createAsyncThunk("home/findBySlugWithCategoryTickets", async ({ slug }, { rejectWithValue }) => {
     try {
         const response = await apiClient.get(`/event/${slug}/with-category-tickets`)
@@ -158,6 +214,40 @@ const eventSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(getEventForCheckerList.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(getEventForCheckerList.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                eventData: action.payload.data,
+                status: "success",
+            })
+        }).addCase(getEventForCheckerList.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(getEventForTicketListPagination.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(getEventForTicketListPagination.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                eventData: action.payload.data,
+                status: "success",
+            })
+        }).addCase(getEventForTicketListPagination.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         }).addCase(fetchEventBySlug.pending, (state) => {
             return (state = {
                 ...state,
@@ -256,6 +346,8 @@ export {
     findBySlugWithCategoryTickets,
     removeEvent,
     createEvent,
-    updateEvent
+    updateEvent,
+    getEventForCheckerList,
+    getEventForTicketListPagination
 };
 export default eventSlice.reducer

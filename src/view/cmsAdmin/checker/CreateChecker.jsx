@@ -9,41 +9,47 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createLineUp, getAllLineUpBySlug, removeLineUp } from '../../../redux/feature/lineUpSlice'
 import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
 import { formatBirthDateToBeInputUtil } from '../../../utils/utils'
+import { getListChecker, registerChecker, removeChecker } from '../../../redux/feature/userSlice'
+// import { getListChecker, registerChecker } f rom '../../../redux/feature/userSlice'
 
 
 
 
 const CreateChecker = () => {
     const { slug } = useParams();
-    // const { responseListLineUp, fetchDataLineUp } = useEffecLineUp(slug)
 
     const dispatch = useDispatch();
     const events = useSelector((state) => state.event.detailEvent)
+    const listChecker = useSelector((state) => state.user.listChecker)
 
 
 
     useEffect(() => {
-        // dispatch(getAllLineUpBySlug({ slug: slug }))
         dispatch(findBySlugWithCategoryTickets({ slug: slug }))
-        console.log('wkwkwwkkwk');
+        dispatch(getListChecker({ slug: slug }))
+
     }, [slug, dispatch])
 
 
+    useEffect(() => {
+        // listChecker
+        // dispatch(getListChecker())
+    }, [])
+
     const [formData, setFormData] = useState({
-        gender: '',
-        fullName: '',
-        email: '',
+        gender: 'L',
+        fullName: 'checker',
+        email: 'checker@gmail.com',
         password: "",
-        d_birth_date: '',
-        m_birth_date: '',
-        y_birth_date: '',
-        phone_number: '',
-        address: ''
+        d_birth_date: '11',
+        m_birth_date: 'July',
+        y_birth_date: '1999',
+        phone_number: '0823343',
+        address: 'madin'
     });
 
     const handleSubmit = async () => {
-        // await dispatch(createLineUp({ slug: slug, payload: formData }))
-        // await dispatch(getAllLineUpBySlug({ slug: slug }))
+
         let payload = {
             fullName: formData?.fullName,
             email: formData?.email,
@@ -53,12 +59,12 @@ const CreateChecker = () => {
             address: formData?.address
         }
 
-
-        // dispatch(updateUser({ userId: isAuth.userId, payload: payload })).then((res) => {
-        //     console.log(res);
-        // }).catch((err) => {
-        //     console.log(err);
-        // })
+        dispatch(registerChecker({ payload: payload, slug: slug })).then((res) => {
+            console.log(res);
+            dispatch(getListChecker({ slug: slug }))
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
     const handleChange = (e) => {
@@ -76,8 +82,9 @@ const CreateChecker = () => {
     const handleDelete = async (id) => {
         const isDelete = confirm("Apakah anda ingin menghapus data?");
         if (isDelete) {
-            // await dispatch(removeLineUp({ id: id }))
-            // await dispatch(getAllLineUpBySlug({ slug: slug }))
+            await dispatch(removeChecker({ checkerId: id })).then((res) => {
+                dispatch(getListChecker({ slug: slug }))
+            })
         }
     }
 
@@ -203,27 +210,34 @@ const CreateChecker = () => {
                                                 Phone Number
                                             </th>
                                             <th scope="col" className="px-6 py-3">
+                                                Total Checker
+                                            </th>
+                                            <th scope="col" className="px-6 py-3">
                                                 Action
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                            <td className="px-6 py-4">Silver</td>
-                                            <td className="px-6 py-4">Silver</td>
-                                            <td className="px-6 py-4">Laptop</td>
-                                            <td className="px-6 py-4">$2999</td>
-                                            <td className="px-6 py-4">$2999</td>
-                                            <td className="px-6 py-4">
-                                                <Button
-                                                    color='failure'
+                                        {listChecker.map((d, i) => (
+                                            <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                                {/* <td className="px-6 py-4">{d.userId.fullName}</td>
+                                                <td className="px-6 py-4">{d.userId.email}</td>
+                                                <td className="px-6 py-4">{d.userId.birthDate}</td>
+                                                <td className="px-6 py-4">{d.userId.gender}</td>
+                                                <td className="px-6 py-4">{d.userId.phoneNumber}</td>
+                                                <td className="px-6 py-4">{d.totalChecker}</td> */}
+                                                <td className="px-6 py-4">
+                                                    <Button
+                                                        color='failure'
+                                                        className='flex items-center justify-center align-middle'
+                                                        onClick={(e) => handleDelete(d.id)}
+                                                    >
+                                                        <IconTrashEl color={"text-white"} /></Button>
+                                                </td>
+                                            </tr>
 
-                                                    className='flex items-center justify-center align-middle'
-                                                    onClick={(e) => handleDelete(e)}
-                                                >
-                                                    <IconTrashEl color={"text-white"} /></Button>
-                                            </td>
-                                        </tr>
+                                        ))}
+
 
                                     </tbody>
                                 </table>

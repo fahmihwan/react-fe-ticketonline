@@ -59,8 +59,11 @@ export default function LoginAdmin() {
                 const data = res.payload.data
                 if (data.role == 'ADMIN') {
                     localStorage.setItem('auth', JSON.stringify(data))
-                    // window.location.reload()
                     navigate('/admin/dashboard')
+                } else if (data.role == 'CHECKER') {
+                    localStorage.setItem('auth', JSON.stringify(data))
+                    navigate('/checker/scanticket')
+
                 } else {
                     alert('username atau password salah')
                 }

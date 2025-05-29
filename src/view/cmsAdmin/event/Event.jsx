@@ -26,15 +26,21 @@ const Event = () => {
         offset: 0,
     })
 
-    useEffect(() => {
-        if (events) {
-            setPaginate({ ...paginate, offset: events?.pageable?.offset, totalPages: events?.totalPages })
-        }
-    }, [events])
+
 
     useEffect(() => {
-        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size }))
-    }, [paginate?.currentPage, dispatch, events?.size])
+        dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size })).then((res) => {
+
+            let response = res.payload.data
+
+            let offset = response.pageable.offset
+            let totalPages = response.totalPages
+            setPaginate({ ...paginate, offset: offset, totalPages: totalPages })
+        })
+
+    }, [dispatch, events?.size, paginate?.currentPage])
+
+
 
 
     const handleDelete = async (id) => {
@@ -122,7 +128,6 @@ const Event = () => {
                                         <td className="px-6 py-4">{d?.venue}</td>
                                         <td className="px-6 py-4 ">
                                             <div className='w-[200px] truncate h-[100px]'>
-                                                {/* {d?.description} */}
                                                 <div
                                                     className='truncate w-[200px] text-[10px]'
                                                     dangerouslySetInnerHTML={{ __html: d?.description }} />
@@ -131,7 +136,7 @@ const Event = () => {
                                         <td className='px-6 py-4'>
 
                                             <ul className='list-disc'>
-                                                {d?.listLineUps.map((x, i) => (
+                                                {d?.lineUpList.map((x, i) => (
                                                     <li key={i}>{x.talentName}</li>
                                                 ))}
                                             </ul>

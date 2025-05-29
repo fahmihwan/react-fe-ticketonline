@@ -12,6 +12,7 @@ const login = createAsyncThunk("aut/login", async ({ payload }, { rejectWithValu
     }
 })
 
+
 const registerUser = createAsyncThunk("auth/register-user", async ({ payload }, { rejectWithValue }) => {
     try {
         const response = await apiClient.post(`/auth/register-user`, payload)
@@ -30,6 +31,28 @@ const registerAdmin = createAsyncThunk("auth/register-admin", async ({ payload }
     }
 })
 
+
+
+const getListChecker = createAsyncThunk("auth/get-list-checjer", async ({ slug }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/checker/${slug}/get-list-checker`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
+
+
+const registerChecker = createAsyncThunk("auth/register-checker", async ({ payload, slug }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.post(`/checker/${slug}`, payload)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const changepassword = createAsyncThunk("auth/changepassword", async ({ payload }, { rejectWithValue }) => {
     try {
         const response = await apiClient.post(`/auth/changepassword`, payload)
@@ -38,6 +61,17 @@ const changepassword = createAsyncThunk("auth/changepassword", async ({ payload 
         return rejectWithValue(error.response.data)
     }
 })
+
+
+const removeChecker = createAsyncThunk("auth/removeChecker", async ({ checkerId }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.delete(`/checker/${checkerId}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 
 
 const findUserById = createAsyncThunk("user/findByUserId", async ({ userId }, { rejectWithValue }) => {
@@ -65,6 +99,7 @@ const userSlice = createSlice({
         message: "",
         loginData: null,
         regiterData: null,
+        listChecker: [],
         detailUser: {},
         status: null,
     },
@@ -115,6 +150,34 @@ const userSlice = createSlice({
                 ...state,
                 status: "failed",
                 error: action.error.message,
+            })
+        }).addCase(registerChecker.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(registerChecker.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                regiterData: action.payload.data,
+                status: "success"
+            })
+        }).addCase(registerChecker.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(getListChecker.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(getListChecker.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                listChecker: action.payload.data,
+                status: "success"
+            })
+        }).addCase(getListChecker.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
             });
         }).addCase(changepassword.pending, (state) => {
             return (state = { ...state, status: "loading" })
@@ -125,6 +188,20 @@ const userSlice = createSlice({
                 status: "success"
             })
         }).addCase(changepassword.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
+        }).addCase(removeChecker.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(removeChecker.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                regiterData: action.payload.data,
+                status: "success"
+            })
+        }).addCase(removeChecker.rejected, (state, action) => {
             return (state = {
                 ...state,
                 status: "failed",
@@ -169,6 +246,9 @@ export {
     changepassword,
     findUserById,
     registerAdmin,
-    updateUser
+    updateUser,
+    registerChecker,
+    getListChecker,
+    removeChecker
 };
 export default userSlice.reducer
