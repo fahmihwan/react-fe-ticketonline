@@ -6,8 +6,9 @@ import { formatRupiahUtil } from '../../../utils/utils'
 import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
 import { useDispatch, useSelector } from 'react-redux'
-import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
-import { createCategoryTicket, removeCategoryTicket } from '../../../redux/feature/categoryTicketSlice'
+import { fetchEventBySlug, findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
+import { createCategoryTicket, getAllCategoryTicketBySlug, removeCategoryTicket } from '../../../redux/feature/categoryTicketSlice'
+
 
 
 
@@ -16,13 +17,16 @@ const CreateTicket = () => {
     const { slug } = useParams();
     const dispatch = useDispatch()
     const navigate = useNavigate();
+    const categoryTickets = useSelector((state) => state.categoryTicket.listCategoryTicket || [])
     const events = useSelector((state) => state.event.detailEvent)
     const status = useSelector((state) => state.event.status)
 
 
 
+
     useEffect(() => {
-        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        dispatch(fetchEventBySlug({ slug: slug }))
+        dispatch(getAllCategoryTicketBySlug({ slug: slug }))
     }, [dispatch])
 
 
@@ -38,7 +42,9 @@ const CreateTicket = () => {
     });
     const handleSubmit = async () => {
         await dispatch(createCategoryTicket({ payload: formData }))
-        await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        // await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        await dispatch(getAllCategoryTicketBySlug({ slug: slug }))
+
 
     }
 
@@ -53,7 +59,7 @@ const CreateTicket = () => {
         const isDelete = confirm("Apakah anda ingin menghapus data?");
         if (isDelete) {
             await dispatch(removeCategoryTicket({ categoryTicketId: id }))
-            await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+            await dispatch(getAllCategoryTicketBySlug({ slug: slug }))
 
         }
     }
@@ -61,7 +67,7 @@ const CreateTicket = () => {
     return (
         <>
             <DetailAdminComponent
-                image={events?.image} title={events?.event_title} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
+                image={events?.image} title={events?.eventTitle} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
 
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
@@ -113,7 +119,7 @@ const CreateTicket = () => {
                     </div>
                     <div className='h-full '>
                         <div className='h-[100px] '>
-                            {events?.category_tickets.length != 0 && events?.category_tickets?.map((d, i) => (<TicketListCompt
+                            {categoryTickets.length != 0 && categoryTickets?.map((d, i) => (<TicketListCompt
                                 key={i}
                                 id={d?.id}
                                 categoryName={d?.categoryName}

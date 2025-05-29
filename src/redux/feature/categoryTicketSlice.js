@@ -3,6 +3,16 @@ import apiClient from "../../api/api";
 
 
 
+
+const getAllCategoryTicketBySlug = createAsyncThunk("getAllLineUpBySlug", async ({ slug }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/cetegory-ticket/${slug}`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const createCategoryTicket = createAsyncThunk("createCategoryTicket", async ({ payload }, { rejectWithValue }) => {
     try {
         const response = await apiClient.post("/cetegory-ticket", payload)
@@ -27,6 +37,7 @@ const categoryTicketSlice = createSlice({
     initialState: {
         message: "",
         detailCategoryTicket: null,
+        listCategoryTicket: [],
         status: null,
     },
     reducers: {
@@ -63,6 +74,20 @@ const categoryTicketSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(getAllCategoryTicketBySlug.pending, (state) => {
+            return (state = { ...state, status: "loading" })
+        }).addCase(getAllCategoryTicketBySlug.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                listCategoryTicket: action.payload.data,
+                status: "success"
+            })
+        }).addCase(getAllCategoryTicketBySlug.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
     }
 })
@@ -70,6 +95,7 @@ const categoryTicketSlice = createSlice({
 
 export {
     createCategoryTicket,
-    removeCategoryTicket
+    removeCategoryTicket,
+    getAllCategoryTicketBySlug
 };
 export default categoryTicketSlice.reducer

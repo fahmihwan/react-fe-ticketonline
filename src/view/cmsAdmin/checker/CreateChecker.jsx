@@ -7,10 +7,9 @@ import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { createLineUp, getAllLineUpBySlug, removeLineUp } from '../../../redux/feature/lineUpSlice'
-import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
+import { fetchEventBySlug, findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
 import { formatBirthDateToBeInputUtil } from '../../../utils/utils'
 import { getListChecker, registerChecker, removeChecker } from '../../../redux/feature/userSlice'
-// import { getListChecker, registerChecker } f rom '../../../redux/feature/userSlice'
 
 
 
@@ -25,16 +24,18 @@ const CreateChecker = () => {
 
 
     useEffect(() => {
-        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        // dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        dispatch(fetchEventBySlug({ slug: slug }))
         dispatch(getListChecker({ slug: slug }))
 
+
     }, [slug, dispatch])
+    console.log(listChecker);
 
-
-    useEffect(() => {
-        // listChecker
-        // dispatch(getListChecker())
-    }, [])
+    // useEffect(() => {
+    // listChecker
+    // dispatch(getListChecker())
+    // }, [])
 
     const [formData, setFormData] = useState({
         gender: 'L',
@@ -92,7 +93,7 @@ const CreateChecker = () => {
         <>
             {/* <DetailAdminComponent /> */}
             <DetailAdminComponent
-                image={events?.image} title={events?.event_title} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
+                image={events?.image} title={events?.eventTitle} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
                     <p className='text-3xl font-bold '>Buat Akun  Checker</p>
@@ -210,8 +211,9 @@ const CreateChecker = () => {
                                                 Phone Number
                                             </th>
                                             <th scope="col" className="px-6 py-3">
-                                                Total Checker
+                                                Address
                                             </th>
+
                                             <th scope="col" className="px-6 py-3">
                                                 Action
                                             </th>
@@ -220,12 +222,13 @@ const CreateChecker = () => {
                                     <tbody>
                                         {listChecker.map((d, i) => (
                                             <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                {/* <td className="px-6 py-4">{d.userId.fullName}</td>
-                                                <td className="px-6 py-4">{d.userId.email}</td>
-                                                <td className="px-6 py-4">{d.userId.birthDate}</td>
-                                                <td className="px-6 py-4">{d.userId.gender}</td>
-                                                <td className="px-6 py-4">{d.userId.phoneNumber}</td>
-                                                <td className="px-6 py-4">{d.totalChecker}</td> */}
+                                                <td className="px-6 py-4">{d.fullName}</td>
+                                                <td className="px-6 py-4">{d.email}</td>
+                                                <td className="px-6 py-4">{d.birthDate}</td>
+                                                <td className="px-6 py-4">{d.gender}</td>
+                                                <td className="px-6 py-4">{d.phoneNumber}</td>
+                                                <td className="px-6 py-4">{d.address}</td>
+
                                                 <td className="px-6 py-4">
                                                     <Button
                                                         color='failure'

@@ -119,7 +119,7 @@ export default function Dashboard() {
                                         <li className="pb-3 sm:pb-4" key={i}>
                                             <div className="flex justify-between min-w-0">
                                                 <p className="text-sm font-semibold text-gray-900 truncate dark:text-white">
-                                                    {d?.event_title}
+                                                    {d?.eventTitle}
                                                 </p>
                                                 <p className="text-sm text-gray-500 truncate dark:text-gray-400">
                                                     {formatDateTimeUtil(d?.schedule)}

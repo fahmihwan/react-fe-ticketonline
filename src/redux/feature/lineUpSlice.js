@@ -3,7 +3,6 @@ import apiClient from "../../api/api";
 
 
 
-
 const getAllLineUpBySlug = createAsyncThunk("getAllLineUpBySlug", async ({ slug }, { rejectWithValue }) => {
     try {
         const response = await apiClient.get(`/lineup/${slug}`)

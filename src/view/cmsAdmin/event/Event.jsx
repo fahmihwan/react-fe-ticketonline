@@ -17,7 +17,7 @@ const Event = () => {
     const dispatch = useDispatch();
     const events = useSelector((state) => state.event.eventData || [])
     const status = useSelector((state) => state.event.status)
-
+    const [listEvent, setListEvent] = useState([])
 
     const [paginate, setPaginate] = useState({
         currentPage: 0,
@@ -32,11 +32,13 @@ const Event = () => {
         dispatch(getEventAdminPagination({ page: paginate?.currentPage, size: paginate?.size })).then((res) => {
 
             let response = res.payload.data
+            setListEvent(response?.content)
 
             let offset = response.pageable.offset
             let totalPages = response.totalPages
             setPaginate({ ...paginate, offset: offset, totalPages: totalPages })
         })
+
 
     }, [dispatch, events?.size, paginate?.currentPage])
 
@@ -57,7 +59,15 @@ const Event = () => {
                     ...paginate, currentPage: page
                 })
             }
-            await dispatch(getEventAdminPagination({ page: page, size: size }))
+            await dispatch(getEventAdminPagination({ page: page, size: size })).then((res) => {
+
+                let response = res.payload.data
+                setListEvent(response?.content)
+
+                let offset = response.pageable.offset
+                let totalPages = response.totalPages
+                setPaginate({ ...paginate, offset: offset, totalPages: totalPages })
+            })
         }
     }
 
@@ -109,7 +119,7 @@ const Event = () => {
                     <tbody>
                         {
                             status == 'loading' ? ('wkwk') : (
-                                events?.content?.map((d, i) => (
+                                listEvent?.map((d, i) => (
                                     <tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <th>
                                             {paginate?.offset + i + 1}

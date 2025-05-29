@@ -2,7 +2,6 @@
 import { ToggleSwitch } from "flowbite-react";
 import { IconPrimaryFormEl, IconSecondaryFormEl } from "../component/IconSvg";
 import { RadioEl, SelectEl, TextInputEl, PaymentRadioBtnEl } from "../component/InputEl";
-import LayoutCustomer from "../layouts/LayoutCustomer";
 import { useEffect, useState } from "react";
 
 
@@ -12,7 +11,7 @@ import { checkIfCurrentTransactionEventForUserExists, checkoutTransaction, getPa
 import { findCartByUserId } from "../../redux/feature/cartTicketSlice";
 import { data, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
+import { fetchEventBySlug, findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
 import { formatDateUtil } from "../../utils/utils";
 import { findUserById } from "../../redux/feature/userSlice";
 
@@ -24,9 +23,9 @@ export default function Checkout() {
     const paymentDuitku = useSelector((state) => state.transaction.paymentMethod)
     const cartUser = useSelector((state) => state.cart.listCartUser)
 
-    const eventRedux = useSelector((state) => state.event.detailEvent)
+    const eventRedux = useSelector((state) => state.event.detailEvent || {})
     const userDetailRedux = useSelector((state) => state.user?.detailUser)
-    // console.log(userDetailRedux);
+
     const navigate = useNavigate()
     const [isAlert, setIsAlert] = useState("")
 
@@ -81,8 +80,8 @@ export default function Checkout() {
 
         // await dispatch(findUserById({ userId: auth?.userId }));
 
-        await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
-
+        // await dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        await dispatch(fetchEventBySlug({ slug: slug }))
         await dispatch(findCartByUserId({ userId: auth?.userId, slug: slug })).then(async (result) => {
             const response = result.payload.data
             console.log(response);
@@ -225,7 +224,7 @@ export default function Checkout() {
         localStorage.setItem('form', JSON.stringify(updateForm.slice(1)))
 
     }
-    const handleSubmit =  () => {
+    const handleSubmit = () => {
 
         if (step == 1) {
             setFirstSubmited(true)
@@ -286,32 +285,32 @@ export default function Checkout() {
             // }).catch((err)=>{
             //     console.log(err);
             // })
-                dispatch(checkoutTransaction({ payload: payload })).then(async(res) => {
-                    
-                    
-                    setTimeout(() => {
-                        
+            dispatch(checkoutTransaction({ payload: payload })).then(async (res) => {
 
-                        let paymentUrl = res.payload.paymentUrl
-                        let transactionCode = res.payload.transaction_code
-                        console.log(paymentUrl);
-                        console.log(transactionCode);
-                        if(paymentUrl){
-                            window.open(paymentUrl, '_blank');
-                        }
-                        if(transactionCode){
-                             navigate(`/transaction-history/${transactionCode}`)
-                        }
-                        
-                      
-                    }, 1000);
-                    
-                    
 
-                }).catch((err)=>{
-                
-                    alert("err" +err)
-                })
+                setTimeout(() => {
+
+
+                    let paymentUrl = res.payload.paymentUrl
+                    let transactionCode = res.payload.transaction_code
+                    console.log(paymentUrl);
+                    console.log(transactionCode);
+                    if (paymentUrl) {
+                        window.open(paymentUrl, '_blank');
+                    }
+                    if (transactionCode) {
+                        navigate(`/transaction-history/${transactionCode}`)
+                    }
+
+
+                }, 1000);
+
+
+
+            }).catch((err) => {
+
+                alert("err" + err)
+            })
         }
 
     }

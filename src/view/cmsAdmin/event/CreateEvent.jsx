@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from 'flowbite-react'
 import { InputCKEditorEl, InputDateEl, InputTimeEl, TextareaEl, TextInputEl, UploadFileEl } from '../../component/InputEl'
-import { createEvent, findEventBySlug } from '../../../api/event'
 import slugify from 'slugify'
 import { explodeFormatDateTimeToInputElementUtil } from '../../../utils/utils'
 import moment from 'moment'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchEventBySlug, updateEvent } from '../../../redux/feature/eventSlice'
+import { createEvent, fetchEventBySlug, updateEvent } from '../../../redux/feature/eventSlice'
 
 
 
@@ -15,6 +14,7 @@ const CreateEvent = () => {
     const dispatch = useDispatch()
     const detailEvent = useSelector((state) => state.event.detailEvent || [])
 
+    const auth = JSON.parse(localStorage.getItem('auth'))
 
     const { slug } = useParams();
 
@@ -69,9 +69,9 @@ const CreateEvent = () => {
                 venue: venue,
                 image: image,
                 description: description,
-                admin_id: 1,
+                admin_id: auth?.userId,
             }
-
+            console.log(payload);
             const result = await dispatch(updateEvent({ payload: payload, slug: paramsSlug }))
             if (result?.payload?.success) {
                 resetForm()
@@ -85,8 +85,9 @@ const CreateEvent = () => {
                 venue: venue,
                 image: image,
                 description: description,
-                admin_id: 1,
+                admin_id: auth?.userId
             }
+            console.log(payload);
             const result = await dispatch(createEvent({ payload: payload }))
             if (result?.payload?.success) {
                 resetForm()

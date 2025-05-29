@@ -39,24 +39,6 @@ const EventChecker = () => {
     }, [paginate?.currentPage, dispatch, events?.size])
 
 
-    const handleDelete = async (id) => {
-        const isDelete = confirm("Apakah anda ingin menghapus data?");
-        if (isDelete) {
-            await dispatch(removeEvent({ eventId: id }))
-
-            let page = paginate?.currentPage;
-            let size = paginate?.size
-
-            if (events.content.length == 1) {
-                page != 0 ? page -= 1 : page = 0
-                setPaginate({
-                    ...paginate, currentPage: page
-                })
-            }
-            await dispatch(getEventAdminPagination({ page: page, size: size }))
-        }
-    }
-
 
     return (
         <>
@@ -148,10 +130,10 @@ const EventChecker = () => {
                                                 >
                                                     <IconEditEl />
                                                 </Link> */}
-                                                <button
+                                                {/* <button
                                                     onClick={(e) => handleDelete(d?.id)}>
                                                     <IconTrashEl />
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </td>
                                     </tr>

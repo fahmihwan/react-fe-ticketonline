@@ -3,12 +3,13 @@ import { IconCartEl, IconMinusEl, IconPlusEl } from "../component/IconSvg";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatDateUtil, formatRupiahUtil } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { findBySlugWithCategoryTickets } from "../../redux/feature/eventSlice";
+import { fetchEventBySlug } from "../../redux/feature/eventSlice";
 import { createCartTicket, findCartByUserId } from "../../redux/feature/cartTicketSlice";
 
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
 import { checkIfCurrentTransactionEventForUserExists } from "../../redux/feature/transactionSlice";
 import { setOpenLoginOrRegisUser } from "../../redux/feature/uiSlice";
+import { getAllCategoryTicketBySlug } from "../../redux/feature/categoryTicketSlice";
 
 export default function CartTicket() {
 
@@ -40,7 +41,8 @@ export default function CartTicket() {
             dispatch(findCartByUserId({ userId: auth?.userId, slug: slug }))
         }
 
-        dispatch(findBySlugWithCategoryTickets({ slug: slug })).then((res) => {
+        dispatch(fetchEventBySlug({ slug: slug })).then((res) => {
+
 
             setDetailEvent({
                 id: res.payload.data?.id,
@@ -50,31 +52,36 @@ export default function CartTicket() {
                 venue: res.payload.data?.venue
             })
 
-
         })
+
     }, [slug, dispatch])
 
 
     useEffect(() => {
-        let responseTicket = event?.category_tickets
 
-        if (responseTicket?.length > 0) {
-            let customeResponse = [];
-            customeResponse = responseTicket?.map((d) => {
-                return {
-                    id: d?.id,
-                    categoryName: d?.categoryName,
-                    price: d?.price,
-                    total: 0,
-                    stock: d?.quotaTicket
-                };
-            })
+        dispatch(getAllCategoryTicketBySlug({ slug: slug })).then((result) => {
 
-            setListTicket(customeResponse)
-            setTotalCheckout(customeResponse?.reduce((acc, item) => acc + (item.total), 0))
-        }
+            let responseTicket = result.payload.data
 
-    }, [event])
+            if (responseTicket?.length > 0) {
+                let customeResponse = [];
+                customeResponse = responseTicket?.map((d) => {
+                    return {
+                        id: d?.id,
+                        categoryName: d?.categoryName,
+                        price: d?.price,
+                        total: 0,
+                        stock: d?.quotaTicket
+                    };
+                })
+
+                setListTicket(customeResponse)
+                setTotalCheckout(customeResponse?.reduce((acc, item) => acc + (item.total), 0))
+            }
+        })
+
+
+    }, [])
 
 
     const fnCountTicket = (item, option) => {

@@ -7,14 +7,13 @@ import { IconTrashEl } from '../../component/IconSvg'
 import DetailAdminComponent from '../../component/DetailAdminComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { createLineUp, getAllLineUpBySlug, removeLineUp } from '../../../redux/feature/lineUpSlice'
-import { findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
+import { fetchEventBySlug, findBySlugWithCategoryTickets } from '../../../redux/feature/eventSlice'
 
 
 
 
 const CreateLineup = () => {
     const { slug } = useParams();
-    // const { responseListLineUp, fetchDataLineUp } = useEffecLineUp(slug)
 
     const dispatch = useDispatch();
     const lineUp = useSelector((state) => state.lineUp.lineUpData || [])
@@ -25,7 +24,7 @@ const CreateLineup = () => {
 
     useEffect(() => {
         dispatch(getAllLineUpBySlug({ slug: slug }))
-        dispatch(findBySlugWithCategoryTickets({ slug: slug }))
+        dispatch(fetchEventBySlug({ slug }))
         console.log('wkwkwwkkwk');
     }, [slug, dispatch])
 
@@ -58,7 +57,7 @@ const CreateLineup = () => {
         <>
             {/* <DetailAdminComponent /> */}
             <DetailAdminComponent
-                image={events?.image} title={events?.event_title} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
+                image={events?.image} title={events?.eventTitle} schedule={events?.schedule} venue={events?.venue} description={events?.description} />
             <div className='w-full'>
                 <div className='flex items-center  justify-between px-5 mb-0'>
                     <p className='text-3xl font-bold '>Create  Lineup</p>
