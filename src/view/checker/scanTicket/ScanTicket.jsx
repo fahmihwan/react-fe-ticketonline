@@ -96,166 +96,170 @@ const ScanTicket = () => {
             userId: auth.userId
         }
         dispatch(scanTicket({ payload: payload })).then((res) => {
-            console.log(res)
+            if (res.payload.success == false) {
+                setScannedResult(res.payload.messages)
+            } else if (res.payload.success == true) {
+                setScannedResult(res.payload.messages)
+            }
         })
 
 
         setIsInputCode(false)
     }
 
-    // console.log(!isSacnned || !isInputCode);
+
 
     return (
-        <div className='w-full block lg:flex'>
-            <div className='w-full lg:w-1/2 border'>
-                <div className='flex justify-center  items-center w-full h-[600px]'>
-
-
-                    {
-                        !isSacnned && !isInputCode ? (
-                            <>
-                                <div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsScanned(true)}
-                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                    >
-                                        Click untuk Scan !
-                                    </button>
-                                    <button
-                                        type="button"
-
-                                        onClick={() => setIsInputCode(true)}
-                                        className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                    >
-                                        Input Kode Manual
-                                    </button>
-
-                                </div>
-
-
-                            </>
-
-
-                        ) : ''
-                    }
-
-                    {
-                        isInputCode && (
-                            <>
-                                <div className="w-full mx-20">
-                                    <label
-                                        htmlFor="default-search"
-                                        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                                    >
-                                        Search
-                                    </label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                            <svg
-                                                className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path
-                                                    stroke="currentColor"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="search"
-                                            onChange={(e) => setInputCode(e.target.value)}
-                                            value={inputCode}
-                                            id="default-search"
-                                            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                            placeholder="Input kode manual"
-                                            required=""
-                                        />
+        <>
+            <div className='w-full'>
+                <div className='flex items-center  justify-between px-5 mb-5'>
+                    <p className='text-3xl font-bold '>Scan Ticket</p>
+                </div>
+            </div>
+            <div className='w-full block lg:flex'>
+                <div className='w-full lg:w-1/2 border'>
+                    <div className={`flex justify-center items-center w-full ${isSacnned ? 'h-[600px]' : 'h-[200px]'}`}>
+                        {
+                            !isSacnned && !isInputCode ? (
+                                <>
+                                    <div>
                                         <button
-                                            type="submit"
-                                            onClick={() => handleSubmitCode()}
-                                            className="text-white w-[100px] absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                            type="button"
+                                            onClick={() => setIsScanned(true)}
+                                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                         >
-                                            Scan
+                                            Click untuk Scan !
+                                        </button>
+                                        <button
+                                            type="button"
+
+                                            onClick={() => setIsInputCode(true)}
+                                            className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                        >
+                                            Input Kode Manual
                                         </button>
                                     </div>
-                                </div>
-
-                            </>
-                        )
-                    }
 
 
+                                </>
+                            ) : ''
+                        }
 
-                    {isSacnned && (
+                        {
+                            isInputCode && (
+                                <>
+                                    <div className="w-full mx-20">
+                                        <label
+                                            htmlFor="default-search"
+                                            className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                                        >
+                                            Search
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                <svg
+                                                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <input
+                                                type="search"
+                                                onChange={(e) => setInputCode(e.target.value)}
+                                                value={inputCode}
+                                                id="default-search"
+                                                className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                placeholder="Input kode manual"
+                                                required=""
+                                            />
+                                            <button
+                                                type="submit"
+                                                onClick={() => handleSubmitCode()}
+                                                className="text-white w-[100px] absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                            >
+                                                Scan
+                                            </button>
+                                        </div>
+                                    </div>
 
-                        <div className='flex  flex-col'>
+                                </>
+                            )
+                        }
 
 
-                            <div className="qr-reader" >
-                                <video ref={videoEl}></video>
-                                <div ref={qrBoxEl} className="qr-box">
-                                    {!videoEl?.current && (
-                                        <img
-                                            src="/static/images/icons/scan_qr1.svg"
-                                            alt="Qr Frame"
-                                            width={256}
-                                            height={256}
-                                            className="qr-frame"
-                                        />
+
+                        {isSacnned && (
+                            <div className='flex  flex-col'>
+                                <p className='text-center font-bold mb-2'>Place QR code in the area to scan you attendance</p>
+                                <div className="qr-reader" >
+                                    <video ref={videoEl}></video>
+                                    <div ref={qrBoxEl} className="qr-box">
+                                        {!videoEl?.current && (
+                                            <img
+                                                src="/assets/fe/scanframe.png"
+                                                alt="Qr Frame"
+                                                width={300}
+                                                height={300}
+                                                className="qr-frame"
+                                            />
+                                        )}
+                                    </div>
+                                    {scannedResult}
+                                    {scannedResult && (
+                                        <p
+                                            style={{
+                                                position: "absolute",
+                                                top: 0,
+                                                left: 0,
+                                                zIndex: 99999,
+                                                color: "white",
+                                            }}>
+                                            Scanned Result: {scannedResult}
+                                        </p>
                                     )}
-                                </div>
-                                {scannedResult}
-                                {scannedResult && (
-                                    <p
-                                        style={{
-                                            position: "absolute",
-                                            top: 0,
-                                            left: 0,
-                                            zIndex: 99999,
-                                            color: "white",
-                                        }}>
-                                        Scanned Result: {scannedResult}
-                                    </p>
-                                )}
-                            </div >
+                                </div >
 
-                            <button
-                                onClick={() => setIsScanned(false)}
-                                type="button"
-                                className="focus:outline-none mt-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                            >
-                                Stop Scan
-                            </button>
+                                <button
+                                    onClick={() => setIsScanned(false)}
+                                    type="button"
+                                    className="focus:outline-none mt-5 text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                >
+                                    Stop Scan
+                                </button>
 
-                        </div>
-                    )}
+                            </div>
+                        )}
 
 
 
 
 
 
+                    </div>
+                </div>
+                <div className={`lg:w-1/2 w-full  flex border-r border-b lg:border-t border-l lg:border-l-0 justify-center items-center`}>
+                    <div className='py-5'>
+                        <p className='text-2xl mb-2 text-center'>STATUS TIKET</p>
+                        {
+                            scannedResult == 'SUCCESS' ? (<p className='text-5xl text-green-500 text-center'>SUCCESS</p>) : null
+                        }
+                        {
+                            scannedResult == 'TIDAK DITEMUKAN' || scannedResult == 'SUDAH DIGUNAKAN' ? (<p className='text-5xl text-red-500 text-center'>{scannedResult}</p>) : null
+                        }
+                    </div>
                 </div>
             </div>
-            <div className='w-1/2  flex border-r border-b border-t justify-center items-center'>
-                <div>
-                    <p className='text-2xl mb-2 text-center'>STATUS TIKET</p>
-
-                    <p className='text-5xl text-green-500 text-center'>SUCCESS</p>
-
-                    {/* <p className='text-5xl text-red-500 text-center'>TIDAK DITEMUKAN</p> */}
-                </div>
-
-                {/* , SUDAH DIGUNAKAN, TIDAK DITEMUKAN */}
-            </div>
-        </div>
+        </>
     );
 }
 

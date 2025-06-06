@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { listLogChecker, scanTicket } from '../../../redux/feature/ checkerSlice';
+import { listLogChecker } from '../../../redux/feature/ checkerSlice';
 import { formatDateTimeUtil, formatDateUtil } from '../../../utils/utils';
 
 const ListLogChecker = () => {
