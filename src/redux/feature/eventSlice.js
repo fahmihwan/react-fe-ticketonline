@@ -167,6 +167,15 @@ const updateEvent = createAsyncThunk("home/updateEvent", async ({ payload, slug 
 })
 
 
+const getEventByCheckerUser = createAsyncThunk("home/getEventByCheckerUser", async ({ userId }, { rejectWithValue }) => {
+    try {
+        const response = await apiClient.get(`/checker/${userId}/event`)
+        return response.data
+    } catch (error) {
+        return rejectWithValue(error.response.data)
+    }
+})
+
 const eventSlice = createSlice({
     name: "eventSlice",
     initialState: {
@@ -333,8 +342,24 @@ const eventSlice = createSlice({
                 status: "failed",
                 error: action.error.message,
             });
+        }).addCase(getEventByCheckerUser.pending, (state) => {
+            return (state = {
+                ...state,
+                status: "loading"
+            })
+        }).addCase(getEventByCheckerUser.fulfilled, (state, action) => {
+            return (state = {
+                ...state,
+                eventData: action.payload.data,
+                status: "success",
+            })
+        }).addCase(getEventByCheckerUser.rejected, (state, action) => {
+            return (state = {
+                ...state,
+                status: "failed",
+                error: action.error.message,
+            });
         })
-
     }
 })
 
@@ -348,6 +373,7 @@ export {
     createEvent,
     updateEvent,
     getEventForCheckerList,
-    getEventForTicketListPagination
+    getEventForTicketListPagination,
+    getEventByCheckerUser
 };
 export default eventSlice.reducer

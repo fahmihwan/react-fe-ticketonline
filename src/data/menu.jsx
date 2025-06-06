@@ -67,7 +67,7 @@ const menuAdmin = [
 const menuChecker = [
     {
         title: 'Dashboard',
-        link: '/admin/dashboard',
+        link: '/checker/dashboard',
         icon: <IconDashboard />,
         submenu: null,
 

@@ -61,10 +61,13 @@ const CreateChecker = () => {
         }
 
         dispatch(registerChecker({ payload: payload, slug: slug })).then((res) => {
-            console.log(res);
+            if (!res.payload.success) {
+                // console.log(res.payload.messages);
+                alert(res.payload.messages)
+            }
             dispatch(getListChecker({ slug: slug }))
         }).catch((err) => {
-            console.log(err);
+            // console.log(err.payload.message);
         })
     }
 

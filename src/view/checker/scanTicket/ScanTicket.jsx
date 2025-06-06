@@ -1,20 +1,27 @@
 import QrScanner from 'qr-scanner';
 import React, { useEffect, useRef, useState } from 'react'
 import { TextInputEl } from '../../component/InputEl';
+import { useDispatch } from 'react-redux';
+import { scanTicket } from '../../../redux/feature/ checkerSlice';
 
 const ScanTicket = () => {
+
+    const auth = JSON.parse(localStorage.getItem('auth'))
+
     // QR States
     const scanner = useRef();
     const videoEl = useRef(null);
     const qrBoxEl = useRef(null)
     const [qrOn, setQrOn] = useState(true);
+    const dispatch = useDispatch()
 
-
+    const [isSuccessCheck, setIsSuccessCheck] = useState(null)
+    // 
 
     const [isSacnned, setIsScanned] = useState(false)
     const [isInputCode, setIsInputCode] = useState(false)
 
-    const [inputCode, setInputCode] = useState('')
+    const [inputCode, setInputCode] = useState('QR250531002820TK1')
 
 
     // Result
@@ -84,9 +91,16 @@ const ScanTicket = () => {
 
     const handleSubmitCode = () => {
 
+        let payload = {
+            ticket_code: inputCode,
+            userId: auth.userId
+        }
+        dispatch(scanTicket({ payload: payload })).then((res) => {
+            console.log(res)
+        })
+
 
         setIsInputCode(false)
-
     }
 
     // console.log(!isSacnned || !isInputCode);
@@ -95,32 +109,6 @@ const ScanTicket = () => {
         <div className='w-full block lg:flex'>
             <div className='w-full lg:w-1/2 border'>
                 <div className='flex justify-center  items-center w-full h-[600px]'>
-                    {/* 
-                    {
-                        !isSacnned && (
-                            <button
-                                type="button"
-                                onClick={() => setIsScanned(true)}
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            >
-                                Click untuk Scan !
-                            </button>
-                        )
-                    }
-
-                    {
-                        !isInputCode && (
-                            <button
-                                type="button"
-                                onClick={() => setIsInputCode(true)}
-                                className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                            >
-                                Input Kode Manual
-                            </button>
-
-                        )
-                    }
-                     */}
 
 
                     {
@@ -246,13 +234,6 @@ const ScanTicket = () => {
                                 Stop Scan
                             </button>
 
-                            {/* <button
-                                type="button"
-                                onClick={() => setIsScanned(true)}
-                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            >
-                                Click untuk Scan !
-                            </button> */}
                         </div>
                     )}
 
@@ -263,11 +244,11 @@ const ScanTicket = () => {
 
                 </div>
             </div>
-            <div className='w-1/2 border flex justify-center items-center'>
+            <div className='w-1/2  flex border-r border-b border-t justify-center items-center'>
                 <div>
                     <p className='text-2xl mb-2 text-center'>STATUS TIKET</p>
 
-                    {/* <p className='text-5xl text-green-500 text-center'>TIDAK DITEMUKAN</p> */}
+                    <p className='text-5xl text-green-500 text-center'>SUCCESS</p>
 
                     {/* <p className='text-5xl text-red-500 text-center'>TIDAK DITEMUKAN</p> */}
                 </div>

@@ -9,5 +9,10 @@ export const ProtectedRouteUser = ({ element }) => {
 
 export const ProtectedRouteAdmin = ({ element }) => {
     const user = JSON.parse(localStorage.getItem('auth'))
-    return user ? element : <Navigate to="/admin/login" />
+    return user && user.role == 'ADMIN' ? element : <Navigate to="/admin/login" />
+}
+
+export const ProtectedRouteChecker = ({ element }) => {
+    const user = JSON.parse(localStorage.getItem('auth'))
+    return user && user.role == 'CHECKER' ? element : <Navigate to="/admin/login" />
 }

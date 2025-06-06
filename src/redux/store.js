@@ -9,6 +9,8 @@ import historySlice from "./feature/historiesSlice";
 import userSlice from "./feature/userSlice";
 import dashboardSlice from "./feature/dashboardSlice"
 import uiSlice from "./feature/uiSlice"
+import checkerSlice from "./feature/ checkerSlice"
+
 
 const store = configureStore({
     reducer: {
@@ -20,7 +22,8 @@ const store = configureStore({
         history: historySlice,
         user: userSlice,
         dashboard: dashboardSlice,
-        ui: uiSlice
+        ui: uiSlice,
+        checker: checkerSlice
     },
 });
 

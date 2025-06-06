@@ -46,7 +46,7 @@ const getListChecker = createAsyncThunk("auth/get-list-checjer", async ({ slug }
 
 const registerChecker = createAsyncThunk("auth/register-checker", async ({ payload, slug }, { rejectWithValue }) => {
     try {
-        const response = await apiClient.post(`/checker/${slug}`, payload)
+        const response = await apiClient.post(`/checker/${slug}/regis-checker`, payload)
         return response.data
     } catch (error) {
         return rejectWithValue(error.response.data)
